@@ -1,10 +1,5 @@
 <template>
     <div class="create" id="create">
-        <!-- <div class="custom-shape-divider-top-1698147972">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M1200 0L0 0 892.25 114.72 1200 0z" class="shape-fill"></path>
-            </svg>
-        </div> -->
         <div class="content" id="content">
             <div class="title">创建账号</div>
             <div class="back">
@@ -13,31 +8,49 @@
             </div>
             <div class="contentAll">
                 <div class="contentBlock">
-                    <div class="tips">账号</div>
-                    <input type="text" :class="'inputClass'" v-model="account">
+                    <div class="flex">
+                        <div class="tips">账号</div>
+                        <div class="error" ref="textError">不能为空！</div>
+                    </div>
+                    <input type="text" :class="'inputClass'" v-model="account" ref="text">
                 </div>
                 <div class="contentBlock">
-                    <div class="tips">密码</div>
-                    <input type="password" :class="'inputClass'" v-model="password">
+                    <div class="flex">
+                        <div class="tips">密码</div>
+                        <div class="error" ref="pwdError">不能为空！</div>
+                    </div>
+                    <input type="password" :class="'inputClass'" v-model="password" ref="pwd">
                 </div>
                 <div class="contentBlock">
-                    <div class="tips">真实姓名</div>
-                    <input type="text" :class="'inputClass'" v-model="name">
+                    <div class="flex">
+                        <div class="tips">真实姓名</div>
+                        <div class="error" ref="realNameError">不能为空！</div>
+                    </div>
+                    <input type="text" :class="'inputClass'" v-model="name" ref="realName">
                 </div>
                 <div class="contentBlock">
-                    <div class="tips">性别</div>
-                    <input type="radio" id="male" name="gender" value="male" :class="'radioClass'" />
+                    <div class="flex">
+                        <div class="tips">性别</div>
+                        <div class="error" ref="genderError">不能为空！</div>
+                    </div>
+                    <input type="radio" id="male" name="gender" value="male" :class="'radioClass'" checked />
                     <label for="male">男</label>
                     <input type="radio" id="female" name="gender" value="female" :class="'radioClass'" />
                     <label for="female">女</label>
                 </div>
                 <div class="contentBlock">
-                    <div class="tips">电话号码</div>
-                    <input type="tel" :class="'inputClass'" v-model="phone">
+                    <div class="flex">
+                        <div class="tips">电话号码</div>
+                        <div class="error" ref="telError">不能为空！</div>
+                    </div>
+                    <input type="tel" :class="'inputClass'" v-model="phone" ref="tel">
                 </div>
                 <div class="contentBlock">
-                    <div class="tips">电子邮箱</div>
-                    <input type="email" :class="'inputClass'" v-model="email">
+                    <div class="flex">
+                        <div class="tips">电子邮箱</div>
+                        <div class="error" ref="emailError">不能为空！</div>
+                    </div>
+                    <input type="email" :class="'inputClass'" v-model="email" ref="email">
                 </div>
                 <a href="javascript:;" class="finishBtn" @click="createAccount">创建账号</a>
             </div>
@@ -53,7 +66,34 @@ export default {
             this.onEvent("Input");
         },
         createAccount() {
+            /*未填写报错*/
+            this.$refs.textError.style.opacity = (this.account) ? '0' : '1'
+            this.$refs.text.style.border = (this.account) ? '' : 'solid 1px red'
+            this.$refs.pwdError.style.opacity = (this.password) ? '0' : '1'
+            this.$refs.pwd.style.border = (this.password) ? '' : 'solid 1px red'
+            this.$refs.realNameError.style.opacity = (this.name) ? '0' : '1'
+            this.$refs.realName.style.border = (this.name) ? '' : 'solid 1px red'
+            this.$refs.telError.style.opacity = (this.phone) ? '0' : '1'
+            this.$refs.tel.style.border = (this.phone) ? '' : 'solid 1px red'
+            this.$refs.emailError.style.opacity = (this.email) ? '0' : '1'
+            this.$refs.email.style.border = (this.email) ? '' : 'solid 1px red'
+            this.male = (document.getElementById("male").checked) ? 1 : 0
+            this.female = (document.getElementById("female").checked) ? 1 : 0
+            /*填写格式错误报错*/
+            const phoneFlag1 = (this.phone.length == 11) ? 1 : 0
+            const phoneFlag2 = (/\d*/.test(this.phone)) ? 1 : 0
+            if ((phoneFlag1 == 0 || phoneFlag2 == 0) && this.phone) {
+                console.log(phoneFlag2)
+                this.$refs.telError.innerHTML = (phoneFlag1 == 0) ? "电话号码需要为11位！" : "电话号码需要为纯数字！"
+                this.$refs.telError.style.opacity = '1'
+            }
 
+            const emailForm = new RegExp(/.{1,}@.{1,}(\..{1,}){1,}/);
+            const emailFlag = (!emailForm.test(this.email) && this.email) ? 0 : 1
+            if (emailFlag == 0) {
+                this.$refs.emailError.innerHTML = "邮箱格式错误！"
+                this.$refs.emailError.style.opacity = '1'
+            }
         }
     },
     props: {
@@ -65,7 +105,9 @@ export default {
             password: '',
             name: '',
             phone: '',
-            email: ''
+            email: '',
+            male: '',
+            female: ''
         }
     },
     components: {
@@ -212,25 +254,6 @@ label {
     text-align: center;
 }
 
-/* .custom-shape-divider-top-1698147972 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    overflow: hidden;
-    line-height: 0;
-}
-
-.custom-shape-divider-top-1698147972 svg {
-    position: relative;
-    display: block;
-    width: calc(181% + 1.3px);
-    height: 115px;
-}
-
-.custom-shape-divider-top-1698147972 .shape-fill {
-    fill: #2AFADF;
-} */
 .radioClass[type="radio"] {
     appearance: none;
 
@@ -248,5 +271,17 @@ label {
 
 .radioClass[type="radio"]:checked {
     border: 6px solid #4C83FF;
+}
+
+.error {
+    font-size: 14px;
+    color: red;
+    margin-right: 120px;
+    opacity: 0;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
 }
 </style>
