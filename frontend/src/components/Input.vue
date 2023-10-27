@@ -123,7 +123,6 @@ export default {
 
 .logInput {
     display: block;
-    width: 330px;
     overflow: hidden;
     padding: 0 60px;
     height: 48px;
