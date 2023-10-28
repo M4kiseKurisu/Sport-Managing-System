@@ -8,7 +8,7 @@ class User(models.Model):
     }
     uid = models.IntegerField(primary_key=True)
     account = models.CharField(max_length=32, unique=True)
-    pwd = models.CharField(max_length=32)
+    password = models.CharField(max_length=32)
     user_name = models.CharField(max_length=10)
     user_age = models.IntegerField()
     user_gender = models.SmallIntegerField(choices=USER_GENDER)
