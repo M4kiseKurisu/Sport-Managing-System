@@ -7,5 +7,5 @@ urlpatterns = [
     path('user/register', user.register),
     path('group/create', group.create),
     path('group/join', group.join),
-    #path('group/exist',)
+    path('group/apply', group.apply),
 ]

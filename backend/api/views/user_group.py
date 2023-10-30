@@ -39,3 +39,18 @@ def add_apply(uid, gid, content):
         print(apply)
         apply.save()
         return True
+
+
+def search_apply(uid, is_manager):
+    """ 查找团体申请信息 """
+    lst = []
+    u = User.objects.get(uid=uid)
+    if is_manager:
+        gids = UserInGroup.objects.filter(uid=u, manager_flag=True).values('gid')
+        print(gids)
+        for gid in gids:
+            lst.extend(list(UserApplyGroup.objects.values('uid', 'gid', 'content')
+                            .filter(gid=gid, status=0)))
+    else:
+        lst.extend(UserApplyGroup.objects.filter(uid=u, status=0))
+    return lst

@@ -3,6 +3,8 @@
 """
 import json
 import random
+
+from django.contrib.sessions import serializers
 from django.http import JsonResponse
 
 from api.models import Group
@@ -45,5 +47,19 @@ def join(request):
             return JsonResponse({"msg": "申请信息已发送", "status": True})
         else:
             return JsonResponse({"msg": "已有申请信息等待审批", "status": False})
+    else:
+        return JsonResponse({"msg": "请求方式有误"})
+
+
+def apply(request):
+    if request.method == 'GET':
+        print(request.GET)
+        uid = request.GET.get('uid')
+        is_manager = request.GET.get('is_manager')
+        if is_manager:
+            lst = user_group.search_apply(uid, True)
+            return JsonResponse({"msg": "请求成功", "list": lst})
+        else:
+            return JsonResponse({"msg": "请求方式有误"})
     else:
         return JsonResponse({"msg": "请求方式有误"})
