@@ -49,7 +49,7 @@ export default {
 
 .logo {
     display: block;
-    height: 12%;
+    height: 100px;
     width: 100%;
     background-color: #5D85A6;
     object-fit: cover;
@@ -59,32 +59,31 @@ export default {
 .logo1 {
     display: block;
     float: left;
-    margin-left: 30px;
     margin-top: 5px;
     height: 80%;
-    width: 80px;
-    background-image: url(../images/logo.png);
-    background-repeat: no-repeat;
+    margin-left: 10%;
+    width: 30%;
+    background: url(../images/logo.png) no-repeat;
     background-position: center;
-    object-fit: cover;
-    background-size: 100% 100%;
+    background-size: 50% 40%;
+    background-size: cover;
+    background-size: contain;
 }
 
 .logo2 {
-    display: block;
-    float: left;
+    display: inline-block;
     font-size: 27px;
     margin-top: 30px;
-    margin-left: 20px;
+    width: 60%;
     color: white;
     font-weight: bold;
     font-style: italic;
 }
 
 .index {
-    display: block;
-    height: 8%;
+    height: 60px;
     width: 100%;
+    line-height: 60px;
     overflow: hidden;
     background-color: rgb(14, 43, 93, 0.6);
 }
@@ -94,11 +93,10 @@ export default {
 }
 
 .icon1 {
-    display: block;
     float: left;
     margin-left: 30px;
-    margin-top: 7px;
-    height: 80%;
+    vertical-align: middle;
+    height: 60px;
     width: 80px;
     background-image: url(../images/personalInformation.png);
     background-repeat: no-repeat;
@@ -106,11 +104,10 @@ export default {
 }
 
 .icon2 {
-    display: block;
     float: left;
     margin-left: 30px;
-    margin-top: 7px;
-    height: 80%;
+    vertical-align: middle;
+    height: 60px;
     width: 80px;
     background-image: url(../images/activityManager.png);
     background-repeat: no-repeat;
@@ -123,6 +120,5 @@ export default {
     font-size: 16px;
     margin-left: 20px;
     color: white;
-    margin-top: 20px;
 }
 </style>

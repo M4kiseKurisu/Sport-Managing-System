@@ -7,6 +7,12 @@
             <div class="up">
                 <upperLayout />
             </div>
+            <div class="main">
+                <PersonalLayout />
+                <PersonalLayout />
+                <PersonalLayout />
+                <PersonalLayout />
+            </div>
         </div>
 
     </div>
@@ -15,25 +21,20 @@
 <script>
 import leftLayout from "./LeftLayout.vue"
 import upperLayout from "./UpperLayout.vue"
+import PersonalLayout from "./PersonalLayout.vue"
 export default {
     components: {
         leftLayout,
-        upperLayout
+        upperLayout,
+        PersonalLayout
     }
 }
 </script>
 
 <style>
 .background {
-    /* position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%; */
+    overflow: hidden;
+    background: gray;
 }
 
 .left {
@@ -46,9 +47,9 @@ export default {
 }
 
 .right {
+    float: right;
     width: 83%;
-    margin-left: auto;
-    background: white;
+    height: 100%;
 }
 
 .up {
