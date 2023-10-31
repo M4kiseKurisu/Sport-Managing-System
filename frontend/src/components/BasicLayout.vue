@@ -9,9 +9,6 @@
             </div>
             <div class="main">
                 <PersonalLayout />
-                <PersonalLayout />
-                <PersonalLayout />
-                <PersonalLayout />
             </div>
         </div>
 
@@ -31,10 +28,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .background {
     overflow: hidden;
-    background: gray;
+    background: rgb(240, 240, 240);
 }
 
 .left {

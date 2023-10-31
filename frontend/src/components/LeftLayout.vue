@@ -74,10 +74,11 @@ export default {
     display: inline-block;
     font-size: 27px;
     margin-top: 30px;
-    width: 60%;
+    width: 50%;
     color: white;
     font-weight: bold;
     font-style: italic;
+    margin-left: 5%;
 }
 
 .index {
