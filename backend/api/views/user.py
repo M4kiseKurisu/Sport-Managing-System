@@ -17,19 +17,21 @@ def genid():
 
 
 def login(request):
+    """ 用户登录验证 """
     if request.method == 'GET':
         account = request.GET.get('account')
         password = request.GET.get('password')
         user = User.objects.filter(account=account, password=password).first()
         if user:
-            return JsonResponse({"msg": '登录成功', "res": True, "uid": user.uid, "user_name": user.user_name})
+            return JsonResponse({"msg": '登录成功', "status": True, "uid": user.uid, "user_name": user.user_name})
         else:
-            return JsonResponse({"msg": '登录失败', "res": False, "uid": None, "user_name": None})
+            return JsonResponse({"msg": '登录失败', "status": False, "uid": None, "user_name": None})
     else:
         return JsonResponse({"msg": "请求方式有误"})
 
 
 def register(request):
+    """ 用户注册 """
     if request.method == 'POST':
         data: dict = json.loads(request.body)
         account = data.get('account')

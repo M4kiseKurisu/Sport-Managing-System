@@ -27,6 +27,16 @@ class Group(models.Model):
     group_desc = models.CharField(max_length=128)
 
 
+class Field(models.Model):
+    """ 运动场地表 """
+    fid = models.IntegerField(primary_key=True)
+    location = models.CharField(max_length=32, unique=True)
+    category = models.CharField(max_length=16)
+    limit = models.BooleanField()
+    open_time = models.TimeField()
+    close_time = models.TimeField()
+
+
 # ----------------------------  联系表  -------------------------------- #
 class UserInGroup(models.Model):
     """ 用户从属团体联系表 """
@@ -43,13 +53,13 @@ class UserApplyGroup(models.Model):
     STATUS = {
         (0, "申请中"),
         (1, "已接受"),
-        (2, "已拒绝")
+        (2, "已拒绝"),
     }
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     content = models.CharField(max_length=128)
-    apply_time = models.DateTimeField(default=timezone.now)
-    status = models.CharField(choices=STATUS, max_length=8)
+    apply_time = models.DateTimeField(auto_now_add=True)
+    status = models.SmallIntegerField(choices=STATUS, max_length=8)
 
     class Meta:
         unique_together = (("uid", "gid", "apply_time"),)

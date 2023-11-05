@@ -3,8 +3,6 @@
 """
 import json
 import random
-
-from django.contrib.sessions import serializers
 from django.http import JsonResponse
 
 from api.models import Group
@@ -22,7 +20,6 @@ def create(request):
     """ 用户创建团体 """
     if request.method == 'POST':
         data: dict = json.loads(request.body)
-        print(data)
         group_name = data.get("group_name")
         group_desc = data.get("group_desc")
         uid = data.get("uid")
@@ -52,14 +49,18 @@ def join(request):
 
 
 def apply(request):
+    """ 团体申请相关 """
     if request.method == 'GET':
-        print(request.GET)
         uid = request.GET.get('uid')
         is_manager = request.GET.get('is_manager')
-        if is_manager:
-            lst = user_group.search_apply(uid, True)
-            return JsonResponse({"msg": "请求成功", "list": lst})
+        lst = user_group.search_apply(uid, is_manager == "true")
+        return JsonResponse({"msg": "请求成功", "list": lst})
+    elif request.method == 'POST':
+        data: dict = json.loads(request.body)
+        print(data)
+        if user_group.handle_apply(data.get('mid'), data.get('uid'), data.get('gid'), data.get('res')):
+            return JsonResponse({"msg": "处理完成", "status": True})
         else:
-            return JsonResponse({"msg": "请求方式有误"})
+            return JsonResponse({"msg": "当前用户无权限处理该团体申请", "status": False})
     else:
         return JsonResponse({"msg": "请求方式有误"})
