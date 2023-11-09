@@ -26,7 +26,7 @@ def add(request):
         return JsonResponse({"msg": "请求方式有误"})
 
 
-def search(request):
+def view(request):
     """ 查询场地信息 """
     if request.method == 'GET':
         category = request.GET.get('category')

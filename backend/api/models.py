@@ -1,5 +1,4 @@
 from django.db import models
-import django.utils.timezone as timezone
 
 
 # ----------------------------  实体表  -------------------------------- #
@@ -28,13 +27,27 @@ class Group(models.Model):
 
 
 class Field(models.Model):
-    """ 运动场地表 """
+    """ 运动场地实体表 """
     fid = models.IntegerField(primary_key=True)
     location = models.CharField(max_length=32, unique=True)
     category = models.CharField(max_length=16)
     limit = models.BooleanField()
     open_time = models.TimeField()
     close_time = models.TimeField()
+
+
+class Activity(models.Model):
+    """ 活动项目实体表 """
+    aid = models.IntegerField(primary_key=True)
+    activity_name = models.CharField(max_length=32)
+    activity_desc = models.CharField(max_length=128)
+
+
+class Equipment(models.Model):
+    """ 器材实体表 """
+    eid = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=32, unique=True)
+    amount = models.IntegerField(default=0)
 
 
 # ----------------------------  联系表  -------------------------------- #
@@ -59,7 +72,70 @@ class UserApplyGroup(models.Model):
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     content = models.CharField(max_length=128)
     apply_time = models.DateTimeField(auto_now_add=True)
-    status = models.SmallIntegerField(choices=STATUS, max_length=8)
+    status = models.SmallIntegerField(choices=STATUS)
 
     class Meta:
         unique_together = (("uid", "gid", "apply_time"),)
+
+
+class ActivityUseField(models.Model):
+    """ 活动使用场地联系表"""
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    fid = models.ForeignKey(Field, on_delete=models.CASCADE)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    class Meta:
+        unique_together = (("aid",), ("fid", "start_time"), ("fid", "end_time"),)
+
+
+class UserInActivity(models.Model):
+    """ 用户参加项目联系表 """
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (("uid", "aid"),)
+
+
+class UserCreateActivity(models.Model):
+    """ 用户发起活动联系表 """
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    private = models.BooleanField()
+
+    class Meta:
+        unique_together = (("aid",),)
+
+
+class GroupCreateActivity(models.Model):
+    """ 团体发起活动联系表 """
+    gid = models.ForeignKey(Group, on_delete=models.CASCADE)
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (("aid",),)
+
+
+class UserEquipment(models.Model):
+    """ 用户借用器材联系表 """
+    eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
+    lend_time = models.DateTimeField()
+    lend_amount = models.IntegerField()
+    is_return = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = (("eid", "uid", "lend_time"),)
+
+
+class GroupEquipment(models.Model):
+    """ 团体借用器材联系表 """
+    eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
+    gid = models.ForeignKey(Group, on_delete=models.CASCADE)
+    lend_time = models.DateTimeField()
+    lend_amount = models.IntegerField()
+    is_return = models.BooleanField()
+
+    class Meta:
+        unique_together = (("eid", "gid", "lend_time"),)

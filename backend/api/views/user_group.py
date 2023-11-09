@@ -29,14 +29,13 @@ def delete_relation(uid, gid):
 
 def add_apply(uid, gid, content):
     """ 增加用户申请团体信息 """
-    user = User.objects.filter(uid=uid).first()
-    group = Group.objects.filter(gid=gid).first()
+    user = User.objects.get(uid=uid)
+    group = Group.objects.get(gid=gid)
 
-    if UserApplyGroup.objects.get(uid=user, gid=group, status=0):
+    if UserApplyGroup.objects.filter(uid=user, gid=group, status=0).first():
         return False
     else:
         apply = UserApplyGroup(uid=user, gid=group, content=content, status=0)
-        print(apply)
         apply.save()
         return True
 
