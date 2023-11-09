@@ -28,3 +28,17 @@ def add(request):
 
 def view(request):
     """ 查看器材信息 """
+    if request.method == 'GET':
+        category = request.GET.get('category')
+        if category:
+            equipment = Equipment.objects.filter(category=category).first()
+            return JsonResponse(
+                {"msg": "器材信息请求成功", "eid": equipment.eid, "category": category, "amount": equipment.amount}
+            ) if equipment else JsonResponse({"msg": "不存在这种类别的器材"})
+
+        else:
+            lst = list(map(lambda param: param.get('category'), Equipment.objects.values('category').all().distinct()))
+        return JsonResponse({"msg": "器材信息请求成功", "list": lst})
+
+    else:
+        return JsonResponse({"msg": "请求方式有误"})
