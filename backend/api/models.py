@@ -121,7 +121,7 @@ class UserEquipment(models.Model):
     """ 用户借用器材联系表 """
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    lend_time = models.DateTimeField()
+    lend_time = models.DateTimeField(auto_now_add=True)
     lend_amount = models.IntegerField()
     is_return = models.BooleanField(default=False)
 
@@ -133,9 +133,9 @@ class GroupEquipment(models.Model):
     """ 团体借用器材联系表 """
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
-    lend_time = models.DateTimeField()
+    lend_time = models.DateTimeField(auto_now_add=True)
     lend_amount = models.IntegerField()
-    is_return = models.BooleanField()
+    is_return = models.BooleanField(default=False)
 
     class Meta:
         unique_together = (("eid", "gid", "lend_time"),)

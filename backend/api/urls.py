@@ -17,5 +17,8 @@ urlpatterns = [
     path('field/view', field.view),
 
     path('equipment/add', equipment.add),
-    path('equipment/view', equipment.view)
+    path('equipment/view', equipment.view),
+    path('equipment/borrow', equipment.borrow),
+    path('equipment/record', equipment.record),
+    path('equipment/return', equipment.give_back)
 ]
