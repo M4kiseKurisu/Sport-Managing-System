@@ -40,7 +40,7 @@ export default {
     padding: 0;
     /*background: linear-gradient(220.55deg, #FFDC99 0%, #FF62C0 100%);*/
     /*background: linear-gradient(0, rgba(61, 221, 61, 0.8) 0%,white 80%, white 100%);*/
-    background-image: url(../images/wave2.png);
+    background-image: url(../../images/wave2.png);
     background-repeat: no-repeat;
     background-position: bottom;
     width: 100%;
@@ -50,4 +50,5 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-}</style>
+}
+</style>

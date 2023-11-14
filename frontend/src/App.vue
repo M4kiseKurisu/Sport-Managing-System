@@ -1,18 +1,20 @@
 <template>
   <div id="app">
     <!-- <Login /> -->
-    <BasicLayout></BasicLayout>
+    <MainPage />
   </div>
 </template>
 
 <script>
-import Login from "./components/Login.vue"
-import BasicLayout from "./components/BasicLayout.vue"
+import Login from "./components/Login/Login.vue"
+// import BasicLayout from "./components/BasicLayout.vue"
+import MainPage from "./components/MainPage/MainPageContainer.vue"
 
 export default {
   components: {
     Login,
-    BasicLayout
+    MainPage
+    // BasicLayout
   }
 }
 </script>

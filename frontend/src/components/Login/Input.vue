@@ -35,10 +35,16 @@ export default {
         login() {
             this.$refs.textError.style.opacity = (this.account) ? '0' : '1'
             this.$refs.pwdError.style.opacity = (this.password) ? '0' : '1'
+
         }
     },
     props: {
         onEvent: Function
+    },
+    mounted() {
+        this.$axios.get('http://127.0.0.1:8000/api/user/login').then(res => {
+            console.log(res.data);
+        })
     }
 }
 </script>
@@ -64,7 +70,7 @@ export default {
 }
 
 .logopic {
-    background-image: url(../images/logo.png);
+    background-image: url(../../images/logo.png);
     background-repeat: no-repeat;
     background-position: center;
     width: 100%;
@@ -162,6 +168,7 @@ input[type="password"]::-ms-reveal {
     border-radius: 24px;
     position: relative;
     font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;
+    text-decoration: none;
 }
 
 .create {
@@ -175,6 +182,7 @@ input[type="password"]::-ms-reveal {
     display: inline-block;
     padding-bottom: 5px;
     font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial, sans-serif;
+    text-decoration: none;
 }
 
 .create:hover {
@@ -184,14 +192,14 @@ input[type="password"]::-ms-reveal {
 }
 
 .logInput[type="text"] {
-    background-image: url(../images/password2.png);
+    background-image: url(../../images/password2.png);
     background-repeat: no-repeat;
     background-position: left;
     background-position: 15px;
 }
 
 .logInput[type=password] {
-    background-image: url(../images/password.png);
+    background-image: url(../../images/password.png);
     background-repeat: no-repeat;
     background-position: left;
     background-position: 15px;

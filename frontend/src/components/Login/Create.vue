@@ -246,6 +246,7 @@ label {
     font-weight: bold;
     border-radius: 4px;
     position: relative;
+    text-decoration: none;
 }
 
 .contentAll .finishBtn {
