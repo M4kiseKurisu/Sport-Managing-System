@@ -13,7 +13,7 @@ import MainPage from "./components/MainPage/MainPageContainer.vue"
 export default {
   components: {
     Login,
-    MainPage
+    MainPage,
     // BasicLayout
   }
 }
