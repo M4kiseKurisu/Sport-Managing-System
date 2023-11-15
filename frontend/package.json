@@ -13,11 +13,8 @@
     "echarts": "^5.4.3",
     "element-plus": "^2.4.2",
     "vue": "^3.3.4",
-<<<<<<< HEAD
-    "vue-echarts": "^6.6.1"
-=======
+    "vue-echarts": "^6.6.1",
     "vuex": "^4.1.0"
->>>>>>> frontend
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.4.0",
