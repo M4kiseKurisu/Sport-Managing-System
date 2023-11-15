@@ -9,12 +9,12 @@
 import Login from "./components/Login/Login.vue"
 // import BasicLayout from "./components/BasicLayout.vue"
 import MainPage from "./components/MainPage/MainPageContainer.vue"
+import Echart from "./components/MainPage/Components/Echart.vue"
 
 export default {
   components: {
     Login,
-    MainPage,
-    // BasicLayout
+    MainPage
   }
 }
 </script>

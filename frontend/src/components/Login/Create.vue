@@ -61,13 +61,26 @@
 
 <script>
 export default {
+    data() {
+        return {
+            account: '',
+            password: '',
+            name: '',
+            phone: '',
+            email: '',
+            male: '',
+            female: ''
+        }
+    },
     methods: {
         input() {
             this.onEvent("Input");
         },
-        createAccount() {
+        createAccount(e) {
+            console.log(1);
             /*未填写报错*/
-            this.$refs.textError.style.opacity = (this.account) ? '0' : '1'
+            //this.$refs.textError.style.opacity = (this.account != "") ? '0' : '1'
+
             this.$refs.text.style.border = (this.account) ? '' : 'solid 1px red'
             this.$refs.pwdError.style.opacity = (this.password) ? '0' : '1'
             this.$refs.pwd.style.border = (this.password) ? '' : 'solid 1px red'
@@ -77,8 +90,7 @@ export default {
             this.$refs.tel.style.border = (this.phone) ? '' : 'solid 1px red'
             this.$refs.emailError.style.opacity = (this.email) ? '0' : '1'
             this.$refs.email.style.border = (this.email) ? '' : 'solid 1px red'
-            this.male = (document.getElementById("male").checked) ? 1 : 0
-            this.female = (document.getElementById("female").checked) ? 1 : 0
+
             /*填写格式错误报错*/
             const phoneFlag1 = (this.phone.length == 11) ? 1 : 0
             const phoneFlag2 = (/\d*/.test(this.phone)) ? 1 : 0
@@ -99,17 +111,7 @@ export default {
     props: {
         onEvent: Function
     },
-    data() {
-        return {
-            account: '',
-            password: '',
-            name: '',
-            phone: '',
-            email: '',
-            male: '',
-            female: ''
-        }
-    },
+
     components: {
 
     }
