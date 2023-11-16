@@ -7,7 +7,8 @@
           <Sidebar />
         </el-aside>
         <el-main>
-          <UserInformation />
+          <!-- <UserInformation /> -->
+          <ActivityInformation />
         </el-main>
       </el-container>
     </el-container>
@@ -18,11 +19,13 @@
 // 引入 Sidebar 组件
 import Sidebar from './SideBar/Sidebar.vue'; // 请替换为实际的路径
 import UserInformation from './Page/UserInformation.vue';
+import ActivityInformation from './Page/ActivityInformation.vue';
 
 export default {
   components: {
     Sidebar, // 将 Sidebar 组件添加到 components 中
     UserInformation,
+    ActivityInformation,
   },
 };
 </script>
