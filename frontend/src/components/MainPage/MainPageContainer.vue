@@ -8,7 +8,7 @@
         </el-aside>
         <el-main>
           <!-- <UserInformation /> -->
-          <FriendInfomation />
+          <GroupInformation />
           <!-- <EquipmentBorrow /> -->
         </el-main>
       </el-container>
@@ -23,6 +23,7 @@ import UserInformation from './Page/UserInformation.vue';
 import ActivityInformation from './Page/ActivityInformation.vue';
 import EquipmentBorrow from './Page/EquipmentBorrow.vue'
 import FriendInfomation from './Page/FriendInformation.vue';
+import GroupInformation from './Page/GroupInformation.vue'
 
 export default {
   components: {
