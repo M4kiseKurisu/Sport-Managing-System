@@ -5,7 +5,9 @@
         <el-col v-for="card in cards" :key="card.id" :span="8" >
           <el-card :body-style="{ padding: '0px' }" class="custom-card">
             <!-- Card content -->
-            <img :src="card.image" class="image" />
+            <div class="image-container">
+                <img :src="card.image" class="image" />
+            </div>
             <div style="padding: 14px">
               <span>{{ card.title }}</span>
               <div class="bottom">
@@ -55,10 +57,22 @@
     min-height: auto;
   }
   
+  .image-container {
+    /* Set container size */
+    width: 100%;
+    height: 100px; /* Set container height */
+
+    /* Set container as flex to center image */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Hide overflow */
+  }
+
   .image {
-    width: 400px;
-    height: 200px;
-    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   </style>
   
