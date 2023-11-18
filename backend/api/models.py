@@ -1,5 +1,7 @@
 from django.db import models
 
+from api.system.storage import ImageStorage
+
 
 # ----------------------------  实体表  -------------------------------- #
 class User(models.Model):
@@ -16,7 +18,8 @@ class User(models.Model):
     user_gender = models.SmallIntegerField(choices=USER_GENDER)
     phone_number = models.BigIntegerField(unique=True)
     email = models.EmailField(max_length=32, unique=True)
-    user_signature = models.CharField(max_length=128, null=True, blank=True)
+    user_signature = models.CharField(max_length=128, default="", blank=True)
+    picture = models.ImageField(upload_to='images/user/', storage=ImageStorage(), null=True)
 
 
 class Group(models.Model):
@@ -24,6 +27,8 @@ class Group(models.Model):
     gid = models.IntegerField(primary_key=True)
     group_name = models.CharField(max_length=32, unique=True)
     group_desc = models.CharField(max_length=128)
+    maximum = models.IntegerField()
+    picture = models.ImageField(upload_to='images/group/', storage=ImageStorage(), null=True)
 
 
 class Field(models.Model):
@@ -39,8 +44,10 @@ class Field(models.Model):
 class Activity(models.Model):
     """ 活动项目实体表 """
     aid = models.IntegerField(primary_key=True)
-    activity_name = models.CharField(max_length=32)
-    activity_desc = models.CharField(max_length=128)
+    name = models.CharField(max_length=32)
+    desc = models.CharField(max_length=128)
+    maximum = models.IntegerField()
+    picture = models.ImageField(upload_to='images/activity/', storage=ImageStorage(), null=True)
 
 
 class Equipment(models.Model):
@@ -48,17 +55,25 @@ class Equipment(models.Model):
     eid = models.IntegerField(primary_key=True)
     category = models.CharField(max_length=32, unique=True)
     amount = models.IntegerField(default=0)
+    picture = models.ImageField(upload_to='images/equipment/', storage=ImageStorage(), null=True)
 
 
 # ----------------------------  联系表  -------------------------------- #
 class UserInGroup(models.Model):
     """ 用户从属团体联系表 """
+    TYPE = {
+        (0, "创建人"),
+        (1, "管理员"),
+        (2, "成员"),
+    }
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
-    manager_flag = models.BooleanField()
+    type = models.SmallIntegerField(choices=TYPE)
 
     class Meta:
-        unique_together = (("uid", "gid"),)
+        constraints = [
+            models.UniqueConstraint(fields=['uid', 'gid'], name='unique_user_in_group'),
+        ]
 
 
 class UserApplyGroup(models.Model):
@@ -75,7 +90,9 @@ class UserApplyGroup(models.Model):
     status = models.SmallIntegerField(choices=STATUS)
 
     class Meta:
-        unique_together = (("uid", "gid", "apply_time"),)
+        constraints = [
+            models.UniqueConstraint(fields=['uid', 'gid', 'apply_time'], name='unique_user_apply_group'),
+        ]
 
 
 class ActivityUseField(models.Model):
@@ -86,7 +103,11 @@ class ActivityUseField(models.Model):
     end_time = models.TimeField()
 
     class Meta:
-        unique_together = (("aid",), ("fid", "start_time"), ("fid", "end_time"),)
+        constraints = [
+            models.UniqueConstraint(fields=['aid'], name='unique_activity_user_field1'),
+            models.UniqueConstraint(fields=['fid', 'start_time'], name='unique_activity_user_field2'),
+            models.UniqueConstraint(fields=['fid', 'end_time'], name='unique_activity_user_field3')
+        ]
 
 
 class UserInActivity(models.Model):
@@ -95,7 +116,9 @@ class UserInActivity(models.Model):
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = (("uid", "aid"),)
+        constraints = [
+            models.UniqueConstraint(fields=['uid', 'aid'], name='unique_user_in_activity')
+        ]
 
 
 class UserCreateActivity(models.Model):
@@ -105,7 +128,9 @@ class UserCreateActivity(models.Model):
     private = models.BooleanField()
 
     class Meta:
-        unique_together = (("aid",),)
+        constraints = [
+            models.UniqueConstraint(fields=['aid'], name='unique_user_create_activity')
+        ]
 
 
 class GroupCreateActivity(models.Model):
@@ -114,28 +139,55 @@ class GroupCreateActivity(models.Model):
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = (("aid",),)
+        constraints = [
+            models.UniqueConstraint(fields=['aid'], name='unique_group_create_activity')
+        ]
 
 
 class UserEquipment(models.Model):
     """ 用户借用器材联系表 """
+    RETURN_STATUS = {
+        (0, "未归还"),
+        (2, "已归还"),
+    }
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    lend_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     lend_amount = models.IntegerField()
-    is_return = models.BooleanField(default=False)
+    is_return = models.SmallIntegerField(choices=RETURN_STATUS, default=0)
 
     class Meta:
-        unique_together = (("eid", "uid", "lend_time"),)
+        constraints = [
+            models.UniqueConstraint(fields=['eid', 'uid', 'start_time', 'end_time'], name='unique_user_equipment')
+        ]
 
 
 class GroupEquipment(models.Model):
     """ 团体借用器材联系表 """
+    RETURN_STATUS = {
+        (0, "未归还"),
+        (2, "已归还"),
+    }
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
-    lend_time = models.DateTimeField(auto_now_add=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     lend_amount = models.IntegerField()
-    is_return = models.BooleanField(default=False)
+    is_return = models.SmallIntegerField(choices=RETURN_STATUS, default=0)
 
     class Meta:
-        unique_together = (("eid", "gid", "lend_time"),)
+        constraints = [
+            models.UniqueConstraint(fields=['eid', 'gid', 'start_time', 'end_time'], name='unique_group_equipment')
+        ]
+
+
+class Friend(models.Model):
+    """ 好友联系表 """
+    uid1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friends1')
+    uid2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friends2')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['uid1', 'uid2'], name='unique_friend')
+        ]
