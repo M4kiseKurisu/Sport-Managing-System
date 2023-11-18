@@ -10,7 +10,6 @@
           <!-- <UserInformation /> -->
           <GroupInformation />
           <!-- <EquipmentBorrow /> -->
-          <FriendInformation />
         </el-main>
       </el-container>
     </el-container>
@@ -23,8 +22,9 @@ import Sidebar from './SideBar/Sidebar.vue'; // 请替换为实际的路径
 import UserInformation from './Page/UserInformation.vue';
 import ActivityInformation from './Page/ActivityInformation.vue';
 import EquipmentBorrow from './Page/EquipmentBorrow.vue'
-import FriendInfomation from './Page/FriendInformation.vue';
+import FriendInformation from './Page/FriendInformation.vue';
 import GroupInformation from './Page/GroupInformation.vue'
+
 
 export default {
   components: {
@@ -32,7 +32,9 @@ export default {
     UserInformation,
     ActivityInformation,
     EquipmentBorrow,
-    FriendInfomation
+    FriendInformation,
+    GroupInformation,
+    UserInformation
 },
 };
 </script>

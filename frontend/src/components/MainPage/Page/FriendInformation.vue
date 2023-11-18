@@ -103,70 +103,7 @@ const tableData: User[] = [
     name: 'Jessy',
     avatar: './src/images/emptyAvatar.png'
   },
-  {
-    name: 'Tom',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'John',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Morgan',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Jessy',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Tom',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'John',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Morgan',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Jessy',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Tom',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'John',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Morgan',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Jessy',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Tom',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'John',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Morgan',
-    avatar: './src/images/emptyAvatar.png'
-  },
-  {
-    name: 'Jessy',
-    avatar: './src/images/emptyAvatar.png'
-  },
+
 ]
 
 const getAvatar = (user: User) => user.avatar
