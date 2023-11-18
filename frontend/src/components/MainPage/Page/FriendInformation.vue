@@ -1,12 +1,17 @@
 <template>
   <div>
   <el-table :data="filteredTableData" style="width: 100%">
-    <el-table-column label="Name" width="200">
+    <el-table-column label="呢称" width="200">
       <template #default="scope">
         <div class="user-info">
           <img :src="getAvatar(scope.row)" alt="avatar" class="avatar">
           <span>{{ scope.row.name }}</span>
         </div>
+      </template>
+    </el-table-column>
+    <el-table-column label="个性签名">
+      <template #default="{ row }">
+        {{ row.description }}
       </template>
     </el-table-column>
     <el-table-column align="right">
@@ -43,6 +48,7 @@ import { computed, ref } from 'vue'
 interface User {
   name: string
   avatar: string
+  description: string;
 }
 
 const small = ref(false)
@@ -89,19 +95,23 @@ function setup() {
 const tableData: User[] = [
   {
     name: 'Tom',
-    avatar: './src/images/emptyAvatar.png'
+    avatar: './src/images/emptyAvatar.png',
+    description:'这个人很懒，还没有编写签名'
   },
   {
     name: 'John',
-    avatar: './src/images/emptyAvatar.png'
+    avatar: './src/images/emptyAvatar.png',
+    description:'这个人很懒，还没有编写签名'
   },
   {
     name: 'Morgan',
-    avatar: './src/images/emptyAvatar.png'
+    avatar: './src/images/emptyAvatar.png',
+    description:'这个人很懒，还没有编写签名'
   },
   {
     name: 'Jessy',
-    avatar: './src/images/emptyAvatar.png'
+    avatar: './src/images/emptyAvatar.png',
+    description:'这个人很懒，还没有编写签名'
   },
 
 ]

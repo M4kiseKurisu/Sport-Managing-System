@@ -7,9 +7,10 @@
           <Sidebar />
         </el-aside>
         <el-main>
-          <!-- <UserInformation /> -->
-          <GroupInformation />
-          <!-- <EquipmentBorrow /> -->
+          <!-- <UserInformation />  -->
+          <!-- <GroupInformation /> -->
+          <!-- <EquipmentBorrow />  -->
+          <FriendInformation />
         </el-main>
       </el-container>
     </el-container>
