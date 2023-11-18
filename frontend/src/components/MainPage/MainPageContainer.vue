@@ -8,8 +8,10 @@
         </el-aside>
         <el-main>
           <!-- <UserInformation /> -->
-          <ActivityInformation />
+          <!-- <ActivityInformation /> -->
           <!-- <EquipmentBorrow /> -->
+          <!-- <EBorrowMain /> -->
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -22,6 +24,7 @@ import Sidebar from './SideBar/Sidebar.vue'; // 请替换为实际的路径
 import UserInformation from './Page/UserInformation.vue';
 import ActivityInformation from './Page/ActivityInformation.vue';
 import EquipmentBorrow from './Page/EquipmentBorrow.vue'
+import EBorrowMain from './Page/E-Borrow/EBorrowMain.vue'
 
 export default {
   components: {
@@ -29,6 +32,7 @@ export default {
     UserInformation,
     ActivityInformation,
     EquipmentBorrow,
+    EBorrowMain,
   },
 };
 </script>
