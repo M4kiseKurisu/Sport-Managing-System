@@ -8,8 +8,11 @@
         </el-aside>
         <el-main>
           <!-- <UserInformation />  -->
+          <!-- <ActivityInformation /> -->
           <!-- <GroupInformation /> -->
           <!-- <EquipmentBorrow />  -->
+          <!-- <EBorrowMain /> -->
+          <router-view></router-view>
           <FriendInformation />
         </el-main>
       </el-container>
@@ -23,6 +26,7 @@ import Sidebar from './SideBar/Sidebar.vue'; // 请替换为实际的路径
 import UserInformation from './Page/UserInformation.vue';
 import ActivityInformation from './Page/ActivityInformation.vue';
 import EquipmentBorrow from './Page/EquipmentBorrow.vue'
+import EBorrowMain from './Page/E-Borrow/EBorrowMain.vue'
 import FriendInformation from './Page/FriendInformation.vue';
 import GroupInformation from './Page/GroupInformation.vue'
 
@@ -33,6 +37,7 @@ export default {
     UserInformation,
     ActivityInformation,
     EquipmentBorrow,
+    EBorrowMain,
     FriendInformation,
     GroupInformation,
     UserInformation
