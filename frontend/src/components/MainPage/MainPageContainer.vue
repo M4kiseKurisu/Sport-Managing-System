@@ -7,10 +7,16 @@
           <Sidebar />
         </el-aside>
         <el-main>
-          <!-- <UserInformation />  -->
+          <!-- <UserInformation /> -->
           <!-- <ActivityInformation /> -->
           <!-- <GroupInformation /> -->
           <!-- <EquipmentBorrow />  -->
+
+          <!-- <UserInformation /> -->
+          <!-- <ActivityInformation /> -->
+          <!-- <GroupInformation /> -->
+          <!-- <EquipmentBorrow /> -->
+
           <!-- <EBorrowMain /> -->
           <router-view></router-view>
           <FriendInformation />
@@ -41,6 +47,6 @@ export default {
     FriendInformation,
     GroupInformation,
     UserInformation
-},
+  },
 };
 </script>

@@ -10,20 +10,101 @@
 
             <div class="str2"> {{ contentStr }} </div>
 
-            <div class="button">
-                <el-button> 点击申请 </el-button>
+            <el-divider />
+
+            <div class="apply">
+                <div>剩余数量：{{ amount }}</div>
+                <div class="button">
+                    <el-button @click="dialogVisible = true"> 点击申请 </el-button>
+                </div>
             </div>
         </el-card>
     </div>
+
+    <el-dialog v-model="dialogVisible" title="申请器材" width="36%">
+        <div class="text">器材类型：{{ titleStr }}</div>
+        <div class="text">当前此器材剩余数量：{{ amount }}</div>
+
+        <el-divider />
+
+        <div style="margin-top: 6px">
+            <el-radio-group v-model="radio">
+                <el-radio-button label="个人申请" />
+                <el-radio-button label="团体申请" />
+            </el-radio-group>
+        </div>
+
+        <div class="selector">
+            <div style="font-size: 16px; margin-right: 12px;">申请团体名：</div>
+            <el-select v-if="this.radio === '团体申请'" v-model="value" placeholder="团体名称">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+            <el-select v-else v-model="value" disabled placeholder="团体名称"></el-select>
+        </div>
+
+        <div class="selector">
+            <div style="font-size: 16px; margin-right: 12px;">开始时间：</div>
+            <el-date-picker v-model="startTime" type="datetime" placeholder="设置开始时间" />
+        </div>
+        <div class="selector">
+            <div style="font-size: 16px; margin-right: 12px;">结束时间：</div>
+            <el-date-picker v-model="endTime" type="datetime" placeholder="设置结束时间" />
+        </div>
+
+        <div class="selector">
+            <div style="font-size: 16px; margin-right: 12px;">申请数量：</div>
+            <el-input-number v-model="num" :min="1" />
+        </div>
+
+        <div class="applyButton">
+            <el-button type="primary" @click="submitForm()">立即申请</el-button>
+        </div>
+    </el-dialog>
 </template>
 
 <script>
 export default {
     data() {
         return {
+            dialogVisible: "false",
+            radio: "个人申请",
+            value: "",
+            num: "",
+            options: [
+                {
+                    value: 'Option1',
+                    label: 'Option1',
+                },
+                {
+                    value: 'Option2',
+                    label: 'Option2',
+                },
+                {
+                    value: 'Option3',
+                    label: 'Option3',
+                },
+                {
+                    value: 'Option4',
+                    label: 'Option4',
+                },
+                {
+                    value: 'Option5',
+                    label: 'Option5',
+                },
+            ],
+            startTime: "",
+            endTime: ""
         }
     },
-    props: ["url", "titleStr", "contentStr"]
+    methods: {
+        submitForm() {
+            this.dialogVisible = false;
+        }
+    },
+    mounted() {
+        this.dialogVisible = false;
+    },
+    props: ["url", "titleStr", "contentStr", "amount"]
 }
 </script>
 
@@ -74,9 +155,33 @@ export default {
     font-style: italic;
 }
 
-.button {
-    margin-top: 26px;
+.apply {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-top: 16px;
+}
+
+.button {
+    margin-left: 14px;
+}
+
+.text {
+    margin-top: 6px;
+    font-size: 16px;
+}
+
+.selector {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.applyButton {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
 }
 </style>
