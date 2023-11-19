@@ -19,7 +19,7 @@
 
           <!-- <EBorrowMain /> -->
           <router-view></router-view>
-          <FriendInformation />
+          <!-- <FriendInformation /> -->
         </el-main>
       </el-container>
     </el-container>

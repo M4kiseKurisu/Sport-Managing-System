@@ -3,7 +3,7 @@
         <el-card :body-style="{}">
             <div class="title">
                 <div class="size">
-                    <img src="../../../images/basketball.png" class="pic" />
+                    <img :src="url" class="pic" />
                 </div>
                 <div class="str1">{{ titleStr }}</div>
             </div>

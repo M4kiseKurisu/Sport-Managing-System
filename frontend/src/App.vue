@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <!-- <Login /> -->
-    <MainPage />
+    <!-- <MainPage /> -->
+    <router-view></router-view>
   </div>
 </template>
 
