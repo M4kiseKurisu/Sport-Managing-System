@@ -1,6 +1,6 @@
 <template>
   <div>
-  <el-table :data="filteredTableData" style="width: 100%">
+  <el-table :data="filteredTableData" style="width: 80%">
     <el-table-column label="呢称" width="200">
       <template #default="scope">
         <div class="user-info">
@@ -81,17 +81,7 @@ const handleCurrentChange = (val: number) => {
 const handleDelete = (index: number, row: User) => {
   console.log(index, row)
 }
-/*
-function setup() {
 
-  return {
-    currentPage,
-    totalPages,
-    filteredTableData,
-    handleCurrentChange,
-  };
-}
-*/
 const tableData: User[] = [
   {
     name: 'Tom',

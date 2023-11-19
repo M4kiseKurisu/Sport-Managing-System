@@ -12,8 +12,10 @@
           <!-- <GroupInformation /> -->
           <!-- <EquipmentBorrow />  -->
           <!-- <EBorrowMain /> -->
+          <!-- <GroupInformation /> -->
           <router-view></router-view>
-          <FriendInformation />
+          <!-- <FriendInformation /> -->
+          <!-- <GroupMainPage /> -->
         </el-main>
       </el-container>
     </el-container>
@@ -29,6 +31,7 @@ import EquipmentBorrow from './Page/EquipmentBorrow.vue'
 import EBorrowMain from './Page/E-Borrow/EBorrowMain.vue'
 import FriendInformation from './Page/FriendInformation.vue';
 import GroupInformation from './Page/GroupInformation.vue'
+import GroupMainPage from './Page/Group/GroupMainPage.vue';
 
 
 export default {
@@ -40,7 +43,8 @@ export default {
     EBorrowMain,
     FriendInformation,
     GroupInformation,
-    UserInformation
+    UserInformation,
+    GroupMainPage
 },
 };
 </script>

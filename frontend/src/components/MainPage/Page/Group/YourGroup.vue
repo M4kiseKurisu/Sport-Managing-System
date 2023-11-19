@@ -1,7 +1,5 @@
 <template>
-    <h1 style="text-align: center; font-size: 24px;">你的团体</h1>
-   
-       <el-scrollbar class="scrollbar" max-height="180px">
+       <el-scrollbar class="scrollbar" max-height="100%">
          <el-row>
            <el-col v-for="card in cards" :key="card.id" :span="8" >
              <el-card :body-style="{ padding: '0px' }" class="custom-card">
@@ -12,8 +10,14 @@
                <div style="padding: 14px">
                  <span>{{ card.title }}</span>
                  <div class="button-container">
-                   <el-button text class="button">查看详情</el-button>
-                   <el-button text class="button">退出</el-button>
+                    <div v-if="isManager" class="icon-container">
+                      <el-icon><UserFilled /></el-icon>
+                    </div>
+                    <router-link to="/GroupMainPage">
+                      <el-button text class="button">查看详情</el-button>
+                    </router-link>
+                    <span>0/50</span>
+                    <el-button text @click="open(card)" class="button">退出</el-button>
                  </div>
                </div>
              </el-card>
@@ -23,7 +27,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
+import { ElMessageBox } from 'element-plus'
+import type { Action } from 'element-plus'
+
+const isManager = ref(false)
 
 // Simulated card data
 const cards = ref([
@@ -80,9 +88,28 @@ const tableData: Groups[] = [
   avatar: './src/images/emptyAvatar.png',
   description: '寻找志同道合的伙伴~'
 },
-
 ]
 
+const open = (cardToDelete: any) => {
+  ElMessageBox.alert('退出成功', {
+    confirmButtonText: 'OK',
+    callback: (action: Action) => {
+      if (action === 'confirm') {
+        deleteCard(cardToDelete);
+      }
+    },
+  });
+};
+
+const deleteCard = (cardToDelete: any) => {
+  // 找到要删除的卡片在数组中的索引
+  const index = cards.value.findIndex((card) => card.id === cardToDelete.id);
+
+  if (index !== -1) {
+    // 如果找到了匹配的卡片索引，就从 cards 数组中删除该卡片
+    cards.value.splice(index, 1);
+  }
+};
 </script>
 
 <style scoped>
