@@ -7,14 +7,26 @@ from api.models import User
 from api.models import Group
 
 
-def add_relation(uid, gid, is_manager):
+def search_relation(uid):
+    """ 查询用户团体联系 """
+    user = User.objects.filter(uid=uid).first()
+    lst = list(
+        map(lambda param: {'gid': param.gid.gid, 'group_name': param.gid.group_name,
+                           "group_desc": param.gid.group_desc, "maximum": param.gid.maximum,
+                           "pic": param.gid.picture or None, "type": param.get_type_display()},
+            UserInGroup.objects.filter(uid=user))
+    )
+    return lst
+
+
+def add_relation(uid, gid, teammate_type):
     """ 增加用户团体联系 """
     user = User.objects.filter(uid=uid).first()
     group = Group.objects.filter(gid=gid).first()
     if UserInGroup.objects.filter(uid=user, gid=group).first():
         return False
     else:
-        new_relation = UserInGroup(uid=user, gid=group, manager_flag=is_manager)
+        new_relation = UserInGroup(uid=user, gid=group, type=teammate_type)
         new_relation.save()
         return True
 

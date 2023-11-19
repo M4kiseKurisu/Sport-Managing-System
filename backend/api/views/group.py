@@ -20,19 +20,24 @@ def create(request):
     """ 用户创建团体 """
     if request.method == 'POST':
         data: dict = json.loads(request.body)
+        uid = data.get("uid")
         group_name = data.get("group_name")
         group_desc = data.get("group_desc")
-        uid = data.get("uid")
+        maximum = data.get("maximum")
+
         if Group.objects.filter(group_name=group_name):
-            return JsonResponse({"msg": "团体名称已存在", "group_name": None, "gid": None})
+            return JsonResponse({"msg": "团体名称已存在", "status": False, "group_name": None, "gid": None})
         else:
+            # 添加团体信息
             gid = genid()
-            new_group = Group(gid=gid, group_name=group_name, group_desc=group_desc)
+            data.pop('uid')
+            new_group = Group(gid=gid, **data)
             new_group.save()
-            user_group.add_relation(uid, gid, True)
+            # 添加用户团体联系
+            user_group.add_relation(uid, gid, 0)
             return JsonResponse({"msg": "团体创建成功", "group_name": group_name, "gid": gid})
     else:
-        return JsonResponse({"msg": "请求方式有误"})
+        return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
 def join(request):
@@ -63,4 +68,4 @@ def apply(request):
         else:
             return JsonResponse({"msg": "当前用户无权限处理该团体申请", "status": False})
     else:
-        return JsonResponse({"msg": "请求方式有误"})
+        return JsonResponse({"msg": "请求方式有误", "status": False})

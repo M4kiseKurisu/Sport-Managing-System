@@ -1,4 +1,9 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import Login from "./components/Login/Login.vue"
+import MainPage from "./components/MainPage/MainPageContainer.vue"
+
+import UserInformation from "./components/MainPage/Page/UserInformation.vue"
+
 import EBorrowMain from "./components/MainPage/Page/E-Borrow/EBorrowMain.vue"
 import Borrow from "./components/MainPage/Page/E-Borrow/Borrow.vue"
 import Personal from "./components/MainPage/Page/E-Borrow/Personal.vue"
@@ -8,21 +13,42 @@ import GroupList from './components/MainPage/Page/Group/GroupList.vue'
 import YourApplication from './components/MainPage/Page/Group/YourApplication.vue'
 import PendingReview from './components/MainPage/Page/Group/PendingReview.vue'
 import GroupMainPage from './components/MainPage/Page/Group/GroupMainPage.vue';
+import Group from "./components/MainPage/Page/E-Borrow/Group.vue"
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
-            path: '/Borrow_Equipment',
-            component: EBorrowMain,
+            path: '/Login',
+            component: Login
+        },
+        {
+            path: '/Page',
+            redirect: '/Page/User_Information',
+            component: MainPage,
             children: [
                 {
-                    path: 'Equipment_Information',
-                    component: Borrow
+                    path: 'Borrow_Equipment',
+                    redirect: 'Borrow_Equipment/Equipment_Information',
+                    component: EBorrowMain,
+                    children: [
+                        {
+                            path: 'Equipment_Information',
+                            component: Borrow
+                        },
+                        {
+                            path: 'Borrow/Personal',
+                            component: Personal
+                        },
+                        {
+                            path: 'Borrow/Group',
+                            component: Group
+                        }
+                    ]
                 },
                 {
-                    path: 'Personal_Borrow',
-                    component: Personal
+                    path: 'User_Information',
+                    component: UserInformation
                 }
             ]
         },

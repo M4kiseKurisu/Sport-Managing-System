@@ -1,19 +1,19 @@
 <template>
     <div class="title">
-        <div>个人借出</div>
+        <div>团体借出</div>
     </div>
 
-    <BorrowFormRow :isTitle=true :isGroup=false />
-    <BorrowFormRow v-if="have1" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have2" :information="information2" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have3" :information="information3" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have4" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have5" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have6" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have7" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have8" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have9" :information="information1" :isTitle=false :isGroup=false />
-    <BorrowFormRow v-if="have10" :information="information1" :isTitle=false :isGroup=false />
+    <BorrowFormRow :isTitle=true :isGroup=true />
+    <BorrowFormRow v-if="have1" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have2" :information="information2" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have3" :information="information3" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have4" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have5" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have6" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have7" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have8" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have9" :information="information1" :isTitle=false :isGroup=true />
+    <BorrowFormRow v-if="have10" :information="information1" :isTitle=false :isGroup=true />
 
     <div class="pagination">
         <el-pagination background layout="prev, pager, next" :total="1000" @current-change="handlePageChange" />
@@ -41,18 +41,21 @@ export default {
                 name: "篮球",
                 amount: "2",
                 returnTime: "2023/11/20",
+                group: "fyb郭楠培养中心",
                 state: "未归还",
             },
             information2: {
                 name: "篮球",
                 amount: "1",
                 returnTime: "2023/9/7",
+                group: "fyb郭楠培养中心",
                 state: "已归还",
             },
             information3: {
                 name: "篮球",
                 amount: "8",
                 returnTime: "2023/9/5",
+                group: "fyb郭楠培养中心",
                 state: "已归还",
             }
         }

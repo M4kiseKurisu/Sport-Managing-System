@@ -7,10 +7,16 @@
           <Sidebar />
         </el-aside>
         <el-main>
-          <!-- <UserInformation />  -->
+          <!-- <UserInformation /> -->
           <!-- <ActivityInformation /> -->
           <!-- <GroupInformation /> -->
           <!-- <EquipmentBorrow />  -->
+
+          <!-- <UserInformation /> -->
+          <!-- <ActivityInformation /> -->
+          <!-- <GroupInformation /> -->
+          <!-- <EquipmentBorrow /> -->
+
           <!-- <EBorrowMain /> -->
           <!-- <GroupInformation /> -->
           <router-view></router-view>
