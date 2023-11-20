@@ -25,9 +25,12 @@ class User(models.Model):
 class Group(models.Model):
     """ 团体实体表 """
     gid = models.IntegerField(primary_key=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
     group_name = models.CharField(max_length=32, unique=True)
     group_desc = models.CharField(max_length=128)
+    tag = models.CharField(max_length=32)
     maximum = models.IntegerField()
+    capacity = models.IntegerField(default=1)
     picture = models.ImageField(upload_to='images/group/', storage=ImageStorage(), null=True)
 
 
@@ -44,9 +47,12 @@ class Field(models.Model):
 class Activity(models.Model):
     """ 活动项目实体表 """
     aid = models.IntegerField(primary_key=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=32)
     desc = models.CharField(max_length=128)
+    tag = models.CharField(max_length=32)
     maximum = models.IntegerField()
+    capacity = models.IntegerField(default=1)
     picture = models.ImageField(upload_to='images/activity/', storage=ImageStorage(), null=True)
 
 

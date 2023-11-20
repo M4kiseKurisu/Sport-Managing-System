@@ -12,6 +12,7 @@ urlpatterns = [
     path('user/group', user.group_view),
 
     # group
+    path('group/view', group.view),
     path('group/create', group.create),
     path('group/join', group.join),
     path('group/apply', group.apply),

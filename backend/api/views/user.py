@@ -62,7 +62,11 @@ def group_view(request):
     """ 查看用户所属团体 """
     if request.method == 'GET':
         uid = request.GET.get('uid')
-        lst = user_group.search_relation(uid)
+        lst = list(
+            map(lambda param: {'gid': param.gid.gid, 'group_name': param.gid.group_name,
+                               "group_desc": param.gid.group_desc, "maximum": param.gid.maximum,
+                               "pic": param.gid.picture or None, "type": param.get_type_display()},
+                user_group.search_relation(uid))),
         print(lst)
         return JsonResponse({"msg": '团体信息请求成功', "status": True, "list": lst})
     else:
