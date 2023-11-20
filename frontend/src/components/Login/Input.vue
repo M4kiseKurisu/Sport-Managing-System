@@ -10,21 +10,11 @@
       <div class="title">用户登录</div>
       <div class="logContent">
         <div class="account-box">
-          <input
-            type="text"
-            placeholder="账号输入"
-            :class="'logInput'"
-            v-model="account"
-          />
+          <input type="text" placeholder="账号输入" :class="'logInput'" v-model="account" />
         </div>
         <div class="account-error" ref="accountError">账号不能为空</div>
         <div class="password-box">
-          <input
-            type="password"
-            placeholder="密码输入"
-            :class="'logInput'"
-            v-model="password"
-          />
+          <input type="password" placeholder="密码输入" :class="'logInput'" v-model="password" />
         </div>
         <div class="password-error" ref="passwordError">密码不能为空</div>
 
@@ -169,6 +159,7 @@ export default {
   background-color: transparent;
   color: #252525;
 }
+
 .password-error,
 .account-error {
   text-align: right;

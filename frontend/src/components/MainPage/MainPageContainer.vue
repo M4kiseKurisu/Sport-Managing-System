@@ -7,13 +7,21 @@
           <Sidebar />
         </el-aside>
         <el-main>
-          <!-- <UserInformation />  -->
+          <!-- <UserInformation /> -->
           <!-- <ActivityInformation /> -->
           <!-- <GroupInformation /> -->
           <!-- <EquipmentBorrow />  -->
+
+          <!-- <UserInformation /> -->
+          <!-- <ActivityInformation /> -->
+          <!-- <GroupInformation /> -->
+          <!-- <EquipmentBorrow /> -->
+
           <!-- <EBorrowMain /> -->
+          <!-- <GroupInformation /> -->
           <router-view></router-view>
-          <FriendInformation />
+          <!-- <FriendInformation /> -->
+          <!-- <Details /> -->
         </el-main>
       </el-container>
     </el-container>
@@ -29,6 +37,7 @@ import EquipmentBorrow from './Page/EquipmentBorrow.vue'
 import EBorrowMain from './Page/E-Borrow/EBorrowMain.vue'
 import FriendInformation from './Page/FriendInformation.vue';
 import GroupInformation from './Page/GroupInformation.vue'
+import Details from './Page/Group/Details.vue';
 
 
 export default {
@@ -40,7 +49,8 @@ export default {
     EBorrowMain,
     FriendInformation,
     GroupInformation,
-    UserInformation
+    UserInformation,
+    Details
 },
 };
 </script>
