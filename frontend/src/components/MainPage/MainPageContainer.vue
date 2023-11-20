@@ -1,7 +1,9 @@
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header>Header</el-header>
+      <el-header>
+        <Header />
+      </el-header>
       <el-container>
         <el-aside width="200px">
           <Sidebar />
@@ -30,6 +32,7 @@
   
 <script>
 // 引入 Sidebar 组件
+import Header from './SideBar/Header.vue';
 import Sidebar from './SideBar/Sidebar.vue'; // 请替换为实际的路径
 import UserInformation from './Page/UserInformation.vue';
 import ActivityInformation from './Page/ActivityInformation.vue';
@@ -42,6 +45,7 @@ import Details from './Page/Group/Details.vue';
 
 export default {
   components: {
+    Header,
     Sidebar,
     UserInformation,
     ActivityInformation,
@@ -51,6 +55,12 @@ export default {
     GroupInformation,
     UserInformation,
     Details
-},
+  },
 };
 </script>
+
+<style scoped>
+.el-header {
+  --el-header-padding: 0;
+}
+</style>

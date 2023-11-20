@@ -10,6 +10,8 @@ export default createStore({
         userLogin(state, data) {
             state.uid = data.uid
             state.user_name = data.user_name
+            sessionStorage.setItem('uid', JSON.stringify(data.uid));
+            sessionStorage.setItem('user_name', JSON.stringify(data.user_name));
         }
     },
     actions: {

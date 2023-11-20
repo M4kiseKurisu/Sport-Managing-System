@@ -32,6 +32,8 @@ export default {
     return {
       account: "",
       password: "",
+      // uid: "",
+      // user_name: "",
     };
   },
   methods: {
@@ -51,8 +53,10 @@ export default {
           },
         }).then((result) => {
           if (result.data.status) {
-            alert("登录成功");
+            //alert("登录成功");
             this.$store.commit("userLogin", result.data);
+            console.log(sessionStorage.getItem('uid'));
+            this.$router.push({ path: 'Page/User_Information' });
           } else {
             alert("账号或密码不正确");
           }
