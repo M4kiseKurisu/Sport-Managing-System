@@ -36,16 +36,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      groupList: [{ id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
-      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },], // 从后端获取的所有团体数据 
+      groupList: [], // 从后端获取的所有团体数据 
       currentPage: 1, // 当前页码
       input: "",
       keyword: "",
@@ -55,14 +46,14 @@ export default {
     GroupCard
   },
   created() {
-    // 页面创建时从后端获取数据
-    // axios.get('/api/groups')
-    // .then(response => {
-    //   this.groupList = response.data;
-    // })
-    // .catch(error => {
-    //   console.error('Error fetching data:', error);
-    // });
+    axios({
+            method: "GET",
+            url: "http://127.0.0.1:8000/api/group/view"
+        }).then((result) => {
+            if (result.data.status) {
+                this.groupList = result.data.list
+            }
+    });
   },
   computed: {
     cutPage() {
@@ -112,14 +103,12 @@ export default {
     search() {
             axios({
                 method: "GET",
-                url: "http://127.0.0.1:8000/api/equipment/view",
+                url: "http://127.0.0.1:8000/api/group/view",
                 params: {
                     keyword: this.keyword
                 }
             }).then((result) => {
-                if (result.data.status) {
-                    this.list = result.data.list
-                }
+                    this.groupList = result.data.list   
             });
     }
   },
