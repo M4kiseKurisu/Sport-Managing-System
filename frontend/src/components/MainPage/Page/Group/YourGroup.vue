@@ -8,12 +8,16 @@
                    <img :src="card.image" class="image" />
                </div>
                <div style="padding: 14px">
-                 <span>{{ card.title }}</span>
+                  <div class="card-title-info">
+                    <span>{{ card.title }}</span>
+                    <span class="creator-info">创建人：{{ card.creator }}</span> <!-- 创建人信息 -->
+                  </div>
                  <div class="button-container">
-                    <div v-if="isManager" class="icon-container">
-                      <el-icon><UserFilled /></el-icon>
+                    <div>
+                      <span v-if="isManager" style="color: blue;">管理员</span>
+                      <span v-else>普通成员</span>
                     </div>
-                    <router-link to="/GroupMainPage">
+                    <router-link to="Details">
                       <el-button text class="button">查看详情</el-button>
                     </router-link>
                     <span>0/50</span>
@@ -31,64 +35,15 @@ import { ref } from 'vue';
 import { ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
-const isManager = ref(false)
+const isManager = ref(true)
 
 // Simulated card data
 const cards = ref([
-  { id: 1, title: 'group 1', image: './src/images/group-default-picture.png' },
-  { id: 2, title: 'group 2', image: './src/images/group-default-picture.png' },
-  { id: 3, title: 'group 3', image: './src/images/group-default-picture.png' },
-  { id: 4, title: 'group 4', image: './src/images/group-default-picture.png' },
+  { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' }, // 创建人信息
+  { id: 2, title: 'group 2', image: './src/images/group-default-picture.png', creator: 'Bob' }, // 创建人信息
+  { id: 3, title: 'group 3', image: './src/images/group-default-picture.png', creator: 'Charlie' }, // 创建人信息
+  { id: 4, title: 'group 4', image: './src/images/group-default-picture.png', creator: 'David' } // 创建人信息
 ]);
-
-interface Groups {
-name: string;
-avatar: string;
-description: string; // 新增字段
-}
-
-const tableData: Groups[] = [
-{
-  name: 'group1',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group2',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group3',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group4',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group5',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group6',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group7',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-{
-  name: 'group8',
-  avatar: './src/images/emptyAvatar.png',
-  description: '寻找志同道合的伙伴~'
-},
-]
 
 const open = (cardToDelete: any) => {
   ElMessageBox.alert('退出成功', {
@@ -158,4 +113,15 @@ width: 90% /* 设置卡片高度 */
   object-fit: cover;
 }
 
+.card-title-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.creator-info {
+  color: #888; /* 创建人信息的颜色 */
+  font-size: 14px; /* 创建人信息的字体大小 */
+}
 </style>

@@ -6,16 +6,33 @@
     </div>
 
     <div style="padding: 14px">
-      <span>{{ card.title }}</span>
-      <div class="button-container">
-        <div v-if="isManager" class="icon-container">
-      <el-icon><UserFilled /></el-icon>
+      <div class="card-title-info">
+        <span>{{ card.title }}</span>
+        <span class="creator-info">创建人：{{ card.creator }}</span> <!-- 创建人信息 -->
       </div>
-        <router-link to="/GroupMainPage">
+      <div class="button-container">
+        <router-link to="Details">
           <el-button text class="button">查看详情</el-button>
         </router-link>
         <span>0/50</span>
-        <el-button text @click="open" class="button">申请加入</el-button>
+        <el-button v-if="status === 0" @click="open" class="button">
+              申请加入
+            </el-button>
+            <el-button
+              v-else-if="status === 1"
+              text
+              class="button"
+              disabled>
+              审核中
+            </el-button>
+            <el-button
+              v-else
+              text
+              type="danger"
+              class="button"
+              disabled>
+              已加入
+            </el-button>
       </div>
     </div>
   </el-card>
@@ -23,30 +40,23 @@
 
 
 <script lang="ts" setup>
-import {
-     UserFilled
-   } from '@element-plus/icons-vue'
 import { ref} from 'vue';
-import { defineProps } from 'vue';
 import { ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
-const props = defineProps({
-    group: Object, // Group data as prop
-});
-
-const isManager = ref(true)
-
+const status = ref(2)
 interface card {
 id: Number;
 title: string;
-image: string; // 新增字段
+image: string;
+creator: string;
 }
 
 const card = ref<card>({
   id: 1,
   title: 'Group',
-  image: './src/images/group-default-picture.png'
+  image: './src/images/group-default-picture.png',
+  creator: 'creator'
 });
 
 // 更新卡片信息的函数
@@ -67,12 +77,6 @@ const open = () => {
 </script>
 
 <style scoped>
-/* 调整 el-scrollbar 大小 */
-.scrollbar {
-width: 100%; /* 设置宽度 */
-height: 400px; /* 设置高度 */
-}
-
 /* 调整 el-card 大小 */
 .custom-card {
 height: 175px;
@@ -90,8 +94,8 @@ width: 90% /* 设置卡片高度 */
 .button {
   padding: 0;
   min-height: auto;
-  color: #fff; /* 按钮文本颜色 */
-  background-color: #409eff; /* 按钮背景色 */
+  color: #070707; /* 按钮文本颜色 */
+  background-color: #ffffff; /* 按钮背景色 */
 }
 
 .image-container {
@@ -119,8 +123,15 @@ width: 90% /* 设置卡片高度 */
   z-index: 1;
 }
 
-.icon {
-  font-size: 20px; /* Adjust icon size as needed */
-  /* Add any additional styles for your icon */
+.card-title-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.creator-info {
+  color: #888; /* 创建人信息的颜色 */
+  font-size: 14px; /* 创建人信息的字体大小 */
 }
 </style>

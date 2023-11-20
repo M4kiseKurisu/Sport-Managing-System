@@ -23,8 +23,7 @@
           size="small"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)"
-          >Delete</el-button
-        >
+          >Delete</el-button>
       </template>
     </el-table-column>
   </el-table>

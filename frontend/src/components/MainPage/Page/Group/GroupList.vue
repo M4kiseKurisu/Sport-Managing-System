@@ -1,85 +1,72 @@
 <template>
-<el-button text @click="addNewGroup">Create Group</el-button>
-<el-row :gutter="20">
-  <el-col :span="8">
-
-      <!-- 单项活动展示 1-->
-      <div class="group">
-          <GroupCard />
-      </div>
-
-      <!-- 单项活动展示 4-->
-      <div class="group">
-          <GroupCard />
-      </div>
-
-      <!-- 单项活动展示 7-->
-      <div class="group">
-          <GroupCard />
-      </div>
-
-  </el-col>
-
-  <el-col :span="8">
-
-      <!-- 单项活动展示 2-->
-      <div class="group">
-          <GroupCard />
-      </div>
-
-      <!-- 单项活动展示 5-->
-      <div class="group">
-          <GroupCard />
-      </div>
-
-      <!-- 单项活动展示 8-->
-      <div class="group">
-          <GroupCard />
-      </div>
-
-  </el-col>
-
-  <el-col :span="8">
-
-      <!-- 单项活动展示 3-->
-      <div class="group">
-          <GroupCard />
-      </div>
-      
-      <div class="group">
-          <GroupCard />
-      </div>
-
-      <div class="group">
-          <GroupCard />
-      </div>
-
-  </el-col>
-</el-row>
-
-<!-- 最下方需要实现换页功能，查看更多的活动，使用分页器元素 -->
-
-<div class="pagination">
-  <el-pagination background layout="prev, pager, next" :total="1000" @current-change="handlePageChange" />
+<div class="button-row">
+  <el-button text @click="addNewGroup">Create Group</el-button>
+  <div class="searchTitle">
+    <div class="searchBox">
+      <el-input v-model="keyword" placeholder="输入查询团体名"></el-input>
+    </div>
+    <el-button @click="search">查 询</el-button>
+  </div>
 </div>
+
+<div>
+    <el-scrollbar class="scrollbar" max-height="100%">
+      <el-row>
+        <el-col v-for="(page, index) in paginatedGroups" :key="index" :span="8">
+          <div v-for="card in page" :key="card.id">
+            <!-- 在这里创建卡片并展示每个团队的信息 -->
+            <el-card>
+              <div>{{ card.name }}</div>
+              <!-- 其他团队信息... -->
+            </el-card>
+          </div>
+        </el-col>
+      </el-row>
+    </el-scrollbar>
+    <el-pagination
+      :current-page="currentPage"
+      :page-size="pageSize"
+      :total="groupList.length"
+      @current-change="handlePageChange"
+    ></el-pagination>
+  </div>
 </template>
 <script lang="ts">
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 import GroupCard from "../../Components/GroupCard.vue";
+import axios from 'axios'
 
 export default {
   data() {
     return {
-      input: ""
+      groupList: [], // 从后端获取的所有团体数据
+      pageSize: 9, // 每页显示的团队数量
+      currentPage: 1, // 当前页码
+      input: "",
+      keyword: "",
     }
   },
   components: {
     GroupCard
   },
+  computed: {
+    paginatedGroups() {
+      // 根据当前页和每页显示的数量切分数据
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.groupList.slice(startIndex, endIndex);
+    },
+  },
   methods: {
-    handlePageChange(pageNo) {
-      // 处理分页变化
+    handlePageChange(newPage) {
+      // 当页码变化时更新当前页码
+      this.currentPage = newPage;
+    },
+    // 从后端获取数据并更新groupList
+    fetchDataFromBackend() {
+      // 发送请求到后端获取所有团体数据，然后更新groupList
+      // 示例：axios.get('/api/groups').then(response => { this.groupList = response.data; });
     },
     addNewGroup() {
       ElMessageBox.alert('This is a message', 'Title', {
@@ -91,27 +78,29 @@ export default {
           })
         },
       })
+    },
+    search() {
+            axios({
+                method: "GET",
+                url: "http://127.0.0.1:8000/api/equipment/view",
+                params: {
+                    keyword: this.keyword
+                }
+            }).then((result) => {
+                if (result.data.status) {
+                    this.list = result.data.list
+                }
+            });
     }
-  }
+  },
+  created() {
+    // 页面创建时从后端获取数据
+    this.fetchDataFromBackend();
+  },
 }
 </script>
   
 <style scoped>
-.el-row {
-    margin-top: 40px;
-}
-
-.title {
-    font-size: 20px;
-    margin-bottom: 16px;
-    margin-top: 16px;
-}
-
-.header {
-    display: flex;
-    align-items: center;
-}
-
 .group {
     display: flex;
     justify-content: center;
@@ -126,24 +115,24 @@ export default {
     margin-right: 30px;
 }
 
-.search {
-    width: 200px;
-    margin-left: 10px;
+.searchTitle {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
 }
 
-.el-carousel__item h3 {
-    color: #475669;
-    opacity: 0.75;
-    line-height: 200px;
-    margin: 0;
-    text-align: center;
+.searchTip {
+    font-size: 16px;
+    margin-right: 20px;
 }
 
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
+.searchBox {
+    width: 240px;
 }
 
-.el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

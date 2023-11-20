@@ -15,7 +15,7 @@
       <template #default="scope">
         <el-button
           size="small"
-          type="danger"
+          type="success"
           @click="handleApplication(1)"
           >同意</el-button
         >

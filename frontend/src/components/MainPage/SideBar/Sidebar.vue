@@ -24,11 +24,11 @@
       <template #title>活动列表</template>
     </el-menu-item>
 
-    <el-menu-item index="3">
+    <el-menu-item index="/Page/GroupInformation">
       <el-icon>
         <Document />
       </el-icon>
-      <template #title>团体列表</template>
+      <template #title>团体信息</template>
     </el-menu-item>
 
     <el-menu-item index="4">
@@ -38,14 +38,7 @@
       <template #title>你的活动</template>
     </el-menu-item>
 
-    <el-menu-item index="5">
-      <el-icon>
-        <ChatDotRound />
-      </el-icon>
-      <template #title>你的团体</template>
-    </el-menu-item>
-
-    <el-menu-item index="6">
+    <el-menu-item index="/Page/Friend">
       <el-icon>
         <Connection />
       </el-icon>
