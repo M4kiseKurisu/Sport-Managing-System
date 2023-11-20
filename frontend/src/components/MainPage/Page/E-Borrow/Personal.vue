@@ -4,7 +4,7 @@
     </div>
 
     <BorrowFormRow :isTitle=true :isGroup=false />
-    <BorrowFormRow v-if="have1" :information="information1" :isTitle=false :isGroup=false />
+    <BorrowFormRow v-if="have1" :information="list[0]" :isTitle=false :isGroup=false />
     <BorrowFormRow v-if="have2" :information="information2" :isTitle=false :isGroup=false />
     <BorrowFormRow v-if="have3" :information="information3" :isTitle=false :isGroup=false />
     <BorrowFormRow v-if="have4" :information="information1" :isTitle=false :isGroup=false />
@@ -22,12 +22,13 @@
 
 <script>
 import BorrowFormRow from "../../Components/BorrowFormRow.vue"
+import axios from 'axios'
 export default {
     data() {
         return {
-            have1: true,
-            have2: true,
-            have3: true,
+            have1: false,
+            have2: false,
+            have3: false,
             have4: false,
             have5: false,
             have6: false,
@@ -54,7 +55,15 @@ export default {
                 amount: "8",
                 returnTime: "2023/9/5",
                 state: "已归还",
-            }
+            },
+
+            list: [],
+            // information: {
+            //     name: list[0].category,
+            //     amount: list[0].lend_amount,
+            //     returnTime: list[0].end_time,
+            //     state: list[0].is_return,
+            // }
         }
     },
     components: {
@@ -65,7 +74,30 @@ export default {
             // pageNo 是你点击的页号
             // 在这里，你可以获取该页面的数据，并更新你的组件
             // 确保你的请求是异步的，以避免阻塞用户界面
-        },
+        }
+    },
+    created() {
+        console.log(JSON.parse(sessionStorage.getItem('uid')));
+        axios({
+            method: "GET",
+            url: "http://127.0.0.1:8000/api/equipment/record",
+            params: {
+                uid: JSON.parse(sessionStorage.getItem('uid'))
+            }
+        }).then((result) => {
+            if (result.data.status) {
+                for (let i = 0; i < result.data.list.length; i++) {
+                    this.list.push({
+                        name: result.data.list[i].category,
+                        amount: String(result.data.list[i].lend_amount),
+                        returnTime: result.data.list[i].end_time,
+                        state: result.data.list[i].is_return,
+                    });
+                    this.have1 = true;
+                }
+                console.log(this.list[0]);
+            }
+        });
     }
 }
 </script>
