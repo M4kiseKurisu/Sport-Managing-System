@@ -53,7 +53,7 @@ def create(request):
         group_desc = data.get("group_desc")
         maximum = data.get("maximum")
         tag = data.get("tag")
-        
+
         if Group.objects.filter(group_name=group_name):
             return JsonResponse({"msg": "团体名称已存在", "status": False})
         else:
@@ -75,21 +75,26 @@ def join(request):
     if request.method == 'POST':
         data: dict = json.loads(request.body)
         print(data)
-        if user_group.add_apply(data.get("uid"), data.get("gid"), data.get("content")):
-            return JsonResponse({"msg": "申请信息已发送", "status": True})
-        else:
-            return JsonResponse({"msg": "已有申请信息等待审批", "status": False})
+        uid = data.get("uid")
+        gid = data.get("gid")
+        content = data.get("content")
+
+        msg, status = user_group.add_apply(uid, gid, content)
+        return JsonResponse({"msg": msg, "status": status})
+
     else:
-        return JsonResponse({"msg": "请求方式有误"})
+        return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
 def apply(request):
-    """ 团体申请相关 """
+    """ 查看团体申请信息 """
     if request.method == 'GET':
         uid = request.GET.get('uid')
-        is_manager = request.GET.get('is_manager')
-        lst = user_group.search_apply(uid, is_manager == "true")
+        method = request.GET.get('method')
+
+        lst = user_group.search_apply(uid, True if method == "accept" else False)
         return JsonResponse({"msg": "请求成功", "list": lst})
+
     elif request.method == 'POST':
         data: dict = json.loads(request.body)
         print(data)
@@ -97,5 +102,6 @@ def apply(request):
             return JsonResponse({"msg": "处理完成", "status": True})
         else:
             return JsonResponse({"msg": "当前用户无权限处理该团体申请", "status": False})
+
     else:
         return JsonResponse({"msg": "请求方式有误", "status": False})

@@ -3,7 +3,7 @@
 """
 import json
 import random
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.http import JsonResponse
 
