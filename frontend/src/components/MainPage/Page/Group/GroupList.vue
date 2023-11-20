@@ -3,7 +3,7 @@
   <el-button text @click="addNewGroup">Create Group</el-button>
   <div class="searchTitle">
     <div class="searchBox">
-      <el-input v-model="keyword" placeholder="输入查询团体名"></el-input>
+      <el-input v-model="keyword" placeholder="输入查询信息"></el-input>
     </div>
     <el-button @click="search">查 询</el-button>
   </div>
@@ -11,21 +11,17 @@
 
 <div>
     <el-scrollbar class="scrollbar" max-height="100%">
-      <el-row>
-        <el-col v-for="(page, index) in paginatedGroups" :key="index" :span="8">
-          <div v-for="card in page" :key="card.id">
-            <!-- 在这里创建卡片并展示每个团队的信息 -->
-            <el-card>
-              <div>{{ card.name }}</div>
-              <!-- 其他团队信息... -->
-            </el-card>
+      <el-row v-for="(page, index) in paginatedGroups" :key="index">
+        <el-col v-for="card in page" :key="card.id"  :span="8">
+          <div>
+            <group-card :card="card" :status="getCardStatus(card)" />
           </div>
-        </el-col>
+        </el-col> 
       </el-row>
     </el-scrollbar>
     <el-pagination
       :current-page="currentPage"
-      :page-size="pageSize"
+      :page-size=9
       :total="groupList.length"
       @current-change="handlePageChange"
     ></el-pagination>
@@ -40,8 +36,16 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      groupList: [], // 从后端获取的所有团体数据
-      pageSize: 9, // 每页显示的团队数量
+      groupList: [{ id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },
+      { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' },], // 从后端获取的所有团体数据 
       currentPage: 1, // 当前页码
       input: "",
       keyword: "",
@@ -50,24 +54,50 @@ export default {
   components: {
     GroupCard
   },
+  created() {
+    // 页面创建时从后端获取数据
+    // axios.get('/api/groups')
+    // .then(response => {
+    //   this.groupList = response.data;
+    // })
+    // .catch(error => {
+    //   console.error('Error fetching data:', error);
+    // });
+  },
   computed: {
-    paginatedGroups() {
-      // 根据当前页和每页显示的数量切分数据
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      return this.groupList.slice(startIndex, endIndex);
+    cutPage() {
+      const pageSize = 9;
+      const pages = [];
+      
+      for(let i = 0; i < this.groupList.length; i += 9){
+        pages.push(this.groupList.slice(i, i+9));
+      }
+      return pages;
     },
+
+    paginatedGroups() {
+      const currentPage = this.currentPage;
+      const page = this.cutPage[currentPage - 1];
+      const groups = [];
+
+      for(let i = 0; i < page.length; i+=3){
+        groups.push(page.slice(i,i+3));
+      }
+
+      return groups;
+    },
+    
   },
   methods: {
+    getCardStatus(card) {
+      // 示例：根据团队信息判断状态，返回对应状态码（0, 1, 2 等）
+       return 0;
+    },
     handlePageChange(newPage) {
       // 当页码变化时更新当前页码
       this.currentPage = newPage;
     },
     // 从后端获取数据并更新groupList
-    fetchDataFromBackend() {
-      // 发送请求到后端获取所有团体数据，然后更新groupList
-      // 示例：axios.get('/api/groups').then(response => { this.groupList = response.data; });
-    },
     addNewGroup() {
       ElMessageBox.alert('This is a message', 'Title', {
         confirmButtonText: 'OK',
@@ -93,10 +123,7 @@ export default {
             });
     }
   },
-  created() {
-    // 页面创建时从后端获取数据
-    this.fetchDataFromBackend();
-  },
+
 }
 </script>
   

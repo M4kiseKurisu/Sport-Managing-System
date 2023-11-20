@@ -2,37 +2,28 @@
   <el-card :body-style="{ padding: '0px' }" class="custom-card">
     <!-- Card content -->
     <div class="image-container">
-        <img :src="card.image" class="image" />
+      <img :src="props.card.image" class="image" />
     </div>
 
     <div style="padding: 14px">
       <div class="card-title-info">
-        <span>{{ card.title }}</span>
-        <span class="creator-info">创建人：{{ card.creator }}</span> <!-- 创建人信息 -->
+        <span>{{ props.card.title }}</span>
+        <span class="creator-info">创建人：{{ props.card.creator }}</span>
       </div>
       <div class="button-container">
         <router-link to="Details">
           <el-button text class="button">查看详情</el-button>
         </router-link>
         <span>0/50</span>
-        <el-button v-if="status === 0" @click="open" class="button">
-              申请加入
-            </el-button>
-            <el-button
-              v-else-if="status === 1"
-              text
-              class="button"
-              disabled>
-              审核中
-            </el-button>
-            <el-button
-              v-else
-              text
-              type="danger"
-              class="button"
-              disabled>
-              已加入
-            </el-button>
+        <el-button v-if="props.status === 0" @click="open" class="button">
+          申请加入
+        </el-button>
+        <el-button v-else-if="props.status === 1" text class="button" disabled>
+          审核中
+        </el-button>
+        <el-button v-else text type="danger" class="button" disabled>
+          已加入
+        </el-button>
       </div>
     </div>
   </el-card>
@@ -44,36 +35,26 @@ import { ref} from 'vue';
 import { ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
-const status = ref(2)
-interface card {
-id: Number;
-title: string;
-image: string;
-creator: string;
+
+interface CardProps {
+  card: {
+    id: number;
+    title: string;
+    image: string;
+    creator: string;
+  };
+  status: number;
 }
 
-const card = ref<card>({
-  id: 1,
-  title: 'Group',
-  image: './src/images/group-default-picture.png',
-  creator: 'creator'
-});
-
-// 更新卡片信息的函数
-const updateCard = (newCard: card) => {
-  card.value = newCard;
-};
+const props  = defineProps<CardProps>();
 
 const open = () => {
   ElMessageBox.alert('成功提交申请，正在审核', {
-    // if you want to disable its autofocus
-    // autofocus: false,
     confirmButtonText: 'OK',
-    callback: (action: Action) => {
+    callback: (action: Action) => {},
+  });
+};
 
-    },
-  })
-}
 </script>
 
 <style scoped>
