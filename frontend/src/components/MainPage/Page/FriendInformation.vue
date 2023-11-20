@@ -1,6 +1,6 @@
 <template>
   <div>
-  <el-table :data="filteredTableData" style="width: 100%">
+  <el-table :data="filteredTableData" style="width: 80%">
     <el-table-column label="呢称" width="200">
       <template #default="scope">
         <div class="user-info">
@@ -23,8 +23,7 @@
           size="small"
           type="danger"
           @click="handleDelete(scope.$index, scope.row)"
-          >Delete</el-button
-        >
+          >Delete</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -81,17 +80,7 @@ const handleCurrentChange = (val: number) => {
 const handleDelete = (index: number, row: User) => {
   console.log(index, row)
 }
-/*
-function setup() {
 
-  return {
-    currentPage,
-    totalPages,
-    filteredTableData,
-    handleCurrentChange,
-  };
-}
-*/
 const tableData: User[] = [
   {
     name: 'Tom',
