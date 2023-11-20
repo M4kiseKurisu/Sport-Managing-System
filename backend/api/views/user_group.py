@@ -10,13 +10,10 @@ from api.models import Group
 def search_relation(uid):
     """ 查询用户团体联系 """
     user = User.objects.filter(uid=uid).first()
-    lst = list(
-        map(lambda param: {'gid': param.gid.gid, 'group_name': param.gid.group_name,
-                           "group_desc": param.gid.group_desc, "maximum": param.gid.maximum,
-                           "pic": param.gid.picture or None, "type": param.get_type_display()},
-            UserInGroup.objects.filter(uid=user))
-    )
-    return lst
+    if user:
+        return UserInGroup.objects.filter(uid=user)
+    else:
+        return None
 
 
 def add_relation(uid, gid, teammate_type):
