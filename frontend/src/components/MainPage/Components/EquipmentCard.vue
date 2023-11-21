@@ -15,7 +15,7 @@
             <div class="apply">
                 <div>剩余数量：{{ amount }}</div>
                 <div class="button">
-                    <el-button @click="dialogVisible = true"> 点击申请 </el-button>
+                    <el-button @click="clickApply()"> 点击申请 </el-button>
                 </div>
             </div>
         </el-card>
@@ -37,7 +37,7 @@
         <div class="selector">
             <div style="font-size: 16px; margin-right: 12px;">申请团体名：</div>
             <el-select v-if="this.radio === '团体申请'" v-model="value" placeholder="团体名称">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+                <el-option v-for="item in list" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
             <el-select v-else v-model="value" disabled placeholder="团体名称"></el-select>
         </div>
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     data() {
         return {
@@ -93,13 +94,35 @@ export default {
                 },
             ],
             startTime: "",
-            endTime: ""
+            endTime: "",
+            list: [],
         }
     },
     methods: {
         submitForm() {
             this.dialogVisible = false;
-        }
+        },
+        clickApply() {
+            this.dialogVisible = true;
+            axios({
+                method: "GET",
+                url: "http://127.0.0.1:8000/api/user/group",
+                params: {
+                    uid: JSON.parse(sessionStorage.getItem('uid'))
+                }
+            }).then((result) => {
+                console.log(result.data.status);
+                if (result.data.status) {
+                    for (let i = 0; i < result.data.list.length; i++) {
+                        this.list.push({
+                            value: 'Option' + String(i + 1),
+                            label: result.data.list[i].group_name,
+                        });
+                        console.log(result.data.list[i].group_name);
+                    }
+                }
+            });
+        },
     },
     mounted() {
         this.dialogVisible = false;

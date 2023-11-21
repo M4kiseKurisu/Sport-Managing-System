@@ -19,7 +19,7 @@
       </template>
     </el-menu-item>
 
-    <el-menu-item index="2">
+    <el-menu-item index="/Page/Activity_Information">
       <el-icon><icon-menu /></el-icon>
       <template #title>活动列表</template>
     </el-menu-item>
