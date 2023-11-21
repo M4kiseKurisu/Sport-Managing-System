@@ -6,6 +6,8 @@ import MainPage from "./components/MainPage/MainPageContainer.vue"
 
 import UserInformation from "./components/MainPage/Page/UserInformation.vue"
 
+import ActivityInformation from "./components/MainPage/Page/ActivityInformation.vue"
+
 import EBorrowMain from "./components/MainPage/Page/E-Borrow/EBorrowMain.vue"
 import Borrow from "./components/MainPage/Page/E-Borrow/Borrow.vue"
 import Personal from "./components/MainPage/Page/E-Borrow/Personal.vue"
@@ -61,6 +63,10 @@ const router = createRouter({
                 {
                     path: 'User_Information',
                     component: UserInformation
+                },
+                {
+                    path: 'Activity_Information',
+                    component: ActivityInformation
                 },
                 {
                     path: 'GroupInformation',

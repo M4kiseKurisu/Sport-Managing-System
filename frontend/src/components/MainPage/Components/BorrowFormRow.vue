@@ -5,7 +5,7 @@
 
                 <!-- 物品图像 -->
                 <el-col :span="3">
-                    <el-avatar v-if="!isTitle" :size="50" src="./src/images/basketball.png" />
+                    <el-avatar v-if="!isTitle" :size="50" :src="information.url" />
                 </el-col>
 
                 <!-- 物品名 -->
