@@ -2,24 +2,26 @@
   <el-card :body-style="{ padding: '0px' }" class="custom-card">
     <!-- Card content -->
     <div class="image-container">
-      <img :src="props.card.image" class="image" />
+      <div v-if="props.card.pic !== null">
+        <img :src="'http://127.0.0.1:8000' + props.card.pic" class="image" />
+      </div>
+      <div v-else>
+        <img :src="defaultImage" class="image" />
+      </div>
     </div>
 
     <div style="padding: 14px">
       <div class="card-title-info">
-        <span>{{ props.card.title }}</span>
+        <span>{{ props.card.group_name }}</span>
         <span class="creator-info">创建人：{{ props.card.creator }}</span>
       </div>
       <div class="button-container">
         <router-link to="Details">
           <el-button text class="button">查看详情</el-button>
         </router-link>
-        <span>0/50</span>
-        <el-button v-if="props.status === 0" @click="open" class="button">
+        <span>{{ props.card.capacity }}/{{ props.card.maximum }}</span>
+        <el-button v-if="props.card.is_joined === 'true'" @click="open" class="button">
           申请加入
-        </el-button>
-        <el-button v-else-if="props.status === 1" text class="button" disabled>
-          审核中
         </el-button>
         <el-button v-else text type="danger" class="button" disabled>
           已加入
@@ -31,25 +33,30 @@
 
 
 <script lang="ts" setup>
-import { ref} from 'vue';
 import { ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
+const defaultImage = "./src/images/group-default-picture.png"
 
 interface CardProps {
   card: {
     id: number;
-    title: string;
-    image: string;
+    group_name: string;
+    pic: string;
     creator: string;
+    is_joined: string;
+    maximum: number;
+    capacity: number;
   };
   status: number;
+  msg:string;
+  
 }
 
 const props  = defineProps<CardProps>();
 
 const open = () => {
-  ElMessageBox.alert('成功提交申请，正在审核', {
+  ElMessageBox.alert( props.msg, {
     confirmButtonText: 'OK',
     callback: (action: Action) => {},
   });

@@ -1,15 +1,20 @@
 <template>
-       <el-scrollbar class="scrollbar" max-height="100%">
-         <el-row>
-           <el-col v-for="card in cards" :key="card.id" :span="8" >
-             <el-card :body-style="{ padding: '0px' }" class="custom-card">
+      <el-scrollbar class="scrollbar" max-height="100%">
+        <el-row v-for="(group, index) in groups" :key="index">
+          <el-col v-for="card in group" :key="card.id" :span="8">
+            <el-card :body-style="{ padding: '0px' }" class="custom-card">
                <!-- Card content -->
-               <div class="image-container">
-                   <img :src="card.image" class="image" />
-               </div>
-               <div style="padding: 14px">
+              <div class="image-container">
+                <div v-if="card.pic !== null">
+                  <img :src="'http://127.0.0.1:8000' + card.pic" class="image" />
+                </div>
+                <div v-else>
+                  <img :src="defaultImage" class="image" />
+                </div>
+              </div>
+              <div style="padding: 14px">
                   <div class="card-title-info">
-                    <span>{{ card.title }}</span>
+                    <span>{{ card.group_name }}</span>
                     <span class="creator-info">创建人：{{ card.creator }}</span> <!-- 创建人信息 -->
                   </div>
                  <div class="button-container">
@@ -20,7 +25,7 @@
                     <router-link to="Details">
                       <el-button text class="button">查看详情</el-button>
                     </router-link>
-                    <span>0/50</span>
+                    <span>{{ card.capacity }}/{{ card.maximum }}</span>
                     <el-button text @click="open(card)" class="button">退出</el-button>
                  </div>
                </div>
@@ -30,40 +35,92 @@
        </el-scrollbar>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { ref } from 'vue';
-import { ElMessageBox } from 'element-plus'
-import type { Action } from 'element-plus'
+import { ElMessageBox } from 'element-plus';
+import type { Action } from 'element-plus';
+import axios from 'axios'
 
-const isManager = ref(true)
+export default {
+  data() {
+    return {
+      groupList: [], // 从后端获取的所有团体数据 
+      input: "",
+      keyword: "",
+      status: "",
+      msg: ""
+    }
+  },
+  created() {
+      const storedUid = sessionStorage.getItem('uid');
+      if (storedUid) {
+        const uid = JSON.parse(storedUid);
+        console.log(uid)
+        axios({
+          method: "GET",
+          url: "http://127.0.0.1:8000/api/user/group",
+          params: {
+            uid: uid
+          }
+        }).then((result) => {
+          this.groupList = result.data.list;
+          this.status = result.data.status;
+          this.msg = result.data.msg;
+        }).catch((error) => {
+          console.error('Error fetching group data:', error);
+        });
+    } else {
+        console.error('UID not found in sessionStorage');
+    }
+  },
 
-// Simulated card data
-const cards = ref([
-  { id: 1, title: 'group 1', image: './src/images/group-default-picture.png', creator: 'Alice' }, // 创建人信息
-  { id: 2, title: 'group 2', image: './src/images/group-default-picture.png', creator: 'Bob' }, // 创建人信息
-  { id: 3, title: 'group 3', image: './src/images/group-default-picture.png', creator: 'Charlie' }, // 创建人信息
-  { id: 4, title: 'group 4', image: './src/images/group-default-picture.png', creator: 'David' } // 创建人信息
-]);
-
-const open = (cardToDelete: any) => {
-  ElMessageBox.alert('退出成功', {
-    confirmButtonText: 'OK',
-    callback: (action: Action) => {
-      if (action === 'confirm') {
-        deleteCard(cardToDelete);
+  computed: {
+    groups() {
+      const joinedGroup: any[] = [];
+      for (let i = 0; i < this.groupList.length; i++) {
+        if (this.groupList[i].is_joined === true) {
+          joinedGroup.push(this.groupList[i]);
+        }
       }
-    },
-  });
-};
+      const groups: any[][] = [];
+      for(let i = 0; i < joinedGroup.length; i+=3){
+          groups.push(joinedGroup.slice(i, i+3))
+      }
+      return groups;
+    }
+  },
 
-const deleteCard = (cardToDelete: any) => {
-  // 找到要删除的卡片在数组中的索引
-  const index = cards.value.findIndex((card) => card.id === cardToDelete.id);
+  setup() {
+    const isManager = ref(true);
+    const defaultImage = "./src/images/group-default-picture.png"
+    // const open = (cardToDelete: any) => {
+    //   ElMessageBox.alert('退出成功', {
+    //     confirmButtonText: 'OK',
+    //     callback: (action: Action) => {
+    //       if (action === 'confirm') {
+    //         deleteCard(cardToDelete);
+    //       }
+    //     },
+    //   });
+    // };
 
-  if (index !== -1) {
-    // 如果找到了匹配的卡片索引，就从 cards 数组中删除该卡片
-    cards.value.splice(index, 1);
-  }
+    // const deleteCard = (cardToDelete: any) => {
+    //   // 找到要删除的卡片在数组中的索引
+    //   const index = cards.value.findIndex((card) => card.id === cardToDelete.id);
+
+    //   if (index !== -1) {
+    //     // 如果找到了匹配的卡片索引，就从 cards 数组中删除该卡片
+    //     cards.value.splice(index, 1);
+    //   }
+    // };
+
+    return {
+      isManager,
+      open,
+      defaultImage
+      // deleteCard,
+    };
+  },
 };
 </script>
 

@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import { computed, ref } from 'vue'
 
 interface Application {
@@ -68,66 +68,6 @@ const handleCurrentChange = (val: number) => {
 }
 
 const tableData: Application[] = [
-  {
-    data: '2023-11-18',
-    group: 'group1',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group2',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group3',
-    status:'审核通过'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group4',
-    status:'拒绝'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group5',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group6',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group7',
-    status:'审核通过'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group8',
-    status:'拒绝'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group9',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group10',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group11',
-    status:'审核通过'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group12',
-    status:'拒绝'
-  },
 
 ]
 
