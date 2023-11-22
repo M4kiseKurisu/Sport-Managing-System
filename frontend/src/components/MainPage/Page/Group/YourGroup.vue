@@ -22,9 +22,16 @@
                       <span v-if="isManager" style="color: blue;">管理员</span>
                       <span v-else>普通成员</span>
                     </div>
-                    <router-link to="Details">
-                      <el-button text class="button">查看详情</el-button>
+                    <router-link :to="{ path: '/Page/GroupInformation/Details', 
+                        query: { 
+                            groupName: card.group_name, 
+                            description: card.group_desc, 
+                            image: card.pic
+                        }
+                    }">
+                        <el-button text class="button">查看详情</el-button>
                     </router-link>
+
                     <span>{{ card.capacity }}/{{ card.maximum }}</span>
                     <el-button text @click="open(card)" class="button">退出</el-button>
                  </div>
@@ -55,10 +62,9 @@ export default {
       const storedUid = sessionStorage.getItem('uid');
       if (storedUid) {
         const uid = JSON.parse(storedUid);
-        console.log(uid)
         axios({
           method: "GET",
-          url: "http://127.0.0.1:8000/api/user/group",
+          url: "http://127.0.0.1:8000/api/group/view",
           params: {
             uid: uid
           }

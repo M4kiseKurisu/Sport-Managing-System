@@ -16,8 +16,14 @@
         <span class="creator-info">创建人：{{ props.card.creator }}</span>
       </div>
       <div class="button-container">
-        <router-link to="Details">
-          <el-button text class="button">查看详情</el-button>
+        <router-link :to="{ path: '/Page/GroupInformation/Details', 
+            query: { 
+                groupName: card.group_name, 
+                description: card.group_desc, 
+                image: card.pic
+            }
+        }">
+            <el-button text class="button">查看详情</el-button>
         </router-link>
         <span>{{ props.card.capacity }}/{{ props.card.maximum }}</span>
         <el-button v-if="props.card.is_joined === 'true'" @click="open" class="button">
@@ -47,6 +53,7 @@ interface CardProps {
     is_joined: string;
     maximum: number;
     capacity: number;
+    group_desc: ""
   };
   status: number;
   msg:string;
