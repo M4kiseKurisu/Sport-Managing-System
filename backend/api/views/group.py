@@ -1,5 +1,5 @@
 """
-管理团体实体
+团体实体
 """
 import json
 import random
@@ -91,9 +91,29 @@ def apply(request):
     if request.method == 'GET':
         uid = request.GET.get('uid')
         method = request.GET.get('method')
+        lst = []
 
-        lst = user_group.search_apply(uid, True if method == "accept" else False)
-        return JsonResponse({"msg": "请求成功", "list": lst})
+        if method == "accept":
+            applies = user_group.search_accept_apply(uid)
+            for a in applies:
+                print(a)
+                temp = {"uid": a.uid.uid, "user_name": a.uid.user_name, "content": a.content,
+                        "gid": a.gid.gid, "group_name": a.gid.group_name,
+                        "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "status": a.get_status_display()}
+                lst.append(temp)
+
+        elif method == "send":
+            applies = user_group.search_send_apply(uid)
+            for a in applies:
+                temp = {"gid": a.gid.gid, "group_name": a.gid.group_name, "content": a.content,
+                        "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "status": a.get_status_display()}
+                lst.append(temp)
+        else:
+            return JsonResponse({"msg": "method参数错误", "status": False})
+
+        return JsonResponse({"msg": "团体申请获取成功", "status": True, "list": lst})
 
     elif request.method == 'POST':
         data: dict = json.loads(request.body)

@@ -1,5 +1,5 @@
 """
-管理用户实体
+用户实体
 """
 import json
 import random
@@ -7,7 +7,10 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 from api.models import User
+
 from api.views import user_group
+from api.views import user_activity
+from api.views import friends
 
 
 def genid():
@@ -58,15 +61,51 @@ def register(request):
         return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
+def information(request):
+    """ 查看用户基本信息 """
+    if request.method == 'GET':
+        uid = request.GET.get('uid')
+        user = User.objects.get(uid=uid)
+
+        # 用户参加的活动：
+        activities = user_activity.search_relation(uid)
+        # 用户参加的团体
+        groups = user_group.search_relation(uid)
+        # 用户的好友
+        f = friends.search_relation(uid)
+
+        info = {"uid": uid, "name": user.user_name, "age": user.user_age,
+                "gender": user.get_user_gender_display(), "phone": user.phone_number, "email": user.email,
+                "signature": user.user_signature, "picture": user.picture.url if user.picture else None,
+                "activity": len(activities), "friend": len(f), "group": len(groups)}
+        print(info)
+        return JsonResponse({"msg": '个人基本信息获取成功', "status": True, "info": info})
+
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def modify(request):
+    """ 查看个人详细信息 """
+    if request.method == 'POST':
+        user = User.objects.get(uid=request.POST.get('uid'))
+        for (key, value) in request.POST.get('data').items():
+            print(key, value)
+            setattr(user, key, value)
+
+        return JsonResponse({"msg": "个人信息修改成功", "status": True})
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
 def group_view(request):
     """ 查看用户所属团体 """
     if request.method == 'GET':
         uid = request.GET.get('uid')
-        lst = list(
-            map(lambda param: {'gid': param.gid.gid, 'group_name': param.gid.group_name,
-                               "group_desc": param.gid.group_desc, "maximum": param.gid.maximum,
-                               "pic": param.gid.picture or None, "type": param.get_type_display()},
-                user_group.search_relation(uid))),
+        lst = list(map(lambda param: {'gid': param.gid.gid, 'group_name': param.gid.group_name,
+                                      "pic": param.gid.picture.url if param.gid.picture else None,
+                                      "type": param.get_type_display()},
+                       user_group.search_relation(uid)))
         print(lst)
         return JsonResponse({"msg": '团体信息请求成功', "status": True, "list": lst})
     else:
