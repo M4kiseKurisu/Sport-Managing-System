@@ -1,5 +1,5 @@
 """
-管理用户和团体联系
+用户和团体联系
 """
 from django.db.models import Q
 
@@ -53,29 +53,25 @@ def add_apply(uid, gid, content):
         return "申请信息已发送", True
 
 
-def search_apply(uid, is_manager):
-    """ 查找团体申请信息 """
+def search_accept_apply(uid):
+    """ 查找收到的团体申请信息 """
     lst = []
     user = User.objects.get(uid=uid)
 
-    if is_manager:
-        groups = list(map(lambda param: param.gid, UserInGroup.objects.filter(Q(uid=user) & (Q(type=0) | Q(type=1)))))
-        for group in groups:
-            applies = UserApplyGroup.objects.filter(gid=group, status=0).order_by('-apply_time')
-            for apply in applies:
-                temp = {"uid": apply.uid.uid, "user_name": apply.uid.user_name, "content": apply.content,
-                        "gid": group.gid, "group_name": group.group_name,
-                        "time": apply.apply_time.strftime("%Y-%m-%d %H:%M:%S")}
-                lst.append(temp)
-    else:
-        applies = UserApplyGroup.objects.filter(uid=user).order_by('-apply_time')
-        print(applies)
-        for apply in applies:
-            temp = {"gid": apply.gid.gid, "group_name": apply.gid.group_name,
-                    "time": apply.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "status": apply.get_status_display()}
-            lst.append(temp)
+    groups = list(map(lambda param: param.gid, UserInGroup.objects.filter(Q(uid=user) & (Q(type=0) | Q(type=1)))))
+    for group in groups:
+        applies = UserApplyGroup.objects.filter(gid=group).order_by('-apply_time')
+        lst += list(applies)
 
+    return lst
+
+
+def search_send_apply(uid):
+    """ 查找发送的团体申请信息 """
+    user = User.objects.get(uid=uid)
+    applies = UserApplyGroup.objects.filter(uid=user).order_by('-apply_time')
+    print(applies)
+    lst = list(applies)
     return lst
 
 

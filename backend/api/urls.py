@@ -9,6 +9,7 @@ urlpatterns = [
     # user
     path('user/login', user.login),
     path('user/register', user.register),
+    path('user/information', user.information),
     path('user/group', user.group_view),
 
     # group

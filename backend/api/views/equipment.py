@@ -12,6 +12,7 @@ from api.models import User
 from api.models import Group
 from api.models import GroupEquipment
 from api.models import UserEquipment
+from api.views import user_group
 
 
 def genid():
@@ -83,7 +84,6 @@ def borrow(request):
 
         equipment.amount -= data.get("amount")
         equipment.save()
-
         return JsonResponse({"msg": "器材借用成功", "status": True})
 
     else:
@@ -94,32 +94,62 @@ def record(request):
     """ 查看器材借用记录 """
     if request.method == 'GET':
         uid = request.GET.get("uid")
-        gid = request.GET.get("gid")
+        config = json.loads(request.GET.get("config"))
+        user = User.objects.get(uid=uid)
+        method = config.get('method')
 
-        if uid:
-            user = User.objects.get(uid=uid)
-            lst = list(map(
-                lambda param: {"pic": param.eid.picture.url,
-                               "category": param.eid.category, "lend_amount": param.lend_amount,
-                               "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-                               "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                               "is_return": param.get_is_return_display()},
-                UserEquipment.objects.filter(uid=user).order_by('-end_time')
-            ))
+        time = config.get('time')
+        state = config.get('state')
+        group_name = config.get('group_name', '')
+        category = config.get('category', '')
+
+        equipments = list(Equipment.objects.filter(category__icontains=category))
+        if method == 'person':
+            lst = record_for_person(user=user, equipments=equipments, time=time, state=state)
+        elif method == 'group':
+            groups = list(map(
+                lambda param: param.gid,
+                user_group.search_relation(uid).filter(gid__group_name__icontains=group_name))
+            )
+            lst = record_for_group(user=user, equipments=equipments, groups=groups, time=time, state=state)
         else:
-            group = Group.objects.get(gid=gid)
-            lst = list(map(
-                lambda param: {"pic": param.eid.picture.url,
-                               "category": param.eid.category, "lend_amount": param.lend_amount,
-                               "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-                               "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                               "is_return": param.get_is_return_display()},
-                GroupEquipment.objects.filter(gid=group).order_by('-end_time')
-            ))
-        return JsonResponse({"msg": "器材信息请求成功", "status": True, "list": lst})
+            return JsonResponse({"msg": "method参数不正确", "status": False})
+
+        return JsonResponse({"msg": "器材借用记录获取成功", "status": True, "list": lst})
 
     else:
         return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def record_for_person(user, equipments, time, state):
+    result = UserEquipment.objects.filter(uid=user, eid__in=equipments).order_by('-end_time')
+    if time:
+        daytime = datetime.strptime(time, '%Y-%m-%d').date()
+        result = result.filter(end_time__date=daytime)
+    if state:
+        result = result.filter(is_return=state)
+
+    return list(map(lambda param: {"pic": param.eid.picture.url,
+                                   "category": param.eid.category, "lend_amount": param.lend_amount,
+                                   "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                                   "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                                   "is_return": param.get_is_return_display()}, result))
+
+
+def record_for_group(user, equipments, groups, time, state):
+    result = GroupEquipment.objects.filter(gid__in=groups, eid__in=equipments).order_by('-end_time')
+    if time:
+        daytime = datetime.strptime(time, '%Y-%m-%d').date()
+        result = result.filter(end_time__date=daytime)
+    if state:
+        result = result.filter(is_return=state)
+
+    return list(map(lambda param: {"gid": param.gid.gid, "group_name": param.gid.group_name,
+                                   "pic": param.eid.picture.url,
+                                   "category": param.eid.category, "lend_amount": param.lend_amount,
+                                   "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                                   "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                                   "is_return": param.get_is_return_display()}, result))
 
 
 def give_back(request):
