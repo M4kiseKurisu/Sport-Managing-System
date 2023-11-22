@@ -1,5 +1,5 @@
 """
-管理团体实体
+团体实体
 """
 import json
 import random
@@ -53,7 +53,7 @@ def create(request):
         group_desc = data.get("group_desc")
         maximum = data.get("maximum")
         tag = data.get("tag")
-        
+
         if Group.objects.filter(group_name=group_name):
             return JsonResponse({"msg": "团体名称已存在", "status": False})
         else:
@@ -75,21 +75,46 @@ def join(request):
     if request.method == 'POST':
         data: dict = json.loads(request.body)
         print(data)
-        if user_group.add_apply(data.get("uid"), data.get("gid"), data.get("content")):
-            return JsonResponse({"msg": "申请信息已发送", "status": True})
-        else:
-            return JsonResponse({"msg": "已有申请信息等待审批", "status": False})
+        uid = data.get("uid")
+        gid = data.get("gid")
+        content = data.get("content")
+
+        msg, status = user_group.add_apply(uid, gid, content)
+        return JsonResponse({"msg": msg, "status": status})
+
     else:
-        return JsonResponse({"msg": "请求方式有误"})
+        return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
 def apply(request):
-    """ 团体申请相关 """
+    """ 查看团体申请信息 """
     if request.method == 'GET':
         uid = request.GET.get('uid')
-        is_manager = request.GET.get('is_manager')
-        lst = user_group.search_apply(uid, is_manager == "true")
-        return JsonResponse({"msg": "请求成功", "list": lst})
+        method = request.GET.get('method')
+        lst = []
+
+        if method == "accept":
+            applies = user_group.search_accept_apply(uid)
+            for a in applies:
+                print(a)
+                temp = {"uid": a.uid.uid, "user_name": a.uid.user_name, "content": a.content,
+                        "gid": a.gid.gid, "group_name": a.gid.group_name,
+                        "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "status": a.get_status_display()}
+                lst.append(temp)
+
+        elif method == "send":
+            applies = user_group.search_send_apply(uid)
+            for a in applies:
+                temp = {"gid": a.gid.gid, "group_name": a.gid.group_name, "content": a.content,
+                        "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "status": a.get_status_display()}
+                lst.append(temp)
+        else:
+            return JsonResponse({"msg": "method参数错误", "status": False})
+
+        return JsonResponse({"msg": "团体申请获取成功", "status": True, "list": lst})
+
     elif request.method == 'POST':
         data: dict = json.loads(request.body)
         print(data)
@@ -97,5 +122,6 @@ def apply(request):
             return JsonResponse({"msg": "处理完成", "status": True})
         else:
             return JsonResponse({"msg": "当前用户无权限处理该团体申请", "status": False})
+
     else:
         return JsonResponse({"msg": "请求方式有误", "status": False})
