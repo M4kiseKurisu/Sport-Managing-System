@@ -21,8 +21,9 @@
     <BorrowFormRow v-if="have9" :information="information1" :isTitle=false :isGroup=false />
     <BorrowFormRow v-if="have10" :information="information1" :isTitle=false :isGroup=false /> -->
   <BorrowFormRow
-    v-for="(item, i) in groups"
-    :key="i"
+    v-for="(item, index) in groups"
+    :key="index"
+    :information="item"
     :isTitle="false"
     :isGroup="false"
   />

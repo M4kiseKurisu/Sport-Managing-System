@@ -23,6 +23,7 @@
   <BorrowFormRow
     v-for="(item, index) in groups"
     :key="index"
+    :information="item"
     :isTitle="false"
     :isGroup="true"
   />
