@@ -6,7 +6,12 @@
           <!-- Left section for group information -->
           <div class="group-details">
             <div class="center-content">
-              <img :src="group.image" alt="group Image" class="group-image" />
+              <div v-if="group.image !== null">
+                  <img :src="'http://127.0.0.1:8000' + group.image" class="image" />
+              </div>
+              <div v-else>
+                  <img :src="defaultImage" class="image" />
+              </div>
               <div class="group_name">
                 <h1>{{ group.name }}</h1>
               </div>
@@ -91,6 +96,7 @@
 import { computed, ref } from 'vue'
 
 export default {
+  props: ['groupName', 'description'],
   data() {  
     return {
       drawer: false,
@@ -102,9 +108,19 @@ export default {
     };
   },
 
-  methods: {
-    // ...其他方法...
+  mounted() {
+    // 获取传递的参数
+    const groupName = this.$route.query.groupName;
+    const description = this.$route.query.description;
+    const image = this.$route.query.image;
 
+    // 将参数存储在 group 对象中
+    this.group.name = groupName;
+    this.group.description = description;
+    this.group.image = image;
+  },
+
+  methods: {
     addActivity() {
       // 处理新增活动的逻辑
     },
@@ -115,6 +131,7 @@ export default {
   },
 
   setup() {
+    const defaultImage = "./src/images/group-default-picture.png"
     const activeName = ref('1');
 
     interface User {
@@ -179,7 +196,8 @@ export default {
       handleDelete,
       tableData,
       getAvatar,
-      activeName
+      activeName,
+      defaultImage
     };
   }
 };
@@ -302,5 +320,12 @@ export default {
 .button-container {
   display: flex;
   justify-content: space-between; /* 可以根据需要选择其他布局方式 */
+}
+
+.image {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>

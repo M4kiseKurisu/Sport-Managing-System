@@ -95,7 +95,8 @@ const router = createRouter({
                         },
                         {
                             path: 'Details',
-                            component: Details
+                            name: 'Details',
+                            component: Details,
                         }
                     ]
                 },

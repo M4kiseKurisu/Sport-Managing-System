@@ -3,12 +3,12 @@
   <el-table :data="filteredTableData" style="width: 80%">
     <el-table-column label="申请日期">
       <template #default="{ row }">
-        {{ row.data }}
+        {{ row.time }}
       </template>
     </el-table-column>
     <el-table-column label="申请对象">
       <template #default="{ row }">
-        {{ row.group }}
+        {{ row.group_name }}
       </template>
     </el-table-column>
     <el-table-column label="审核">
@@ -42,109 +42,90 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { computed, ref } from 'vue'
+<script lang="ts">
+import { computed, ref, onMounted } from 'vue'
+import axios from 'axios'
 
-interface Application {
-  data: string
-  group: string
-  status: string;
-}
+export default {
+  setup() {
+    interface Application {
+      time: string
+      group_name: string
+      status: string;
+    }
+    
+    const groupList = ref<Application[]>([]);
+    const small = ref(false)
+    const background = ref(false)
+    const disabled = ref(false)
 
-const small = ref(false)
-const background = ref(false)
-const disabled = ref(false)
+    const search = ref('')
+    const currentPage = ref(1);
 
-const search = ref('')
-const currentPage = ref(1);
-const totalPages = computed(() => {
-  console.log(Math.ceil(filterTableData.value.length ))
-  return Math.ceil(filterTableData.value.length );
-});
-const filterTableData = computed(() =>
-  tableData.filter(
-    (data) =>
-      !search.value ||
-      data.data.includes(search.value)
-  )
-)
-const filteredTableData = computed(() => {
-  const start = (currentPage.value - 1) * 10;
-  const end = start + 10;
-  return filterTableData.value.slice(start, end);
-});
+    const totalPages = computed(() => {
+      return Math.ceil(filteredTableData.value.length);
+    });
 
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-}
+    const filteredTableData = computed(() => {
+      const start = (currentPage.value - 1) * 10;
+      const end = start + 10;
+      return filterTableData(groupList.value).slice(start, end);
+    });
 
-const tableData: Application[] = [
-  {
-    data: '2023-11-18',
-    group: 'group1',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group2',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group3',
-    status:'审核通过'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group4',
-    status:'拒绝'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group5',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group6',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group7',
-    status:'审核通过'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group8',
-    status:'拒绝'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group9',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group10',
-    status:'审核中'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group11',
-    status:'审核通过'
-  },
-  {
-    data: '2023-11-18',
-    group: 'group12',
-    status:'拒绝'
-  },
+    const filterTableData = (data: Application[]) => {
+      return data.filter(
+        (item) =>
+          !search.value ||
+          item.time.includes(search.value) ||
+          item.group_name.includes(search.value) ||
+          item.status.includes(search.value)
+      );
+    };
 
-]
+    const handleCurrentChange = (val: number) => {
+      console.log(`current page: ${val}`)
+    }
 
-const handleApplication = (op: number) => {
+    const handleApplication = (op: number) => {
   
+    }
+
+    onMounted(() => {
+      const storedUid = sessionStorage.getItem('uid');
+      if (storedUid) {
+        const uid = JSON.parse(storedUid);
+        axios({
+          method: "GET",
+          url: "http://127.0.0.1:8000/api/group/apply",
+          params: {
+            uid: uid,
+            method: "accept"
+          }
+        }).then((result) => {
+          groupList.value = result.data.list;
+          // Process any other data as needed from the result
+        }).catch((error) => {
+          console.error('Error fetching group data:', error);
+        });
+      } else {
+        console.error('UID not found in sessionStorage');
+      }
+    });
+
+    return {
+      small,
+      background,
+      disabled,
+      search,
+      currentPage,
+      totalPages,
+      filteredTableData,
+      handleCurrentChange,
+      handleApplication
+    };
+  }
 }
+
 </script>
 
 <style scoped>
