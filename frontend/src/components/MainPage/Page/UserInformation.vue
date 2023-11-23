@@ -1,234 +1,230 @@
 <template>
-    <el-row :gutter="20">
-        <el-col :span="8">
+  <el-row :gutter="20">
+    <el-col :span="8">
+      <!-- 头像组件 -->
 
-            <!-- 头像组件 -->
+      <div class="avatarDiv">
+        <el-avatar
+          :size="150"
+          shape="circle"
+          :src="picture || './src/images/emptyAvatar.png'"
+        ></el-avatar>
+      </div>
 
-            <div class="avatarDiv">
-                <el-avatar :size="150" shape="circle" src="./src/images/emptyAvatar.png"></el-avatar>
-            </div>
+      <!-- 个人账号 -->
 
-            <!-- 个人账号 -->
+      <div class="nameDiv">
+        <div>你好啊：</div>
+        <div>{{ name }}</div>
+        <div class="genderSign">
+          <el-icon v-if="this.gender === '女'">
+            <Female />
+          </el-icon>
+          <el-icon v-else>
+            <Male />
+          </el-icon>
+        </div>
+      </div>
 
-            <div class="nameDiv">
-                <div>你好啊： </div>
-                <div>{{ name }}</div>
-                <div class="genderSign">
-                    <el-icon v-if="this.gender === '女'">
-                        <Female />
-                    </el-icon>
-                    <el-icon v-else>
-                        <Male />
-                    </el-icon>
-                </div>
-            </div>
+      <!-- 个人签名 -->
 
-            <!-- 个人签名 -->
+      <div class="signDiv">
+        <div>{{ sign }}</div>
+      </div>
 
-            <div class="signDiv">
-                <div>{{ sign }}</div>
-            </div>
+      <el-divider />
 
-            <el-divider />
+      <!-- 个人数据 -->
 
-            <!-- 个人数据 -->
+      <div class="statistic">
+        <el-row>
+          <el-col :span="8">
+            <el-statistic title="好友" :value="this.friend" />
+          </el-col>
+          <el-col :span="8">
+            <el-statistic title="已参加活动" :value="this.activity" />
+          </el-col>
+          <el-col :span="8">
+            <el-statistic title="已参加团体" :value="this.group" />
+          </el-col>
+        </el-row>
+      </div>
 
-            <div class="statistic">
-                <el-row>
-                    <el-col :span="8">
-                        <el-statistic title="好友" :value="this.friend" />
-                    </el-col>
-                    <el-col :span="8">
-                        <el-statistic title="已参加活动" :value="this.activity" />
-                    </el-col>
-                    <el-col :span="8">
-                        <el-statistic title="已参加团体" :value="this.group" />
-                    </el-col>
-                </el-row>
-            </div>
+      <el-divider />
 
-            <el-divider />
+      <!-- 其他个人信息 -->
 
-            <!-- 其他个人信息 -->
+      <div class="information">
+        <div class="informationRow">其他个人信息：</div>
 
-            <div class="information">
-                <div class="informationRow">其他个人信息：</div>
+        <div class="informationRow">
+          <div class="icon">
+            <el-icon>
+              <User />
+            </el-icon>
+          </div>
 
-                <div class="informationRow">
-                    <div class="icon">
-                        <el-icon>
-                            <User />
-                        </el-icon>
-                    </div>
+          <div class="text">年龄：{{ age }}岁</div>
+        </div>
 
-                    <div class="text">年龄：{{ age }}岁</div>
-                </div>
+        <div class="informationRow">
+          <div class="icon">
+            <el-icon>
+              <Phone />
+            </el-icon>
+          </div>
 
-                <div class="informationRow">
-                    <div class="icon">
-                        <el-icon>
-                            <Phone />
-                        </el-icon>
-                    </div>
+          <div class="text">电话号码：{{ phone }}</div>
+        </div>
 
-                    <div class="text">电话号码：{{ phone }}</div>
-                </div>
+        <div class="informationRow">
+          <div class="icon">
+            <el-icon>
+              <Message />
+            </el-icon>
+          </div>
 
-                <div class="informationRow">
-                    <div class="icon">
-                        <el-icon>
-                            <Message />
-                        </el-icon>
-                    </div>
+          <div class="text">个人邮箱：{{ email }}</div>
+        </div>
+      </div>
 
-                    <div class="text">个人邮箱：{{ email }}</div>
-                </div>
-            </div>
+      <!-- 更改个人信息按钮 -->
+      <div class="changeButton">
+        <ChangeUserInformation />
+      </div>
+    </el-col>
 
-            <!-- 更改个人信息按钮 -->
-            <div class="changeButton">
-                <ChangeUserInformation />
-            </div>
+    <el-col :span="8">
+      <!-- 活动饼状图 -->
+      <div class="pieChart">
+        <Echart />
+      </div>
+    </el-col>
 
-        </el-col>
-
-
-        <el-col :span="8">
-
-            <!-- 活动饼状图 -->
-            <div class="pieChart">
-                <Echart />
-            </div>
-
-
-        </el-col>
-
-
-        <el-col :span="8">
-        </el-col>
-    </el-row>
+    <el-col :span="8"> </el-col>
+  </el-row>
 </template>
 
 <script>
-import Echart from "../Components/Echart.vue"
-import ChangeUserInformation from "../Components/ChangeUserInformation.vue"
-import axios from 'axios'
-import { Female, Male, User, Phone, Message } from '@element-plus/icons-vue'
+import Echart from "../Components/Echart.vue";
+import ChangeUserInformation from "../Components/ChangeUserInformation.vue";
+import axios from "axios";
+import { Female, Male, User, Phone, Message } from "@element-plus/icons-vue";
 export default {
-    data() {
-        return {
-            name: '',
-            age: '',
-            gender: '',
-            phone: '',
-            email: '',
-            sign: '这个人很懒，还没有留下任何签名哦~',
-            picture: '',
-            activity: '',
-            friend: '',
-            group: '',
-        }
-    },
-    components: {
-        Echart,
-        ChangeUserInformation,
-        Female,
-        Male,
-        User,
-        Phone,
-        Message,
-    },
-    created() {
-        axios({
-            method: "GET",
-            url: "http://127.0.0.1:8000/api/user/information",
-            params: {
-                uid: JSON.parse(sessionStorage.getItem('uid'))
-            }
-        }).then((result) => {
-            if (result.data.status) {
-                this.name = result.data.info.name;
-                this.age = result.data.info.age;
-                this.gender = result.data.info.gender;
-                this.phone = result.data.info.phone;
-                this.email = result.data.info.email;
-                this.sign = result.data.info.signature;
-                this.picture = result.data.info.picture;
-                this.activity = result.data.info.activity;
-                this.friend = result.data.info.friend;
-                this.group = result.data.info.group;
-            }
-        });
-    }
-}
+  data() {
+    return {
+      name: "",
+      age: "",
+      gender: "",
+      phone: "",
+      email: "",
+      sign: "这个人很懒，还没有留下任何签名哦~",
+      picture: "",
+      activity: "",
+      friend: "",
+      group: "",
+    };
+  },
+  components: {
+    Echart,
+    ChangeUserInformation,
+    Female,
+    Male,
+    User,
+    Phone,
+    Message,
+  },
+  created() {
+    axios({
+      method: "GET",
+      url: "http://127.0.0.1:8000/api/user/information",
+      params: {
+        uid: JSON.parse(sessionStorage.getItem("uid")),
+      },
+    }).then((result) => {
+      if (result.data.status) {
+        this.name = result.data.info.name;
+        this.age = result.data.info.age;
+        this.gender = result.data.info.gender;
+        this.phone = result.data.info.phone;
+        this.email = result.data.info.email;
+        this.sign = result.data.info.signature;
+        this.picture = "http://127.0.0.1:8000" + result.data.info.picture;
+        this.activity = result.data.info.activity;
+        this.friend = result.data.info.friend;
+        this.group = result.data.info.group;
+      }
+    });
+  },
+};
 </script>
 
 <style scoped>
 .el-col {
-    text-align: center;
+  text-align: center;
 }
 
 .avatarDiv {
-    display: flex;
-    justify-content: center;
-    padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
 }
 
 .nameDiv {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
 }
 
 .genderSign {
-    margin-top: 2px;
-    margin-left: 6px;
-    height: 60%;
+  margin-top: 2px;
+  margin-left: 6px;
+  height: 60%;
 }
 
 .signDiv {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    font-size: 14px;
-    color: gray;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
+  color: gray;
 }
 
 .pieChart {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .information {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
 .informationRow {
-    display: flex;
+  display: flex;
 
-    margin-bottom: 8px;
-    margin-left: 16px;
+  margin-bottom: 8px;
+  margin-left: 16px;
 }
 
 .text {
-    font-size: 16px;
-    margin-left: 6px;
+  font-size: 16px;
+  margin-left: 6px;
 }
 
 .icon {
-    vertical-align: center;
-    padding-top: 3px;
+  vertical-align: center;
+  padding-top: 3px;
 }
 
 .changeButton {
-    margin-top: 16px;
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 20px;
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 20px;
 }
 </style>
   

@@ -10,6 +10,8 @@ urlpatterns = [
     path('user/login', user.login),
     path('user/register', user.register),
     path('user/information', user.information),
+    path('user/modify/text', user.modify_text),
+    path('user/modify/pic', user.modify_pic),
     path('user/group', user.group_view),
 
     # group

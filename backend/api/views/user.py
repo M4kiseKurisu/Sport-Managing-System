@@ -27,7 +27,8 @@ def login(request):
         password = request.GET.get('password')
         user = User.objects.filter(account=account, password=password).first()
         if user:
-            return JsonResponse({"msg": '登录成功', "status": True, "uid": user.uid, "user_name": user.user_name})
+            return JsonResponse({"msg": '登录成功', "status": True, "uid": user.uid, "user_name": user.user_name,
+                                 "picture": user.picture.url})
         else:
             return JsonResponse({"msg": '登录失败', "status": False, "uid": None, "user_name": None})
     else:
@@ -85,17 +86,38 @@ def information(request):
         return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
-def modify(request):
-    """ 查看个人详细信息 """
+def modify_text(request):
+    """ 修改个人信息 """
     if request.method == 'POST':
-        user = User.objects.get(uid=request.POST.get('uid'))
-        for (key, value) in request.POST.get('data').items():
+        req: dict = json.loads(request.body)
+        print(req)
+        user = User.objects.get(uid=req.get('uid'))
+        # 数据库约束检查
+        phone_number = req.get('data').get('phone_number')
+        email = req.get('data').get('email')
+        if phone_number and phone_number != user.phone_number:
+            if User.objects.filter(phone_number=phone_number).first():
+                return JsonResponse({"msg": "电话号码已存在", "status": False})
+        if email and email != user.email:
+            if User.objects.filter(email=email).first():
+                return JsonResponse({"msg": "邮箱已存在", "status": False})
+
+        for (key, value) in req.get('data').items():
             print(key, value)
             setattr(user, key, value)
-
+        user.save()
         return JsonResponse({"msg": "个人信息修改成功", "status": True})
     else:
         return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def modify_pic(request):
+    """ 修改个人头像 """
+    print(request.POST)
+    user = User.objects.get(uid=request.POST.get('uid'))
+    user.picture = request.FILES['picture']
+    user.save()
+    return JsonResponse({"msg": "头像已更新", "status": True})
 
 
 def group_view(request):
