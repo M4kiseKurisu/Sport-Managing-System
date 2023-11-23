@@ -1,7 +1,14 @@
 <template>
-    <div class="title">
-        <div>个人借出</div>
+    <div class="headline">
+        <div class="title">
+            <div>个人借出</div>
+        </div>
+
+        <div class="search">
+            <BorrowSearch :isGroup=false @someEvent="getHandle" />
+        </div>
     </div>
+
 
     <BorrowFormRow :isTitle=true :isGroup=false />
     <!-- <BorrowFormRow v-if="have1" :information="list[0]" :isTitle=false :isGroup=false />
@@ -22,6 +29,7 @@
 
 <script>
 import BorrowFormRow from "../../Components/BorrowFormRow.vue"
+import BorrowSearch from "../../Components/BorrowSearch.vue"
 import axios from 'axios'
 export default {
     data() {
@@ -66,10 +74,21 @@ export default {
             //     returnTime: list[0].end_time,
             //     state: list[0].is_return,
             // }
+            // params: {
+            //     uid: JSON.parse(sessionStorage.getItem('uid')),
+            //     config: {
+            //         method: 'person',
+            //         category: '',
+            //         time: '',
+            //         state: '',
+            //     }
+            // }
+            message: "",
         }
     },
     components: {
         BorrowFormRow,
+        BorrowSearch,
     },
     methods: {
         handlePageChange(pageNo) {
@@ -77,18 +96,63 @@ export default {
             // 在这里，你可以获取该页面的数据，并更新你的组件
             // 确保你的请求是异步的，以避免阻塞用户界面
             this.current_page = pageNo;
+        },
+        toString() {
+
+        },
+        getHandle(data) {
+            this.message = data;
+            console.log(this.message);
+            let searchUrl = 'http://127.0.0.1:8000/api/equipment/record?uid=' + JSON.parse(sessionStorage.getItem('uid'));
+            searchUrl += '&config={"method":"person"';
+            if (data.type != '') {
+                searchUrl += ', "category":"' + data.type + '"';
+            }
+            if (data.time != '' && data.time != null) {
+                searchUrl += ', "time":"' + data.time + '"';
+            }
+            if (data.state == 0 || data.state == 2) {
+                searchUrl += ', "state":"' + data.state + '"';
+            }
+            searchUrl += '}';
+            console.log(searchUrl);
+            axios({
+                method: "GET",
+                url: searchUrl
+            }).then((result) => {
+                console.log(result)
+                if (result.data.status) {
+                    // console.log(result.data.list);
+                    this.list = [];
+                    for (let i = 0; i < result.data.list.length; i++) {
+                        this.list.push({
+                            url: 'http://127.0.0.1:8000' + result.data.list[i].pic,
+                            name: result.data.list[i].category,
+                            amount: String(result.data.list[i].lend_amount),
+                            returnTime: result.data.list[i].end_time,
+                            state: result.data.list[i].is_return,
+                        });
+                    }
+                }
+                console.log(this.list);
+            })
         }
     },
     created() {
         console.log(JSON.parse(sessionStorage.getItem('uid')));
+        let searchUrl = 'http://127.0.0.1:8000/api/equipment/record?uid=' + JSON.parse(sessionStorage.getItem('uid'))
+            + '&config={"method":"person"}';
         axios({
             method: "GET",
-            url: "http://127.0.0.1:8000/api/equipment/record",
-            params: {
-                uid: JSON.parse(sessionStorage.getItem('uid'))
-            }
+            // url: 'http://127.0.0.1:8000/api/equipment/record?uid=2135220&config={"method": "group", "time":"2023-12-12"}',
+            url: searchUrl
+            // params: {
+            //     uid: JSON.parse(sessionStorage.getItem('uid')),
+            //     config: "{ 'method': 'person' }"
+            // }
         }).then((result) => {
             if (result.data.status) {
+                // console.log(result.data.list);
                 for (let i = 0; i < result.data.list.length; i++) {
                     this.list.push({
                         url: 'http://127.0.0.1:8000' + result.data.list[i].pic,
@@ -111,10 +175,21 @@ export default {
 </script>
 
 <style scoped>
+.headline {
+    display: flex;
+    justify-content: space-between;
+}
+
 .title {
     font-size: 20px;
     margin-bottom: 30px;
     margin-top: 20px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    margin-right: 24px;
 }
 
 .pagination {

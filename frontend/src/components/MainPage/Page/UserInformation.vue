@@ -12,13 +12,21 @@
 
             <div class="nameDiv">
                 <div>你好啊： </div>
-                <div v-html="name"></div>
+                <div>{{ name }}</div>
+                <div class="genderSign">
+                    <el-icon v-if="this.gender === '女'">
+                        <Female />
+                    </el-icon>
+                    <el-icon v-else>
+                        <Male />
+                    </el-icon>
+                </div>
             </div>
 
             <!-- 个人签名 -->
 
             <div class="signDiv">
-                <div v-html="sign"></div>
+                <div>{{ sign }}</div>
             </div>
 
             <el-divider />
@@ -28,16 +36,60 @@
             <div class="statistic">
                 <el-row>
                     <el-col :span="8">
-                        <el-statistic title="好友" :value="0" />
+                        <el-statistic title="好友" :value="this.friend" />
                     </el-col>
                     <el-col :span="8">
-                        <el-statistic title="已参加活动" :value="0" />
+                        <el-statistic title="已参加活动" :value="this.activity" />
                     </el-col>
                     <el-col :span="8">
-                        <el-statistic title="已参加团体" :value="0" />
+                        <el-statistic title="已参加团体" :value="this.group" />
                     </el-col>
                 </el-row>
             </div>
+
+            <el-divider />
+
+            <!-- 其他个人信息 -->
+
+            <div class="information">
+                <div class="informationRow">其他个人信息：</div>
+
+                <div class="informationRow">
+                    <div class="icon">
+                        <el-icon>
+                            <User />
+                        </el-icon>
+                    </div>
+
+                    <div class="text">年龄：{{ age }}岁</div>
+                </div>
+
+                <div class="informationRow">
+                    <div class="icon">
+                        <el-icon>
+                            <Phone />
+                        </el-icon>
+                    </div>
+
+                    <div class="text">电话号码：{{ phone }}</div>
+                </div>
+
+                <div class="informationRow">
+                    <div class="icon">
+                        <el-icon>
+                            <Message />
+                        </el-icon>
+                    </div>
+
+                    <div class="text">个人邮箱：{{ email }}</div>
+                </div>
+            </div>
+
+            <!-- 更改个人信息按钮 -->
+            <div class="changeButton">
+                <ChangeUserInformation />
+            </div>
+
         </el-col>
 
 
@@ -59,15 +111,54 @@
 
 <script>
 import Echart from "../Components/Echart.vue"
+import ChangeUserInformation from "../Components/ChangeUserInformation.vue"
+import axios from 'axios'
+import { Female, Male, User, Phone, Message } from '@element-plus/icons-vue'
 export default {
     data() {
         return {
-            name: 'MakiseKurisu',
-            sign: '这个人很懒，还没有留下任何签名哦~'
+            name: '',
+            age: '',
+            gender: '',
+            phone: '',
+            email: '',
+            sign: '这个人很懒，还没有留下任何签名哦~',
+            picture: '',
+            activity: '',
+            friend: '',
+            group: '',
         }
     },
     components: {
-        Echart
+        Echart,
+        ChangeUserInformation,
+        Female,
+        Male,
+        User,
+        Phone,
+        Message,
+    },
+    created() {
+        axios({
+            method: "GET",
+            url: "http://127.0.0.1:8000/api/user/information",
+            params: {
+                uid: JSON.parse(sessionStorage.getItem('uid'))
+            }
+        }).then((result) => {
+            if (result.data.status) {
+                this.name = result.data.info.name;
+                this.age = result.data.info.age;
+                this.gender = result.data.info.gender;
+                this.phone = result.data.info.phone;
+                this.email = result.data.info.email;
+                this.sign = result.data.info.signature;
+                this.picture = result.data.info.picture;
+                this.activity = result.data.info.activity;
+                this.friend = result.data.info.friend;
+                this.group = result.data.info.group;
+            }
+        });
     }
 }
 </script>
@@ -87,7 +178,14 @@ export default {
     margin-top: 20px;
     display: flex;
     justify-content: center;
+    align-items: center;
     font-size: 20px;
+}
+
+.genderSign {
+    margin-top: 2px;
+    margin-left: 6px;
+    height: 60%;
 }
 
 .signDiv {
@@ -101,6 +199,36 @@ export default {
 .pieChart {
     display: flex;
     justify-content: center;
+}
+
+.information {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.informationRow {
+    display: flex;
+
+    margin-bottom: 8px;
+    margin-left: 16px;
+}
+
+.text {
+    font-size: 16px;
+    margin-left: 6px;
+}
+
+.icon {
+    vertical-align: center;
+    padding-top: 3px;
+}
+
+.changeButton {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
 }
 </style>
   
