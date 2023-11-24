@@ -5,7 +5,7 @@
         <Header />
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="150px">
           <Sidebar />
         </el-aside>
         <el-main>
@@ -24,6 +24,7 @@
           <router-view></router-view>
           <!-- <FriendInformation /> -->
           <!-- <Details /> -->
+          <!-- <CreateGroup /> -->
         </el-main>
       </el-container>
     </el-container>
@@ -41,6 +42,7 @@ import EBorrowMain from './Page/E-Borrow/EBorrowMain.vue'
 import FriendInformation from './Page/FriendInformation.vue';
 import GroupInformation from './Page/GroupInformation.vue'
 import Details from './Page/Group/Details.vue';
+import CreateGroup from './Components/CreateGroup.vue';
 
 
 export default {
@@ -54,7 +56,8 @@ export default {
     FriendInformation,
     GroupInformation,
     UserInformation,
-    Details
+    Details,
+    CreateGroup
   },
 };
 </script>

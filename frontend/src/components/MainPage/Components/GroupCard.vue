@@ -26,7 +26,7 @@
             <el-button text class="button">查看详情</el-button>
         </router-link>
         <span>{{ props.card.capacity }}/{{ props.card.maximum }}</span>
-        <el-button v-if="props.card.is_joined === 'true'" @click="open" class="button">
+        <el-button v-if="props.card.is_joined === false" @click="applicate" class="button">
           申请加入
         </el-button>
         <el-button v-else text type="danger" class="button" disabled>
@@ -39,7 +39,7 @@
 
 
 <script lang="ts" setup>
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
 
 const defaultImage = "./src/images/group-default-picture.png"
@@ -50,7 +50,7 @@ interface CardProps {
     group_name: string;
     pic: string;
     creator: string;
-    is_joined: string;
+    is_joined: boolean;
     maximum: number;
     capacity: number;
     group_desc: ""
@@ -62,12 +62,26 @@ interface CardProps {
 
 const props  = defineProps<CardProps>();
 
-const open = () => {
-  ElMessageBox.alert( props.msg, {
-    confirmButtonText: 'OK',
-    callback: (action: Action) => {},
-  });
-};
+const applicate = () => {
+  ElMessageBox.prompt('发送你的申请', {
+    confirmButtonText: '提交申请',
+    cancelButtonText: '取消申请',
+    inputPattern:/.*/,
+    inputErrorMessage: '请填写申请',
+  })
+    .then(({ value }) => {
+      ElMessage({
+        type: 'success',
+        message: `申请成功发送`,
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '你已取消申请',
+      })
+    })
+}
 
 </script>
 
