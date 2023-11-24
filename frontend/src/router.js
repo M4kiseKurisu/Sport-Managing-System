@@ -27,6 +27,10 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
+            path: '',
+            redirect: '/Login'
+        },
+        {
             path: '/Login',
             component: Login,
             meta: {

@@ -10,11 +10,21 @@
       <div class="title">用户登录</div>
       <div class="logContent">
         <div class="account-box">
-          <input type="text" placeholder="账号输入" :class="'logInput'" v-model="account" />
+          <input
+            type="text"
+            placeholder="账号输入"
+            :class="'logInput'"
+            v-model="account"
+          />
         </div>
         <div class="account-error" ref="accountError">账号不能为空</div>
         <div class="password-box">
-          <input type="password" placeholder="密码输入" :class="'logInput'" v-model="password" />
+          <input
+            type="password"
+            placeholder="密码输入"
+            :class="'logInput'"
+            v-model="password"
+          />
         </div>
         <div class="password-error" ref="passwordError">密码不能为空</div>
 
@@ -53,10 +63,9 @@ export default {
           },
         }).then((result) => {
           if (result.data.status) {
-            //alert("登录成功");
             this.$store.commit("userLogin", result.data);
-            console.log(sessionStorage.getItem('uid'));
-            this.$router.push({ path: 'Page/User_Information' });
+            console.log(sessionStorage.getItem("uid"));
+            this.$router.push({ path: "Page/User_Information" });
           } else {
             alert("账号或密码不正确");
           }
