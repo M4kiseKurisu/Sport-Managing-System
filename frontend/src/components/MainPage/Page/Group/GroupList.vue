@@ -113,15 +113,16 @@ export default {
       })
     },
     search() {
-            // axios({
-            //     method: "GET",
-            //     url: "http://127.0.0.1:8000/api/group/view",
-            //     params: {
-            //         keyword: this.keyword
-            //     }
-            // }).then((result) => {
-            //         this.groupList = result.data.list   
-            // });
+          axios({
+              method: "GET",
+              url: "http://127.0.0.1:8000/api/group/view",
+              params: {
+                  uid: sessionStorage.getItem('uid'),
+                  keyword: this.keyword
+              }
+          }).then((result) => {
+              this.groupList = result.data.list   
+          });
     }
   },
 }
