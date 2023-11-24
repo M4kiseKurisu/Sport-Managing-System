@@ -1,9 +1,9 @@
 from django.urls import path
 
-from api.views import user
-from api.views import group
-from api.views import field
-from api.views import equipment
+from api.views.entity import equipment
+from api.views.entity import user
+from api.views.entity import field
+from api.views.entity import group
 
 urlpatterns = [
     # user
@@ -12,7 +12,7 @@ urlpatterns = [
     path('user/information', user.information),
     path('user/modify/text', user.modify_text),
     path('user/modify/pic', user.modify_pic),
-    path('user/group', user.group_view),
+    path('user/group', user.group_list),
 
     # group
     path('group/view', group.view),
@@ -29,5 +29,11 @@ urlpatterns = [
     path('equipment/view', equipment.view),
     path('equipment/borrow', equipment.borrow),
     path('equipment/record', equipment.record),
-    path('equipment/return', equipment.give_back)
+    path('equipment/return', equipment.give_back),
+
+    # friend
+    path('user/find', user.find),
+    path('friend/add', user.friend_add),
+    path('friend/apply', user.friend_apply),
+    path('friend/list', user.friend_list),
 ]

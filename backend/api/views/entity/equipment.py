@@ -12,7 +12,7 @@ from api.models import User
 from api.models import Group
 from api.models import GroupEquipment
 from api.models import UserEquipment
-from api.views import user_group
+from api.views.relation import user_group
 
 
 def genid():
