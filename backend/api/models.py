@@ -197,3 +197,22 @@ class Friend(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['uid1', 'uid2'], name='unique_friend')
         ]
+
+
+class FriendApply(models.Model):
+    """ 好友申请表 """
+    STATUS = {
+        (0, "申请中"),
+        (1, "已接受"),
+        (2, "已拒绝"),
+    }
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
+    content = models.CharField(max_length=128)
+    apply_time = models.DateTimeField(auto_now_add=True)
+    status = models.SmallIntegerField(choices=STATUS)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['sender', 'receiver', 'apply_time'], name='unique_friend_apply')
+        ]
