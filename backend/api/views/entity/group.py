@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from api.models import Group
 from api.models import User
-from api.views import user_group
+from api.views.relation import user_group
 
 
 def genid():
@@ -87,8 +87,8 @@ def join(request):
 
 
 def apply(request):
-    """ 查看团体申请信息 """
     if request.method == 'GET':
+        """ 查看团体申请信息 """
         uid = request.GET.get('uid')
         method = request.GET.get('method')
         lst = []
@@ -116,12 +116,13 @@ def apply(request):
         return JsonResponse({"msg": "团体申请获取成功", "status": True, "list": lst})
 
     elif request.method == 'POST':
+        """ 处理团体申请 """
         data: dict = json.loads(request.body)
         print(data)
-        if user_group.handle_apply(data.get('mid'), data.get('uid'), data.get('gid'), data.get('res')):
+        if user_group.handle_apply(data.get('uid'), data.get('gid'), data.get('res')):
             return JsonResponse({"msg": "处理完成", "status": True})
         else:
-            return JsonResponse({"msg": "当前用户无权限处理该团体申请", "status": False})
+            return JsonResponse({"msg": "团体人数已达上限", "status": False})
 
     else:
         return JsonResponse({"msg": "请求方式有误", "status": False})

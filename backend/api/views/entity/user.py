@@ -8,9 +8,7 @@ from django.db.models import Q
 
 from api.models import User
 
-from api.views import user_group
-from api.views import user_activity
-from api.views import friends
+from api.views.relation import user_activity, user_group, friend
 
 
 def genid():
@@ -73,7 +71,7 @@ def information(request):
         # 用户参加的团体
         groups = user_group.search_relation(uid)
         # 用户的好友
-        f = friends.search_relation(uid)
+        f = friend.search_relation(uid)
 
         info = {"uid": uid, "name": user.user_name, "age": user.user_age,
                 "gender": user.get_user_gender_display(), "phone": user.phone_number, "email": user.email,
@@ -113,14 +111,17 @@ def modify_text(request):
 
 def modify_pic(request):
     """ 修改个人头像 """
-    print(request.POST)
-    user = User.objects.get(uid=request.POST.get('uid'))
-    user.picture = request.FILES['picture']
-    user.save()
-    return JsonResponse({"msg": "头像已更新", "status": True})
+    if request.method == 'POST':
+        print(request.POST)
+        user = User.objects.get(uid=request.POST.get('uid'))
+        user.picture = request.FILES['picture']
+        user.save()
+        return JsonResponse({"msg": "头像已更新", "status": True})
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
-def group_view(request):
+def group_list(request):
     """ 查看用户所属团体 """
     if request.method == 'GET':
         uid = request.GET.get('uid')
@@ -130,5 +131,90 @@ def group_view(request):
                        user_group.search_relation(uid)))
         print(lst)
         return JsonResponse({"msg": '团体信息请求成功', "status": True, "list": lst})
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def find(request):
+    """ 查询用户 """
+    if request.method == 'GET':
+        key = request.GET.get('keyword', '')
+        if key == '':
+            lst = []
+        else:
+            users = User.objects.filter(user_name__icontains=key)
+            friends = friend.search_relation(request.GET.get('uid'))
+            lst = list(map(lambda param: {'uid': param.uid, 'user_name': param.user_name,
+                                          "pic": param.picture.url if param.picture else None,
+                                          "signature": param.user_signature, "is_friend": param in friends},
+                           users))
+        print(lst)
+        return JsonResponse({"msg": '用户信息搜索成功', "status": True, "list": lst})
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def friend_list(request):
+    """ 好友列表 """
+    if request.method == 'GET':
+        uid = request.GET.get('uid')
+        keyword = request.GET.get('keyword', '')
+
+        lst = []
+        for param in friend.search_relation(uid):
+            if keyword in param.user_name:
+                lst.append({'uid': param.uid, 'user_name': param.user_name,
+                            "pic": param.picture.url if param.picture else None})
+        print(lst)
+        return JsonResponse({"msg": '好友列表请求成功', "status": True, "list": lst})
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def friend_add(request):
+    """ 申请添加好友 """
+    if request.method == 'POST':
+        data: dict = json.loads(request.body)
+        print(data)
+        sender = data.get('sender')
+        receiver = data.get('receiver')
+        content = data.get('content')
+
+        msg, status = friend.add_apply(sender, receiver, content)
+        return JsonResponse({"msg": msg, "status": status})
+    else:
+        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+
+def friend_apply(request):
+    if request.method == 'GET':
+        """ 查看好友申请 """
+        uid = request.GET.get('uid')
+        method = request.GET.get('method')
+
+        if method == "accept":
+            applies = friend.search_accept_apply(uid)
+            lst = list(map(lambda param: {"uid": param.sender.uid, "user_name": param.sender.user_name,
+                                          "content": param.content, "status": param.get_status_display(),
+                                          "time": param.apply_time.strftime("%Y-%m-%d %H:%M:%S")},
+                           applies))
+        elif method == "send":
+            applies = friend.search_send_apply(uid)
+            lst = list(map(lambda param: {"uid": param.receiver.uid, "user_name": param.receiver.user_name,
+                                          "content": param.content, "status": param.get_status_display(),
+                                          "time": param.apply_time.strftime("%Y-%m-%d %H:%M:%S")},
+                           applies))
+        else:
+            return JsonResponse({"msg": "method参数错误", "status": False})
+
+        return JsonResponse({"msg": "好友申请信息获取成功", "status": True, "list": lst})
+
+    elif request.method == 'POST':
+        """ 处理好友申请 """
+        data: dict = json.loads(request.body)
+        print(data)
+        friend.handle_apply(data.get('sender'), data.get('receiver'), data.get('res'))
+        return JsonResponse({"msg": "处理完成", "status": True})
+
     else:
         return JsonResponse({"msg": "请求方式有误", "status": False})

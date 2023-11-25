@@ -75,20 +75,20 @@ def search_send_apply(uid):
     return lst
 
 
-def handle_apply(mid, uid, gid, res):
+def handle_apply(uid, gid, res):
     """ 管理员处理团体申请请求 """
-    manager = User.objects.get(uid=mid)
     group = Group.objects.get(gid=gid)
-    if not UserInGroup.objects.get(uid=manager, gid=group, manager_flag=True):
-        return False
+    applicant = User.objects.get(uid=uid)
+    apply = UserApplyGroup.objects.get(uid=applicant, gid=group, status=0)
+    if res:
+        if group.capacity == group.maximum:
+            return False
+        apply.status = 1
+        group.capacity += 1
+        group.save()
+        rec = UserInGroup(uid=applicant, gid=group, type=2)
+        rec.save()
     else:
-        applicant = User.objects.get(uid=uid)
-        apply = UserApplyGroup.objects.get(uid=applicant, gid=group)
-        if res:
-            apply.status = 1
-            rec = UserInGroup(uid=applicant, gid=group, manager_flag=False)
-            rec.save()
-        else:
-            apply.status = 2
-        apply.save()
-        return True
+        apply.status = 2
+    apply.save()
+    return True
