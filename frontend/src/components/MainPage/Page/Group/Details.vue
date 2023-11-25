@@ -17,7 +17,7 @@
                 <h1>{{ group.name }}</h1>
               </div>
               <div class="group-buttons"  v-if="this.father=='YourGroup' 
-              && (this.group.type=='创建人' || this.group.type=='管理者')">
+              && (this.group.type=='创建人' || this.group.type=='管理员')">
                 <el-button @click="addActivity()">新增活动</el-button>
               </div>
             </div>
@@ -88,7 +88,7 @@
               <div v-for="user in scope.row" :key="user.uid" class="user-info">
               <div v-if="this.father=='YourGroup'" class="button-container">
               <el-button
-                v-if="this.group.type=='创建人' || this.group.type=='管理者'"
+                v-if="this.group.type=='创建人' || this.group.type=='管理员'"
                 size="small"
                 type="danger"
                 @click="handleDelete(user.uid)"
@@ -97,8 +97,11 @@
                 v-if="this.group.type=='创建人'"
                 size="small"
                 type="warning"
-                @click="handleSet(scope.$index, scope.row)"
-              >设为管理员</el-button>
+                @click="handleSet(user)"
+              >
+                <span v-if="user.type=='管理员'">移除权限</span>
+                <span v-if="user.type=='成员'">设为管理员</span>
+              </el-button>
             </div>
             </div>
             </template>
@@ -143,7 +146,8 @@ export default {
       keyword: '',
       currentPage: 1,
       defaultImage: "./src/images/group-default-picture.png",
-      activeName: '1'
+      activeName: '1',
+      gid: ''
     };
   },
   mounted() {
@@ -157,6 +161,7 @@ export default {
 
     // 将参数存储在 group 对象中
     this.group.gid = gid;
+    this.gid = gid;
     this.group.name = groupName;
     this.group.description = description;
     this.group.image = image;
@@ -193,10 +198,11 @@ export default {
           method: "GET",
           url: "http://127.0.0.1:8000/api/group/members/list",
           params: {
-             gid: this.group.gid
+             gid: this.gid
           }
         }).then((result) => {
           if (result.data.status) {
+            console.log( result.data.list )
             this.Users = result.data.list; // 将后端数据赋值给 Users
             this.msg = result.data.msg;
           }
@@ -248,12 +254,50 @@ export default {
           } );
 
           this.getData();
-          this.drawer = false;
         } ).catch( error =>
         {
           ElMessage( {
             type: 'error',
             message: '踢出失败，请重试',
+          } );
+        } );
+      } ).catch( () =>
+      {
+        ElMessage( {
+          type: 'info',
+          message: '你已取消操作',
+        } );
+      } );
+    },
+
+    handleSet(user){
+      const type = user.type == '成员' ? 1 : 2;
+      const msg = user.type == '成员' ? '是否将其设为管理员':'是否取消其管理员权限';
+      ElMessageBox.confirm( msg,
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then( () =>
+      {
+        axios.post( 'http://127.0.0.1:8000/api/group/members/authority', {
+          uid: user.uid,
+          gid: this.group.gid,
+          type: type
+        } ).then( response =>
+        {
+          ElMessage( {
+            type: 'success',
+            message: '操作成功',
+          } );
+
+          this.getData();
+        } ).catch( error =>
+        {
+          ElMessage( {
+            type: 'error',
+            message: '操作失败，请重试',
           } );
         } );
       } ).catch( () =>
