@@ -1,30 +1,59 @@
 <template>
   <div>
   <el-table :data="filteredTableData" style="width: 80%">
+    
     <el-table-column label="申请日期">
       <template #default="{ row }">
         {{ row.time }}
       </template>
     </el-table-column>
+
+    <el-table-column label="申请人">
+      <template #default="{ row }">
+        {{ row.user_name }}
+      </template>
+    </el-table-column>
+
     <el-table-column label="申请对象">
       <template #default="{ row }">
         {{ row.group_name }}
       </template>
     </el-table-column>
+
+    <el-table-column label="申请信息">
+      <template #default="{ row }">
+        <div v-if="row.content.length > 10">
+          <el-collapse>
+            <el-collapse-item title="点击展开" v-if="row.content.length > 10">
+              {{ row.content }}
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+        <div v-else>
+          {{ row.content }}
+        </div>
+      </template>
+    </el-table-column>
+
     <el-table-column label="审核">
       <template #default="scope">
+        <div v-if="scope.row.status === '申请中'">
         <el-button
           size="small"
           type="success"
-          @click="handleApplication(1)"
+          @click="handleApplication(scope.row,1)"
           >同意</el-button
         >
         <el-button
           size="small"
           type="danger"
-          @click="handleApplication(2)"
+          @click="handleApplication(scope.row,2)"
           >拒绝</el-button
         >
+        </div>
+        <div v-else>
+          <span>{{scope.row.status}}</span>
+        </div> 
       </template>
     </el-table-column>
   </el-table>
@@ -44,14 +73,19 @@
 
 <script lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import { ElMessage} from 'element-plus'
 import axios from 'axios'
 
 export default {
   setup() {
     interface Application {
+      uid: number
+      user_name: string
       time: string
+      gid: number
       group_name: string
-      status: string;
+      status: string
+      content: string
     }
     
     const groupList = ref<Application[]>([]);
@@ -86,8 +120,35 @@ export default {
       console.log(`current page: ${val}`)
     }
 
-    const handleApplication = (op: number) => {
-  
+    const handleApplication = (row, op: number) => {
+      let res = false;
+      if(op == 1){
+          res = true;
+      }
+      axios({
+          method: "POST",
+          url: "http://127.0.0.1:8000/api/group/apply",
+          data: {
+            uid: row.uid,
+            gid: row.gid,
+            res: res
+          }
+        }).then(response => {
+        const { status, msg } = response.data;
+        if (status === true) {
+            ElMessage({
+              type: 'success',
+              message: msg,
+            });
+          } else {
+            ElMessage({
+              type: 'error',
+              message: msg,
+            });
+          }
+      }).catch(error => {
+        console.error(error);
+      });
     }
 
     onMounted(() => {
@@ -103,6 +164,7 @@ export default {
           }
         }).then((result) => {
           groupList.value = result.data.list;
+          console.log(groupList)
           // Process any other data as needed from the result
         }).catch((error) => {
           console.error('Error fetching group data:', error);

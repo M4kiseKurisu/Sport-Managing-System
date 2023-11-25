@@ -165,7 +165,6 @@ export default {
       }
 
       const pages: any[]= [];
-      console.log(this.groupList)
       for(let i = 0; i < this.groupList.length; i += 9){
         pages.push(this.groupList.slice(i, i+9));
       }
