@@ -3,8 +3,10 @@
 """
 import json
 import random
+
 from django.http import JsonResponse
 from django.db.models import Q
+from django.views.decorators.http import require_http_methods
 
 from api.models import Group
 from api.models import User
@@ -24,7 +26,7 @@ def view(request):
         key = request.GET.get('keyword') or ''
         uid = request.GET.get('uid')
         groups = Group.objects.filter(Q(group_name__icontains=key) | Q(group_desc__icontains=key))
-        joined_groups = list(map(lambda param: param.gid.gid, user_group.search_relation(uid)))
+        joined_groups = list(map(lambda param: param.gid.gid, user_group.search_relation(uid, None)))
 
         lst = list(map(lambda param: {"gid": param.gid, "group_name": param.group_name, "group_desc": param.group_desc,
                                       "tag": param.tag, "capacity": param.capacity, "maximum": param.maximum,
@@ -61,7 +63,7 @@ def create(request):
             gid = genid()
             creator = User.objects.get(uid=uid)
             new_group = Group(gid=gid, creator=creator, group_name=group_name, group_desc=group_desc,
-                              tag=tag, maximum=maximum, capacity=1, picture=request.FILES['picture'])
+                              tag=tag, maximum=maximum, capacity=0, picture=request.FILES['picture'])
             new_group.save()
             # 添加用户团体联系
             user_group.add_relation(uid, gid, 0)
@@ -86,6 +88,7 @@ def join(request):
         return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
+@require_http_methods(["GET", "POST"])
 def apply(request):
     if request.method == 'GET':
         """ 查看团体申请信息 """
@@ -124,5 +127,36 @@ def apply(request):
         else:
             return JsonResponse({"msg": "团体人数已达上限", "status": False})
 
-    else:
-        return JsonResponse({"msg": "请求方式有误", "status": False})
+
+@require_http_methods(["POST"])
+def exit_out(request):
+    """ 用户退出团体 """
+    data: dict = json.loads(request.body)
+    print(data)
+    uid = data.get('uid')
+    gid = data.get('gid')
+    user_group.delete_relation(uid, gid)
+    return JsonResponse({"msg": "团体已退出", "status": True})
+
+
+@require_http_methods(["GET"])
+def members_list(request):
+    """ 查看团体成员列表 """
+    gid = request.GET.get('gid')
+    keyword = request.GET.get('keyword', '')
+    members = user_group.search_relation(None, gid)
+    members = list(map(lambda param: {"uid": param.uid.uid, "user_name": param.uid.user_name,
+                                      "pic": param.uid.picture.url if param.uid.picture else None,
+                                      "type": param.get_type_display()},
+                       members.filter(uid__user_name__icontains=keyword).order_by('type')))
+    return JsonResponse({"msg": "成员列表获取成功", "status": True, "list": members})
+
+
+@require_http_methods(["POST"])
+def members_remove(request):
+    """ 移除团体成员 """
+    data: dict = json.loads(request.body)
+    uid = data.get('uid')
+    gid = data.get('gid')
+    user_group.delete_relation(uid, gid)
+    return JsonResponse({"msg": "成员已移除", "status": True})

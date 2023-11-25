@@ -9,11 +9,16 @@ from api.models import User
 from api.models import Group
 
 
-def search_relation(uid):
+def search_relation(uid, gid):
     """ 查询用户团体联系 """
     user = User.objects.filter(uid=uid).first()
-    if user:
+    group = Group.objects.filter(gid=gid).first()
+    if user and not group:
         return UserInGroup.objects.filter(uid=user)
+    elif group and not user:
+        return UserInGroup.objects.filter(gid=group)
+    elif user and group:
+        return UserInGroup.objects.filter(uid=user, gid=group)
     else:
         return None
 
@@ -27,15 +32,23 @@ def add_relation(uid, gid, teammate_type):
     else:
         new_relation = UserInGroup(uid=user, gid=group, type=teammate_type)
         new_relation.save()
+        group.capacity += 1
+        group.save()
         return True
 
 
 def delete_relation(uid, gid):
     """ 删除用户团体联系 """
-    if UserInGroup.objects.filter(uid=uid, gid=gid).first():
-        return True
-    else:
-        return False
+    user = User.objects.get(uid=uid)
+    group = Group.objects.get(gid=gid)
+    relation = UserInGroup.objects.filter(uid=user, gid=group).first()
+    if relation:
+        if relation.type == 0:
+            group.delete()
+        else:
+            relation.delete()
+            group.capacity -= 1
+            group.save()
 
 
 def add_apply(uid, gid, content):
