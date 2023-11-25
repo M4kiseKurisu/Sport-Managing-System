@@ -27,7 +27,7 @@ def login(request):
     user = User.objects.filter(account=account, password=password).first()
     if user:
         return JsonResponse({"msg": '登录成功', "status": True, "uid": user.uid, "user_name": user.user_name,
-                             "picture": user.picture.url})
+                             "picture": user.picture.url if user.picture else None})
     else:
         return JsonResponse({"msg": '登录失败', "status": False, "uid": None, "user_name": None})
 
@@ -66,7 +66,7 @@ def information(request):
     # 用户参加的活动：
     activities = user_activity.search_relation(uid)
     # 用户参加的团体
-    groups = user_group.search_relation(uid)
+    groups = user_group.search_relation(uid, None)
     # 用户的好友
     f = friend.search_relation(uid)
 
@@ -116,9 +116,12 @@ def group_list(request):
     """ 查看用户所属团体 """
     uid = request.GET.get('uid')
     lst = list(map(lambda param: {'gid': param.gid.gid, 'group_name': param.gid.group_name,
-                                  "pic": param.gid.picture.url if param.gid.picture else None,
+                                  'group_desc': param.gid.group_desc, 'tag': param.gid.tag,
+                                  'capacity': param.gid.capacity, 'maximum': param.gid.maximum,
+                                  'creator': param.gid.creator.user_name,
+                                  'pic': param.gid.picture.url if param.gid.picture else None,
                                   "type": param.get_type_display()},
-                   user_group.search_relation(uid)))
+                   user_group.search_relation(uid, None)))
     print(lst)
     return JsonResponse({"msg": '团体信息请求成功', "status": True, "list": lst})
 

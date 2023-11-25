@@ -30,7 +30,7 @@ class Group(models.Model):
     group_desc = models.CharField(max_length=128)
     tag = models.CharField(max_length=32)
     maximum = models.IntegerField()
-    capacity = models.IntegerField(default=1)
+    capacity = models.IntegerField()
     picture = models.ImageField(upload_to='images/group/', storage=ImageStorage(), null=True)
 
 
