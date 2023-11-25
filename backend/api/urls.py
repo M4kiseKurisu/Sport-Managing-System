@@ -22,6 +22,7 @@ urlpatterns = [
     path('group/exit', group.exit_out),
     path('group/members/list', group.members_list),
     path('group/members/remove', group.members_remove),
+    path('group/members/authority', group.members_authority),
 
     # field
     path('field/add', field.add),

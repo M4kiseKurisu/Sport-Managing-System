@@ -99,7 +99,7 @@ def apply(request):
         if method == "accept":
             applies = user_group.search_accept_apply(uid)
             for a in applies:
-                print(a)
+                print(a.apply_time)
                 temp = {"uid": a.uid.uid, "user_name": a.uid.user_name, "content": a.content,
                         "gid": a.gid.gid, "group_name": a.gid.group_name,
                         "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -160,3 +160,20 @@ def members_remove(request):
     gid = data.get('gid')
     user_group.delete_relation(uid, gid)
     return JsonResponse({"msg": "成员已移除", "status": True})
+
+
+@require_http_methods(["POST"])
+def members_authority(request):
+    data: dict = json.loads(request.body)
+    uid = data.get('uid')
+    gid = data.get('gid')
+    member_type = data.get('type')
+    if member_type == 0:
+        return JsonResponse({"msg": "无法修改团体创建人信息", "status": False})
+    elif member_type == 1:
+        user_group.modify_relation(uid, gid, member_type)
+        return JsonResponse({"msg": "添加团体管理员成功", "status": True})
+    elif member_type == 2:
+        user_group.modify_relation(uid, gid, member_type)
+        return JsonResponse({"msg": "移除团体管理员成功", "status": True})
+
