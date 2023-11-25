@@ -21,6 +21,16 @@ def search_relation(uid):
         return None
 
 
+def delete_relation(uid1, uid2):
+    """ 删除好友联系 """
+    user1 = User.objects.get(uid=uid1)
+    user2 = User.objects.get(uid=uid2)
+    Friend.objects.filter(
+        Q(uid1=user1, uid2=user2) |
+        Q(uid1=user2, uid2=user1)
+    ).delete()
+
+
 def add_apply(sid, rid, content):
     """ 添加好友申请信息 """
     sender = User.objects.get(uid=sid)

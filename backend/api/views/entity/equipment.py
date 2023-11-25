@@ -109,7 +109,7 @@ def record(request):
         elif method == 'group':
             groups = list(map(
                 lambda param: param.gid,
-                user_group.search_relation(uid).filter(gid__group_name__icontains=group_name))
+                user_group.search_relation(uid, None).filter(gid__group_name__icontains=group_name))
             )
             lst = record_for_group(user=user, equipments=equipments, groups=groups, time=time, state=state)
         else:
