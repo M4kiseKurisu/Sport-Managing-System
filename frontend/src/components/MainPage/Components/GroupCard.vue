@@ -20,7 +20,8 @@
             query: { 
                 groupName: card.group_name, 
                 description: card.group_desc, 
-                image: card.pic
+                image: card.pic,
+                father: 'GroupList'
             }
         }">
             <el-button text class="button">查看详情</el-button>

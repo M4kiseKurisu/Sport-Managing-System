@@ -1,6 +1,7 @@
 <template>
   <div class="common-layout">
     <el-container>
+
       <el-aside width="200px" class="centered-aside">
         <div class="group-info">
           <!-- Left section for group information -->
@@ -15,14 +16,16 @@
               <div class="group_name">
                 <h1>{{ group.name }}</h1>
               </div>
-              <div class="group-buttons">
+              <div class="group-buttons"  v-if="this.father=='YourGroup' 
+              && (this.group.type=='创建者' || this.group.type=='管理者')">
                 <el-button @click="addActivity()">新增活动</el-button>
-                <el-button @click="borrowEquipment()">借还器材</el-button>
               </div>
             </div>
           </div>
         </div>
       </el-aside>
+
+
       <el-main width="20%">
         <div class="group-navigation">
           <!-- Right section for navigation -->
@@ -45,10 +48,12 @@
           </ul>
         </div>
       </el-main>
+    </el-container>
 
-      <el-drawer v-model="drawer" title="成员列表" :with-header="false">
-        <el-table :data="filteredTableData" style="width: 90%">
-          <el-table-column label="呢称" width="200">
+      <el-drawer v-model="drawer" title="成员列表" :with-header="false" width="400px">
+        <el-table :data="filteredTableData" style="width:400px">
+
+          <el-table-column label="呢称" width="150px">
             <template #default="scope">
               <div class="user-info">
                 <img :src="getAvatar(scope.row)" alt="avatar" class="avatar">
@@ -56,18 +61,27 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column >
+          
+          <el-table-column label="类型">
+            <template #default="scope">
+              <span>{{scope.row.type }}</span>
+            </template>
+          </el-table-column>  
+
+          <el-table-column  width="150px">
             <template #header>
               <el-input v-model="search" size="small" placeholder="Type to search" />
             </template>
             <template #default="scope" align="right">
-              <div class="button-container">
+              <div v-if="this.father=='YourGroup'" class="button-container">
               <el-button
+                v-if="this.group.type=='创建者' || this.group.type=='管理者'"
                 size="small"
                 type="danger"
                 @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button>
               <el-button
+                v-if="this.group.type=='创建者'"
                 size="small"
                 type="warning"
                 @click="handleDelete(scope.$index, scope.row)"
@@ -75,6 +89,7 @@
             </div>
             </template>
           </el-table-column>
+
         </el-table>
 
         <el-pagination
@@ -88,7 +103,7 @@
         @current-change="handleCurrentChange"
         />
       </el-drawer>
-    </el-container>
+
   </div>
 </template>
 
@@ -96,15 +111,16 @@
 import { computed, ref } from 'vue'
 
 export default {
-  props: ['groupName', 'description'],
   data() {  
     return {
       drawer: false,
       group: {
         image: './src/images/group-default-picture.png', // Replace with your group image path
         name: '团体名称',
-        description: '团体简介描述'
-      }
+        description: '团体简介描述',
+        type: ''
+      },
+      father: ''
     };
   },
 
@@ -113,20 +129,20 @@ export default {
     const groupName = this.$route.query.groupName;
     const description = this.$route.query.description;
     const image = this.$route.query.image;
+    const father = this.$route.query.father;
+    const type = this.$route.query.type;
 
     // 将参数存储在 group 对象中
     this.group.name = groupName;
     this.group.description = description;
     this.group.image = image;
+    this.group.type = type;
+    this.father = father;
   },
 
   methods: {
     addActivity() {
       // 处理新增活动的逻辑
-    },
-
-    borrowEquipment() {
-      // 处理借还器材的逻辑
     },
   },
 
@@ -138,6 +154,7 @@ export default {
       name: string;
       avatar: string;
       description: string;
+      type: string
     }
 
     const small = ref(false);
@@ -175,7 +192,8 @@ export default {
       {
         name: 'Tom',
         avatar: './src/images/emptyAvatar.png',
-        description: '这个人很懒，还没有编写签名'
+        description: '这个人很懒，还没有编写签名',
+        type: '创建人'
       },
       // ...其他用户数据...
     ];

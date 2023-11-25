@@ -135,12 +135,27 @@ export default {
           }
         }).then(response => {
         const { status, msg } = response.data;
-        if (status === true) {
+        if (status === true) { 
             ElMessage({
               type: 'success',
               message: msg,
             });
-          } else {
+            const storedUid = sessionStorage.getItem('uid');
+            if (storedUid) {
+                const uid = JSON.parse(storedUid);
+                axios({
+                    method: "GET",
+                    url: "http://127.0.0.1:8000/api/group/apply",
+                    params: {
+                        uid: uid,
+                        method: "accept"
+                    }
+                }).then((result) => {
+                      groupList.value = result.data.list;
+                      console.log(groupList)
+          // Process any other data as needed from the result
+                   })
+          }} else {
             ElMessage({
               type: 'error',
               message: msg,

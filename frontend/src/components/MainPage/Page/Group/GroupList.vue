@@ -79,6 +79,9 @@
       </span>
     </template>
   </el-dialog>
+<!-- 创建团体按钮和创建逻辑 -->
+
+<!-- 搜索逻辑 -->
   <div class="searchTitle">
     <div class="searchBox">
       <el-input v-model="keyword" placeholder="输入查询信息"></el-input>
@@ -86,7 +89,7 @@
     <el-button @click="search">查 询</el-button>
   </div>
 </div>
-<!-- 创建团体按钮和创建逻辑 -->
+<!-- 搜索逻辑 -->
 
 
 <!-- 分页逻辑 -->

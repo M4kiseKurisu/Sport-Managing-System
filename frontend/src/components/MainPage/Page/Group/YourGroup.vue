@@ -19,21 +19,22 @@
                   </div>
                  <div class="button-container">
                     <div>
-                      <span v-if="isManager" style="color: blue;">管理员</span>
-                      <span v-else>普通成员</span>
+                      <span style="color: blue;">{{ card.type }}</span>
                     </div>
                     <router-link :to="{ path: '/Page/GroupInformation/Details', 
                         query: { 
                             groupName: card.group_name, 
                             description: card.group_desc, 
-                            image: card.pic
+                            image: card.pic,
+                            father: 'YourGroup',
+                            type: card.type
                         }
                     }">
                         <el-button text class="button">查看详情</el-button>
                     </router-link>
 
                     <span>{{ card.capacity }}/{{ card.maximum }}</span>
-                    <el-button text @click="open(card)" class="button">退出</el-button>
+                    <el-button text @click="quit(card)" class="button">退出</el-button>
                  </div>
                </div>
              </el-card>
@@ -44,7 +45,7 @@
 
 <script lang="ts">
 import { ref } from 'vue';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox, ElMessage } from 'element-plus';
 import type { Action } from 'element-plus';
 import axios from 'axios'
 
@@ -99,30 +100,34 @@ export default {
   setup() {
     const isManager = ref(true);
     const defaultImage = "./src/images/group-default-picture.png"
-    // const open = (cardToDelete: any) => {
-    //   ElMessageBox.alert('退出成功', {
-    //     confirmButtonText: 'OK',
-    //     callback: (action: Action) => {
-    //       if (action === 'confirm') {
-    //         deleteCard(cardToDelete);
-    //       }
-    //     },
-    //   });
-    // };
-
-    // const deleteCard = (cardToDelete: any) => {
-    //   // 找到要删除的卡片在数组中的索引
-    //   const index = cards.value.findIndex((card) => card.id === cardToDelete.id);
-
-    //   if (index !== -1) {
-    //     // 如果找到了匹配的卡片索引，就从 cards 数组中删除该卡片
-    //     cards.value.splice(index, 1);
-    //   }
-    // };
+    const quit = (card: any) => {
+        let msg = '是否确认退出';
+        if(card.type == '创建者'){
+            msg = '是否确认退出并解散团体'
+        }
+        ElMessageBox.confirm(msg,
+            'Warning',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        ).then(() => {
+            ElMessage({
+                type: 'success',
+                message: '退出成功',
+            })
+        }).catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '你已取消操作',
+            })
+        })
+    };
 
     return {
       isManager,
-      open,
+      quit,
       defaultImage
       // deleteCard,
     };
