@@ -153,14 +153,13 @@ export default {
                 }).then((result) => {
                       groupList.value = result.data.list;
                       console.log(groupList)
-          // Process any other data as needed from the result
                    })
-          }} else {
-            ElMessage({
-              type: 'error',
-              message: msg,
-            });
-          }
+            }} else {
+              ElMessage({
+                type: 'error',
+                message: msg,
+              });
+            } 
       }).catch(error => {
         console.error(error);
       });
@@ -178,9 +177,8 @@ export default {
             method: "accept"
           }
         }).then((result) => {
+          console.log(result.data)
           groupList.value = result.data.list;
-          console.log(groupList)
-          // Process any other data as needed from the result
         }).catch((error) => {
           console.error('Error fetching group data:', error);
         });

@@ -17,7 +17,7 @@
                 <h1>{{ group.name }}</h1>
               </div>
               <div class="group-buttons"  v-if="this.father=='YourGroup' 
-              && (this.group.type=='创建者' || this.group.type=='管理者')">
+              && (this.group.type=='创建人' || this.group.type=='管理者')">
                 <el-button @click="addActivity()">新增活动</el-button>
               </div>
             </div>
@@ -42,7 +42,7 @@
           <ul>
             <el-card><li>团体活动</li></el-card>
             <el-card @click="drawer = true">
-              <li>团体成员</li>
+              <li>其他成员</li>
             </el-card>
             <!-- Add more navigation links as needed -->
           </ul>
@@ -50,42 +50,56 @@
       </el-main>
     </el-container>
 
-      <el-drawer v-model="drawer" title="成员列表" :with-header="false" width="400px">
-        <el-table :data="filteredTableData" style="width:400px">
+      <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" width="800px">
+        <el-table :data="filteredUsers" style="width:100%">
 
           <el-table-column label="呢称" width="150px">
             <template #default="scope">
-              <div class="user-info">
-                <img :src="getAvatar(scope.row)" alt="avatar" class="avatar">
-                <span>{{ scope.row.name }}</span>
+              <div v-for="user in scope.row" :key="user.uid" class="user-info">
+                <div v-if="user.pic !== null">
+                    <img :src="'http://127.0.0.1:8000' + user.pic" class="avatar" />
+                </div>
+                <div v-else>
+                    <img :src="defaultImage" class="avatar" />
+                </div>
+                <span>{{ user.user_name }}</span>
               </div>
             </template>
           </el-table-column>
           
-          <el-table-column label="类型">
+          <el-table-column label="类型" width="92px">
             <template #default="scope">
-              <span>{{scope.row.type }}</span>
+              <div v-for="user in scope.row" :key="user.uid">
+                <span>{{user.type }}</span>
+              </div>
             </template>
           </el-table-column>  
 
-          <el-table-column  width="150px">
+          <el-table-column>
             <template #header>
-              <el-input v-model="search" size="small" placeholder="Type to search" />
+              <div class="searchTitle">
+                <div class="searchBox">
+                  <el-input v-model="keyword" placeholder="搜索成员"></el-input>
+                </div>
+                <el-button @click="search" class="searchButton">查询</el-button>
+              </div>
             </template>
             <template #default="scope" align="right">
+              <div v-for="user in scope.row" :key="user.uid" class="user-info">
               <div v-if="this.father=='YourGroup'" class="button-container">
               <el-button
-                v-if="this.group.type=='创建者' || this.group.type=='管理者'"
+                v-if="this.group.type=='创建人' || this.group.type=='管理者'"
                 size="small"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button>
+                @click="handleDelete(user.uid)"
+              >踢出</el-button>
               <el-button
-                v-if="this.group.type=='创建者'"
+                v-if="this.group.type=='创建人'"
                 size="small"
                 type="warning"
-                @click="handleDelete(scope.$index, scope.row)"
+                @click="handleSet(scope.$index, scope.row)"
               >设为管理员</el-button>
+            </div>
             </div>
             </template>
           </el-table-column>
@@ -107,25 +121,34 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, ref } from 'vue'
+<script lang="js">
+import axios from 'axios'
 
 export default {
   data() {  
     return {
       drawer: false,
       group: {
-        image: './src/images/group-default-picture.png', // Replace with your group image path
+        gid: '',
+        image: './src/images/group-default-picture.png', 
         name: '团体名称',
         description: '团体简介描述',
         type: ''
       },
-      father: ''
+      father: '',
+      Users: [],
+      small: false,
+      background: false,
+      disabled: false,
+      keyword: '',
+      currentPage: 1,
+      defaultImage: "./src/images/group-default-picture.png",
+      activeName: '1'
     };
   },
-
   mounted() {
     // 获取传递的参数
+    const gid = this.$route.query.gid;
     const groupName = this.$route.query.groupName;
     const description = this.$route.query.description;
     const image = this.$route.query.image;
@@ -133,91 +156,119 @@ export default {
     const type = this.$route.query.type;
 
     // 将参数存储在 group 对象中
+    this.group.gid = gid;
     this.group.name = groupName;
     this.group.description = description;
     this.group.image = image;
     this.group.type = type;
     this.father = father;
-  },
 
+    this.getData();
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.Users.length);
+    },
+    filteredUsers() {
+      let buf = [];
+      let filterUsers = [];
+      for (let i = 0; i < this.Users.length;i++){
+          if(this.Users[i].uid != sessionStorage.getItem( 'uid' )){
+              buf.push(this.Users[i]);
+          } 
+      }
+
+      for(let i = 0;i < buf.length; i+=10){
+          filterUsers.push(buf.slice(i,i+10))
+      }
+      return filterUsers
+    }
+  },
   methods: {
     addActivity() {
       // 处理新增活动的逻辑
     },
-  },
+    getData() {
+        axios({
+          method: "GET",
+          url: "http://127.0.0.1:8000/api/group/members/list",
+          params: {
+             gid: this.group.gid
+          }
+        }).then((result) => {
+          if (result.data.status) {
+            this.Users = result.data.list; // 将后端数据赋值给 Users
+            this.msg = result.data.msg;
+          }
+        }).catch((error) => {
+          console.error('Error fetching group data:', error);
+        });
+    },
 
-  setup() {
-    const defaultImage = "./src/images/group-default-picture.png"
-    const activeName = ref('1');
-
-    interface User {
-      name: string;
-      avatar: string;
-      description: string;
-      type: string
-    }
-
-    const small = ref(false);
-    const background = ref(false);
-    const disabled = ref(false);
-
-    const search = ref('');
-    const currentPage = ref(1);
-    const totalPages = computed(() => {
-      console.log(Math.ceil(filterTableData.value.length));
-      return Math.ceil(filterTableData.value.length);
-    });
-    const filterTableData = computed(() =>
-      tableData.filter(
-        (data) =>
-          !search.value ||
-          data.name.includes(search.value)
-      )
-    );
-    const filteredTableData = computed(() => {
-      const start = (currentPage.value - 1) * 10;
-      const end = start + 10;
-      return filterTableData.value.slice(start, end);
-    });
-
-    const handleCurrentChange = (val: number) => {
-      console.log(`current page: ${val}`);
-    };
-
-    const handleDelete = (index: number, row: User) => {
-      console.log(index, row);
-    };
-
-    const tableData: User[] = [
+    search () {
+      axios( {
+        method: "GET",
+        url: "http://127.0.0.1:8000/api/group/members/list",
+        params: {
+          gid: this.group.gid,
+          keyword: this.keyword
+        }
+      } ).then(( result ) =>
       {
-        name: 'Tom',
-        avatar: './src/images/emptyAvatar.png',
-        description: '这个人很懒，还没有编写签名',
-        type: '创建人'
-      },
-      // ...其他用户数据...
-    ];
+        if ( result.data.status )
+        {
+          this.Users = result.data.list; // 将后端数据赋值给 Users
+          this.msg = result.data.msg;
+        }
+      });
+    },
 
-    const getAvatar = (user: User) => user.avatar;
+    handleCurrentChange(val) {
+      console.log(`current page: ${val}`);
+    },
 
-    // 返回需要在组件中使用的值和函数
-    return {
-      small,
-      background,
-      disabled,
-      search,
-      currentPage,
-      totalPages,
-      filterTableData,
-      filteredTableData,
-      handleCurrentChange,
-      handleDelete,
-      tableData,
-      getAvatar,
-      activeName,
-      defaultImage
-    };
-  }
+    handleDelete(uid) {
+      ElMessageBox.confirm( '是否确认踢出该成员',
+        'Warning',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then( () =>
+      {
+        axios.post( 'http://127.0.0.1:8000/api/group/members/remove', {
+          uid: uid,
+          gid: this.group.gid
+        } ).then( response =>
+        {
+          ElMessage( {
+            type: 'success',
+            message: '踢出成功',
+          } );
+
+          this.getData();
+          this.drawer = false;
+        } ).catch( error =>
+        {
+          ElMessage( {
+            type: 'error',
+            message: '踢出失败，请重试',
+          } );
+        } );
+      } ).catch( () =>
+      {
+        ElMessage( {
+          type: 'info',
+          message: '你已取消操作',
+        } );
+      } );
+    },
+
+    getAvatar(user) {
+      return user.pic;
+    },
+  },
 };
 
 </script>
@@ -247,13 +298,6 @@ export default {
 .group_name{
   font-size: 23px;
   text-align: center;
-}
-.group-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 10px; /* Added border-radius */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Adjustments for navigation section */
@@ -345,5 +389,19 @@ export default {
   height: auto;
   max-width: 100%;
   max-height: 100%;
+}
+
+.searchTitle {
+    width: 600px;
+    display: flex;
+    align-items: center;
+}
+
+.searchBox {
+    width: 100px;
+}
+
+.searchButton {
+    width: 50px;
 }
 </style>

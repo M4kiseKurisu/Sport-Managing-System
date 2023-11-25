@@ -23,6 +23,7 @@
                     </div>
                     <router-link :to="{ path: '/Page/GroupInformation/Details', 
                         query: { 
+                            gid: card.gid,
                             groupName: card.group_name, 
                             description: card.group_desc, 
                             image: card.pic,
@@ -43,96 +44,98 @@
        </el-scrollbar>
 </template>
 
-<script lang="ts">
-import { ref } from 'vue';
+<script>
 import { ElMessageBox, ElMessage } from 'element-plus';
-import type { Action } from 'element-plus';
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   data() {
     return {
-      groupList: [], // 从后端获取的所有团体数据 
+      groupList: [],
       input: "",
       keyword: "",
       status: "",
-      msg: ""
-    }
+      msg: "",
+    };
   },
-  created() {
+  methods: {
+    getData() {
       const storedUid = sessionStorage.getItem('uid');
       if (storedUid) {
         const uid = JSON.parse(storedUid);
         axios({
           method: "GET",
-          url: "http://127.0.0.1:8000/api/group/view",
-          params: {
-            uid: uid
-          }
+          url: "http://127.0.0.1:8000/api/user/group",
+          params: { uid: uid }
         }).then((result) => {
-          this.groupList = result.data.list;
-          this.status = result.data.status;
-          this.msg = result.data.msg;
+          if( result.data.status ){
+            this.groupList = result.data.list;
+            this.status = result.data.status;
+            this.msg = result.data.msg;
+          }
         }).catch((error) => {
           console.error('Error fetching group data:', error);
         });
-    } else {
+      } else {
         console.error('UID not found in sessionStorage');
-    }
+      }
+    },
+    quit(card) {
+      let msg = '是否确认退出';
+      if (card.type == '创建人') {
+        msg = '是否确认退出并解散团体';
+      }
+      ElMessageBox.confirm(msg,
+        'Warning',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        axios.post('http://127.0.0.1:8000/api/group/exit', {
+          uid: sessionStorage.getItem('uid'),
+          gid: card.gid
+        }).then(response => {
+          ElMessage({
+            type: 'success',
+            message: '退出成功',
+          });
+          this.getData();
+        }).catch(error => {
+          ElMessage({
+            type: 'error',
+            message: '退出失败，请重试',
+          });
+        });
+      }).catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '你已取消操作',
+        });
+      });
+    },
   },
-
+  created() {
+    this.getData();
+  },
   computed: {
     groups() {
-      const joinedGroup: any[] = [];
-      for (let i = 0; i < this.groupList.length; i++) {
-        if (this.groupList[i].is_joined === true) {
-          joinedGroup.push(this.groupList[i]);
-        }
-      }
-      const groups: any[][] = [];
-      for(let i = 0; i < joinedGroup.length; i+=3){
-          groups.push(joinedGroup.slice(i, i+3))
+      const groups = [];
+      for (let i = 0; i < this.groupList.length; i += 3) {
+        groups.push(this.groupList.slice(i, i + 3));
       }
       return groups;
-    }
+    },
   },
-
   setup() {
-    const isManager = ref(true);
-    const defaultImage = "./src/images/group-default-picture.png"
-    const quit = (card: any) => {
-        let msg = '是否确认退出';
-        if(card.type == '创建者'){
-            msg = '是否确认退出并解散团体'
-        }
-        ElMessageBox.confirm(msg,
-            'Warning',
-            {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }
-        ).then(() => {
-            ElMessage({
-                type: 'success',
-                message: '退出成功',
-            })
-        }).catch(() => {
-            ElMessage({
-                type: 'info',
-                message: '你已取消操作',
-            })
-        })
-    };
-
+    const defaultImage = "./src/images/group-default-picture.png";
     return {
-      isManager,
-      quit,
       defaultImage
-      // deleteCard,
     };
   },
 };
+
 </script>
 
 <style scoped>
@@ -189,7 +192,7 @@ width: 90% /* 设置卡片高度 */
 }
 
 .creator-info {
-  color: #888; /* 创建人信息的颜色 */
-  font-size: 14px; /* 创建人信息的字体大小 */
+  color: #888; /* 创建人人信息的颜色 */
+  font-size: 14px; /* 创建人人信息的字体大小 */
 }
 </style>

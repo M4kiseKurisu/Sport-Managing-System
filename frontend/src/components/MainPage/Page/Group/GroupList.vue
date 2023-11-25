@@ -141,25 +141,7 @@ export default {
     ZoomIn,
   },
   created() {
-    const storedUid = sessionStorage.getItem('uid');
-      if (storedUid) {
-        const uid = JSON.parse(storedUid);
-        axios({
-          method: "GET",
-          url: "http://127.0.0.1:8000/api/group/view",
-          params: {
-            uid: uid
-          }
-        }).then((result) => {
-          this.groupList = result.data.list;
-          this.status = result.data.status;
-          this.msg = result.data.msg;
-        }).catch((error) => {
-          console.error('Error fetching group data:', error);
-        });
-    } else {
-        console.error('UID not found in sessionStorage');
-    }
+    this.getData();
   },
   computed: {
     paginatedGroups() {
@@ -185,14 +167,36 @@ export default {
     
   },
   methods: {
+    getData() {
+      const storedUid = sessionStorage.getItem('uid');
+      if (storedUid) {
+        const uid = JSON.parse(storedUid);
+        axios({
+          method: "GET",
+          url: "http://127.0.0.1:8000/api/group/view",
+          params: {
+            uid: uid
+          }
+        }).then((result) => {
+          this.groupList = result.data.list;
+          this.status = result.data.status;
+          this.msg = result.data.msg;
+        }).catch((error) => {
+          console.error('Error fetching group data:', error);
+        });
+      } else {
+        console.error('UID not found in sessionStorage');
+      }
+    },
+
     getCardStatus() {
-      // 示例：根据团队信息判断状态
        return this.status;
     },
+
     handlePageChange(newPage) {
-      // 当页码变化时更新当前页码
       this.currentPage = newPage;
     },
+
     search() {
           axios({
               method: "GET",
@@ -224,11 +228,9 @@ export default {
           data.append('tag', this.form.tag);
           data.append('picture', pic);
           axios.post('http://127.0.0.1:8000/api/group/create', data)
-              .then(response => {
-              // 处理响应
-              console.log(response);
+            .then(response => {
+              this.getData();
           }).catch(error => {
-              console.error(error);
           });
 
           this.showCreateGroup = false

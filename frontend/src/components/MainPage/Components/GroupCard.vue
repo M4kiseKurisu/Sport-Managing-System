@@ -18,6 +18,7 @@
       <div class="button-container">
         <router-link :to="{ path: '/Page/GroupInformation/Details', 
             query: { 
+                gid: card.gid,
                 groupName: card.group_name, 
                 description: card.group_desc, 
                 image: card.pic,
