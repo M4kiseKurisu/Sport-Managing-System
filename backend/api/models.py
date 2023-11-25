@@ -46,14 +46,20 @@ class Field(models.Model):
 
 class Activity(models.Model):
     """ 活动项目实体表 """
+    TYPE = {
+        (0, "个人"),
+        (1, "团体"),
+    }
     aid = models.IntegerField(primary_key=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.SmallIntegerField(choices=TYPE)
     name = models.CharField(max_length=32)
     desc = models.CharField(max_length=128)
-    tag = models.CharField(max_length=32)
+    tags = models.CharField(max_length=128)
     maximum = models.IntegerField()
-    capacity = models.IntegerField(default=1)
+    capacity = models.IntegerField()
+    favor = models.IntegerField()
     picture = models.ImageField(upload_to='images/activity/', storage=ImageStorage(), null=True)
+    private = models.BooleanField()
 
 
 class Equipment(models.Model):
@@ -131,7 +137,6 @@ class UserCreateActivity(models.Model):
     """ 用户发起活动联系表 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    private = models.BooleanField()
 
     class Meta:
         constraints = [
