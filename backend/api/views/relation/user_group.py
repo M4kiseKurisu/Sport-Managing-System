@@ -51,6 +51,14 @@ def delete_relation(uid, gid):
             group.save()
 
 
+def modify_relation(uid, gid, member_type):
+    user = User.objects.get(uid=uid)
+    group = Group.objects.get(gid=gid)
+    relation = UserInGroup.objects.get(uid=user, gid=group)
+    relation.type = member_type
+    relation.save()
+
+
 def add_apply(uid, gid, content):
     """ 增加用户申请团体信息 """
     user = User.objects.get(uid=uid)
