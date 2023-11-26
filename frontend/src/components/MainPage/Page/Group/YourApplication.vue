@@ -32,14 +32,14 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import axios from 'axios'
+import { computed, ref, onMounted } from "vue";
+import axios from "axios";
 
 export default {
   setup() {
     interface Application {
-      time: string
-      group_name: string
+      time: string;
+      group_name: string;
       status: string;
     }
     const small = ref(false);
@@ -47,7 +47,7 @@ export default {
     const disabled = ref(false);
 
     const currentPage = ref(1);
-    const search = ref('');
+    const search = ref("");
     const groupList = ref<Application[]>([]); // 替换 Application 类型为实际的类型
 
     const totalPages = computed(() => {
@@ -71,11 +71,11 @@ export default {
     };
 
     const handleCurrentChange = (val: number) => {
-      console.log(`current page: ${val}`)
+      console.log(`current page: ${val}`);
     };
 
     onMounted(() => {
-      const storedUid = sessionStorage.getItem('uid');
+      const storedUid = sessionStorage.getItem("uid");
       if (storedUid) {
         const uid = JSON.parse(storedUid);
         axios({
@@ -83,16 +83,18 @@ export default {
           url: "http://127.0.0.1:8000/api/group/apply",
           params: {
             uid: uid,
-            method: "send"
-          }
-        }).then((result) => {
-          groupList.value = result.data.list;
-          // Process any other data as needed from the result
-        }).catch((error) => {
-          console.error('Error fetching group data:', error);
-        });
+            method: "send",
+          },
+        })
+          .then((result) => {
+            groupList.value = result.data.list;
+            // Process any other data as needed from the result
+          })
+          .catch((error) => {
+            console.error("Error fetching group data:", error);
+          });
       } else {
-        console.error('UID not found in sessionStorage');
+        console.error("UID not found in sessionStorage");
       }
     });
 
@@ -106,8 +108,8 @@ export default {
       filteredTableData,
       handleCurrentChange,
     };
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

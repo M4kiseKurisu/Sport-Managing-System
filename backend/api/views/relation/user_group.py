@@ -80,10 +80,9 @@ def search_accept_apply(uid):
     user = User.objects.get(uid=uid)
 
     groups = list(map(lambda param: param.gid, UserInGroup.objects.filter(Q(uid=user) & (Q(type=0) | Q(type=1)))))
-    for group in groups:
-        applies = UserApplyGroup.objects.filter(gid=group).order_by('-apply_time')
-        lst += list(applies)
 
+    applies = UserApplyGroup.objects.filter(gid__in=groups).order_by('-apply_time')
+    lst += list(applies)
     return lst
 
 
