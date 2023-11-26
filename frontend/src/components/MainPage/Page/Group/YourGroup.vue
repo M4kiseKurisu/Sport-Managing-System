@@ -19,21 +19,23 @@
                   </div>
                  <div class="button-container">
                     <div>
-                      <span v-if="isManager" style="color: blue;">管理员</span>
-                      <span v-else>普通成员</span>
+                      <span style="color: blue;">{{ card.type }}</span>
                     </div>
                     <router-link :to="{ path: '/Page/GroupInformation/Details', 
                         query: { 
+                            gid: card.gid,
                             groupName: card.group_name, 
                             description: card.group_desc, 
-                            image: card.pic
+                            image: card.pic,
+                            father: 'YourGroup',
+                            type: card.type
                         }
                     }">
                         <el-button text class="button">查看详情</el-button>
                     </router-link>
 
                     <span>{{ card.capacity }}/{{ card.maximum }}</span>
-                    <el-button text @click="open(card)" class="button">退出</el-button>
+                    <el-button text @click="quit(card)" class="button">退出</el-button>
                  </div>
                </div>
              </el-card>
@@ -42,92 +44,98 @@
        </el-scrollbar>
 </template>
 
-<script lang="ts">
-import { ref } from 'vue';
-import { ElMessageBox } from 'element-plus';
-import type { Action } from 'element-plus';
-import axios from 'axios'
+<script>
+import { ElMessageBox, ElMessage } from 'element-plus';
+import axios from 'axios';
 
 export default {
   data() {
     return {
-      groupList: [], // 从后端获取的所有团体数据 
+      groupList: [],
       input: "",
       keyword: "",
       status: "",
-      msg: ""
-    }
+      msg: "",
+    };
   },
-  created() {
+  methods: {
+    getData() {
       const storedUid = sessionStorage.getItem('uid');
       if (storedUid) {
         const uid = JSON.parse(storedUid);
         axios({
           method: "GET",
-          url: "http://127.0.0.1:8000/api/group/view",
-          params: {
-            uid: uid
-          }
+          url: "http://127.0.0.1:8000/api/user/group",
+          params: { uid: uid }
         }).then((result) => {
-          this.groupList = result.data.list;
-          this.status = result.data.status;
-          this.msg = result.data.msg;
+          if( result.data.status ){
+            this.groupList = result.data.list;
+            this.status = result.data.status;
+            this.msg = result.data.msg;
+          }
         }).catch((error) => {
           console.error('Error fetching group data:', error);
         });
-    } else {
+      } else {
         console.error('UID not found in sessionStorage');
-    }
+      }
+    },
+    quit(card) {
+      let msg = '是否确认退出';
+      if (card.type == '创建人') {
+        msg = '是否确认退出并解散团体';
+      }
+      ElMessageBox.confirm(msg,
+        'Warning',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        axios.post('http://127.0.0.1:8000/api/group/exit', {
+          uid: sessionStorage.getItem('uid'),
+          gid: card.gid
+        }).then(response => {
+          ElMessage({
+            type: 'success',
+            message: '退出成功',
+          });
+          this.getData();
+        }).catch(error => {
+          ElMessage({
+            type: 'error',
+            message: '退出失败，请重试',
+          });
+        });
+      }).catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '你已取消操作',
+        });
+      });
+    },
   },
-
+  created() {
+    this.getData();
+  },
   computed: {
     groups() {
-      const joinedGroup: any[] = [];
-      for (let i = 0; i < this.groupList.length; i++) {
-        if (this.groupList[i].is_joined === true) {
-          joinedGroup.push(this.groupList[i]);
-        }
-      }
-      const groups: any[][] = [];
-      for(let i = 0; i < joinedGroup.length; i+=3){
-          groups.push(joinedGroup.slice(i, i+3))
+      const groups = [];
+      for (let i = 0; i < this.groupList.length; i += 3) {
+        groups.push(this.groupList.slice(i, i + 3));
       }
       return groups;
-    }
+    },
   },
-
   setup() {
-    const isManager = ref(true);
-    const defaultImage = "./src/images/group-default-picture.png"
-    // const open = (cardToDelete: any) => {
-    //   ElMessageBox.alert('退出成功', {
-    //     confirmButtonText: 'OK',
-    //     callback: (action: Action) => {
-    //       if (action === 'confirm') {
-    //         deleteCard(cardToDelete);
-    //       }
-    //     },
-    //   });
-    // };
-
-    // const deleteCard = (cardToDelete: any) => {
-    //   // 找到要删除的卡片在数组中的索引
-    //   const index = cards.value.findIndex((card) => card.id === cardToDelete.id);
-
-    //   if (index !== -1) {
-    //     // 如果找到了匹配的卡片索引，就从 cards 数组中删除该卡片
-    //     cards.value.splice(index, 1);
-    //   }
-    // };
-
+    const defaultImage = "./src/images/group-default-picture.png";
     return {
-      isManager,
-      open,
       defaultImage
-      // deleteCard,
     };
   },
 };
+
 </script>
 
 <style scoped>
@@ -184,7 +192,7 @@ width: 90% /* 设置卡片高度 */
 }
 
 .creator-info {
-  color: #888; /* 创建人信息的颜色 */
-  font-size: 14px; /* 创建人信息的字体大小 */
+  color: #888; /* 创建人人信息的颜色 */
+  font-size: 14px; /* 创建人人信息的字体大小 */
 }
 </style>

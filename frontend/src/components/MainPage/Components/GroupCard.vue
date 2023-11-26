@@ -18,15 +18,17 @@
       <div class="button-container">
         <router-link :to="{ path: '/Page/GroupInformation/Details', 
             query: { 
+                gid: card.gid,
                 groupName: card.group_name, 
                 description: card.group_desc, 
-                image: card.pic
+                image: card.pic,
+                father: 'GroupList'
             }
         }">
             <el-button text class="button">查看详情</el-button>
         </router-link>
         <span>{{ props.card.capacity }}/{{ props.card.maximum }}</span>
-        <el-button v-if="props.card.is_joined === false" @click="applicate" class="button">
+        <el-button v-if="props.card.is_joined === false" @click="applicate(card.gid)" class="button">
           申请加入
         </el-button>
         <el-button v-else text type="danger" class="button" disabled>
@@ -40,13 +42,13 @@
 
 <script lang="ts" setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
-import type { Action } from 'element-plus'
+import axios from 'axios'
 
 const defaultImage = "./src/images/group-default-picture.png"
 
 interface CardProps {
   card: {
-    id: number;
+    gid: number;
     group_name: string;
     pic: string;
     creator: string;
@@ -62,26 +64,56 @@ interface CardProps {
 
 const props  = defineProps<CardProps>();
 
-const applicate = () => {
+const applicate = (gid) => {
   ElMessageBox.prompt('发送你的申请', {
     confirmButtonText: '提交申请',
     cancelButtonText: '取消申请',
-    inputPattern:/.*/,
+    inputPattern: /.*/,
     inputErrorMessage: '请填写申请',
-  })
-    .then(({ value }) => {
-      ElMessage({
-        type: 'success',
-        message: `申请成功发送`,
-      })
-    })
-    .catch(() => {
+  }).then(({ value }) => {
+      if (!value) {
+        ElMessage({
+          type: 'warning',
+          message: '申请信息不能为空',
+        });
+        return;
+      }
+
+      console.log(gid)
+      // 发送申请
+      axios.post('http://127.0.0.1:8000/api/group/join', {
+        uid: sessionStorage.getItem('uid'),
+        gid: gid,
+        content: value,
+      }).then(response => {
+          const { status, msg } = response.data;
+
+          if (status === true) {
+            ElMessage({
+              type: 'success',
+              message: msg,
+            });
+          } else {
+            ElMessage({
+              type: 'error',
+              message: msg,
+            });
+          }
+        }).catch(error => {
+          console.error('发送申请时出错:', error);
+          ElMessage({
+            type: 'error',
+            message: '申请发送失败，请稍后重试',
+          });
+        });
+    }).catch(() => {
       ElMessage({
         type: 'info',
         message: '你已取消申请',
-      })
-    })
-}
+      });
+    });
+};
+
 
 </script>
 
