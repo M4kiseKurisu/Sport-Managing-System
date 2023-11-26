@@ -99,7 +99,6 @@ def apply(request):
         if method == "accept":
             applies = user_group.search_accept_apply(uid)
             for a in applies:
-                print(a.apply_time)
                 temp = {"uid": a.uid.uid, "user_name": a.uid.user_name, "content": a.content,
                         "gid": a.gid.gid, "group_name": a.gid.group_name,
                         "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),

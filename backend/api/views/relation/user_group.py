@@ -91,7 +91,6 @@ def search_send_apply(uid):
     """ 查找发送的团体申请信息 """
     user = User.objects.get(uid=uid)
     applies = UserApplyGroup.objects.filter(uid=user).order_by('-apply_time')
-    print(applies)
     lst = list(applies)
     return lst
 
