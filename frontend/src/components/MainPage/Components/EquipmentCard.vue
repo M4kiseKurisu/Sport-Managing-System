@@ -44,11 +44,11 @@
 
         <div class="selector">
             <div style="font-size: 16px; margin-right: 12px;">开始时间：</div>
-            <el-date-picker v-model="startTime" type="datetime" placeholder="设置开始时间" />
+            <el-date-picker v-model="startTime" type="datetime" placeholder="设置开始时间" value-format="YYYY-MM-DD hh:mm:ss" />
         </div>
         <div class="selector">
             <div style="font-size: 16px; margin-right: 12px;">结束时间：</div>
-            <el-date-picker v-model="endTime" type="datetime" placeholder="设置结束时间" />
+            <el-date-picker v-model="endTime" type="datetime" placeholder="设置结束时间" value-format="YYYY-MM-DD hh:mm:ss" />
         </div>
 
         <div class="selector">
@@ -64,6 +64,7 @@
 
 <script>
 import axios from 'axios'
+import dayjs from 'dayjs'
 export default {
     data() {
         return {
@@ -71,28 +72,28 @@ export default {
             radio: "个人申请",
             value: "",
             num: "",
-            options: [
-                {
-                    value: 'Option1',
-                    label: 'Option1',
-                },
-                {
-                    value: 'Option2',
-                    label: 'Option2',
-                },
-                {
-                    value: 'Option3',
-                    label: 'Option3',
-                },
-                {
-                    value: 'Option4',
-                    label: 'Option4',
-                },
-                {
-                    value: 'Option5',
-                    label: 'Option5',
-                },
-            ],
+            // options: [
+            // {
+            //     value: 'Option1',
+            //     label: 'Option1',
+            // },
+            // {
+            //     value: 'Option2',
+            //     label: 'Option2',
+            // },
+            // {
+            //     value: 'Option3',
+            //     label: 'Option3',
+            // },
+            // {
+            //     value: 'Option4',
+            //     label: 'Option4',
+            // },
+            // {
+            //     value: 'Option5',
+            //     label: 'Option5',
+            // },
+            // ],
             startTime: "",
             endTime: "",
             list: [],
@@ -101,7 +102,80 @@ export default {
     methods: {
         submitForm() {
             this.dialogVisible = false;
+            let apply = null;
+            let type = this.titleStr;
+
+            // console.log(this.value);
+            // console.log(type);
+            // console.log(this.num);
+            // console.log(this.startTime);
+
+            if (this.startTime > this.endTime) {
+                this.$message({
+                    showClose: true,
+                    message: '开始时间必须早于结束时间',
+                    type: 'error'
+                });
+                return;
+            }
+
+            // console.log(dayjs().format('YYYY-MM-DD hh:mm:ss'));
+            // console.log(this.endTime);
+
+            if (this.endTime < dayjs().format('YYYY-MM-DD hh:mm:ss')) {
+                this.$message({
+                    showClose: true,
+                    message: '结束时间必须晚于当前时间',
+                    type: 'error'
+                });
+                return;
+            }
+
+
+
+            if (this.radio === '个人申请') {
+                apply = {
+                    uid: JSON.parse(sessionStorage.getItem('uid')),
+                    category: type,
+                    amount: parseInt(this.num),
+                    start_time: this.startTime,
+                    end_time: this.endTime
+                }
+                console.log(apply);
+            }
+
+            else {
+                apply = {
+                    gid: this.value,
+                    category: type,
+                    amount: parseInt(this.num),
+                    start_time: this.startTime,
+                    end_time: this.endTime
+                }
+            }
+
+            axios({
+                method: "POST",
+                url: "http://127.0.0.1:8000/api/equipment/borrow",
+                data: apply
+            }).then((result) => {
+                //console.log(result);
+                if (result.data.status) {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'success'
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'error'
+                    });
+                }
+            })
         },
+
         clickApply() {
             this.dialogVisible = true;
             axios({
@@ -111,14 +185,16 @@ export default {
                     uid: JSON.parse(sessionStorage.getItem('uid'))
                 }
             }).then((result) => {
-                console.log(result.data.status);
+                console.log(result.data.list);
                 if (result.data.status) {
                     for (let i = 0; i < result.data.list.length; i++) {
-                        this.list.push({
-                            value: 'Option' + String(i + 1),
-                            label: result.data.list[i].group_name,
-                        });
-                        console.log(result.data.list[i].group_name);
+
+                        if (result.data.list[i].type === '创建人' || result.data.list[i].type === '管理员') {
+                            this.list.push({
+                                value: result.data.list[i].gid,
+                                label: result.data.list[i].group_name,
+                            });
+                        }
                     }
                 }
             });
