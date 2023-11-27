@@ -54,6 +54,7 @@ class Activity(models.Model):
     type = models.SmallIntegerField(choices=TYPE)
     name = models.CharField(max_length=32)
     desc = models.CharField(max_length=128)
+    category = models.CharField(max_length=32)
     tags = models.CharField(max_length=128)
     maximum = models.IntegerField()
     capacity = models.IntegerField()
@@ -111,8 +112,8 @@ class ActivityUseField(models.Model):
     """ 活动使用场地联系表"""
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
     fid = models.ForeignKey(Field, on_delete=models.CASCADE)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
 
     class Meta:
         constraints = [
@@ -146,6 +147,7 @@ class UserCreateActivity(models.Model):
 
 class GroupCreateActivity(models.Model):
     """ 团体发起活动联系表 """
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
@@ -221,3 +223,5 @@ class FriendApply(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['sender', 'receiver', 'apply_time'], name='unique_friend_apply')
         ]
+
+# ----------------------------  辅助表  -------------------------------- #
