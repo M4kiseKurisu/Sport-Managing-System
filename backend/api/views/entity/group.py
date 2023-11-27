@@ -121,7 +121,7 @@ def apply(request):
         """ 处理团体申请 """
         data: dict = json.loads(request.body)
         print(data)
-        if user_group.handle_apply(data.get('uid'), data.get('gid'), data.get('res')):
+        if user_group.modify_apply(data.get('uid'), data.get('gid'), data.get('res')):
             return JsonResponse({"msg": "处理完成", "status": True})
         else:
             return JsonResponse({"msg": "团体人数已达上限", "status": False})
