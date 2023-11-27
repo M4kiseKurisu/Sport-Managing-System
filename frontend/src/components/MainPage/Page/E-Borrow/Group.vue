@@ -120,6 +120,7 @@ export default {
               returnTime: result.data.list[i].end_time,
               state: result.data.list[i].is_return,
               group: result.data.list[i].group_name,
+              eid: result.data.list[i].eid,
             });
           }
         }
@@ -148,6 +149,7 @@ export default {
             state: result.data.list[i].is_return,
             group: result.data.list[i].group_name,
             gid: result.data.list[i].gid,
+            eid: result.data.list[i].eid,
           });
         }
       }

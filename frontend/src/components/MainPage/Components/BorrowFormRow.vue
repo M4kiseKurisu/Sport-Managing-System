@@ -93,10 +93,11 @@ export default {
         },
 
         returnEquipment() {
+            //console.log(this.information);
             if (this.isGroup) {
                 this.returnData = {
                     gid: this.information.gid,
-                    //eid: 
+                    eid: this.information.eid,
                     category: this.information.name,
                     start_time: this.information.startTime,
                     end_time: this.information.returnTime
@@ -106,14 +107,15 @@ export default {
             else {
                 this.returnData = {
                     uid: JSON.parse(sessionStorage.getItem('uid')),
-                    //eid: 
+                    eid: this.information.eid,
                     category: this.information.name,
                     start_time: this.information.startTime,
                     end_time: this.information.returnTime
                 }
             }
 
-            console.log(this.returnData);
+            //console.log(this.returnData);
+            this.applyReturn();
         }
     },
     computed: {

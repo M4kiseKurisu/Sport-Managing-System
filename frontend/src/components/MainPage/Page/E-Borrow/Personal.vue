@@ -130,6 +130,7 @@ export default {
               startTime: result.data.list[i].start_time,
               returnTime: result.data.list[i].end_time,
               state: result.data.list[i].is_return,
+              eid: result.data.list[i].eid,
             });
           }
         }
@@ -159,8 +160,10 @@ export default {
             url: "http://127.0.0.1:8000" + result.data.list[i].pic,
             name: result.data.list[i].category,
             amount: String(result.data.list[i].lend_amount),
+            startTime: result.data.list[i].start_time,
             returnTime: result.data.list[i].end_time,
             state: result.data.list[i].is_return,
+            eid: result.data.list[i].eid,
           });
         }
       }
