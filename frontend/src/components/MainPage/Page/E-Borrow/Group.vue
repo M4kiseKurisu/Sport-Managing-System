@@ -20,21 +20,10 @@
     <BorrowFormRow v-if="have8" :information="information1" :isTitle=false :isGroup=true />
     <BorrowFormRow v-if="have9" :information="information1" :isTitle=false :isGroup=true />
     <BorrowFormRow v-if="have10" :information="information1" :isTitle=false :isGroup=true /> -->
-  <BorrowFormRow
-    v-for="(item, index) in groups"
-    :key="index"
-    :information="item"
-    :isTitle="false"
-    :isGroup="true"
-  />
+  <BorrowFormRow v-for="(item, index) in groups" :key="index" :information="item" :isTitle="false" :isGroup="true" />
 
   <div class="pagination">
-    <el-pagination
-      background
-      layout="prev, pager, next"
-      :total="this.list.length"
-      @current-change="handlePageChange"
-    />
+    <el-pagination background layout="prev, pager, next" :total="this.list.length" @current-change="handlePageChange" />
   </div>
 </template>
 
@@ -127,6 +116,7 @@ export default {
               url: "http://127.0.0.1:8000" + result.data.list[i].pic,
               name: result.data.list[i].category,
               amount: String(result.data.list[i].lend_amount),
+              startTime: result.data.list[i].start_time,
               returnTime: result.data.list[i].end_time,
               state: result.data.list[i].is_return,
               group: result.data.list[i].group_name,
@@ -147,14 +137,17 @@ export default {
       url: searchUrl,
     }).then((result) => {
       if (result.data.status) {
+        console.log(result);
         for (let i = 0; i < result.data.list.length; i++) {
           this.list.push({
             url: "http://127.0.0.1:8000" + result.data.list[i].pic,
             name: result.data.list[i].category,
             amount: String(result.data.list[i].lend_amount),
+            startTime: result.data.list[i].start_time,
             returnTime: result.data.list[i].end_time,
             state: result.data.list[i].is_return,
             group: result.data.list[i].group_name,
+            gid: result.data.list[i].gid,
           });
         }
       }

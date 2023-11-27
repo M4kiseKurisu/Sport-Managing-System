@@ -4,11 +4,7 @@
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar
-          :size="150"
-          shape="circle"
-          :src="picture || './src/images/emptyAvatar.png'"
-        ></el-avatar>
+        <el-avatar :size="150" shape="circle" :src="picture || './src/images/emptyAvatar.png'"></el-avatar>
       </div>
 
       <!-- 个人账号 -->
