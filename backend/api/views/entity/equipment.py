@@ -129,7 +129,7 @@ def record_for_person(user, equipments, time, state):
     if state:
         result = result.filter(is_return=state)
 
-    return list(map(lambda param: {"pic": param.eid.picture.url,
+    return list(map(lambda param: {"pic": param.eid.picture.url, "eid": param.eid.eid,
                                    "category": param.eid.category, "lend_amount": param.lend_amount,
                                    "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
                                    "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -145,7 +145,7 @@ def record_for_group(user, equipments, groups, time, state):
         result = result.filter(is_return=state)
 
     return list(map(lambda param: {"gid": param.gid.gid, "group_name": param.gid.group_name,
-                                   "pic": param.eid.picture.url,
+                                   "pic": param.eid.picture.url, "eid": param.eid.eid,
                                    "category": param.eid.category, "lend_amount": param.lend_amount,
                                    "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
                                    "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
