@@ -4,6 +4,7 @@
 
         <div class="form">
             <el-form :model="form" label-width="120px">
+
                 <el-form-item label="用户昵称">
                     <el-input v-model="form.name" />
                 </el-form-item>
@@ -49,6 +50,8 @@
 </template>
 
 <script>
+import { Plus } from '@element-plus/icons-vue'
+import axios from "axios";
 export default {
     data() {
         return {
@@ -59,17 +62,70 @@ export default {
                 gender: '',
                 phone: '',
                 email: '',
-                signature: ''
+                signature: '',
             },
         }
     },
     methods: {
         clickApply() {
             this.dialogVisible = true;
+            axios({
+                method: "GET",
+                url: "http://127.0.0.1:8000/api/user/information",
+                params: {
+                    uid: JSON.parse(sessionStorage.getItem("uid")),
+                },
+            }).then((result) => {
+                if (result.data.status) {
+                    this.form.name = result.data.info.name;
+                    this.form.age = result.data.info.age;
+                    this.form.gender = result.data.info.gender;
+                    this.form.phone = result.data.info.phone;
+                    this.form.email = result.data.info.email;
+                    this.form.signature = result.data.info.signature;
+                }
+            });
         },
         onSubmit() {
-            //提交新的身份信息
+            let content = {
+                user_name: this.form.name,
+                user_age: this.form.age,
+                user_gender: this.form.gender === '女' ? 0 : 1,
+                phone_number: this.form.phone,
+                email: this.form.email,
+                user_signature: this.form.signature,
+            };
+
+            let apply = {
+                uid: JSON.parse(sessionStorage.getItem('uid')),
+                data: content
+            }
+
+            axios({
+                method: "POST",
+                url: "http://127.0.0.1:8000/api/user/modify/text",
+                uid: JSON.parse(sessionStorage.getItem('uid')),
+                data: apply
+            }).then((result) => {
+                //console.log(result);
+                if (result.data.status) {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'success'
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'error'
+                    });
+                }
+            })
         }
+    },
+    components: {
+        Plus,
     }
 }
 </script>
@@ -89,5 +145,27 @@ export default {
 
 .commitButton {
     margin-top: 20px;
+}
+
+.right {
+    display: flex;
+}
+
+.buttons {
+    margin-left: 30px;
+}
+
+.preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.preview-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin-right: 10px;
+    margin-bottom: 10px;
 }
 </style>
