@@ -52,6 +52,7 @@ def delete_relation(uid, gid):
 
 
 def modify_relation(uid, gid, member_type):
+    """ 修改用户团体联系 """
     user = User.objects.get(uid=uid)
     group = Group.objects.get(gid=gid)
     relation = UserInGroup.objects.get(uid=user, gid=group)
@@ -94,7 +95,7 @@ def search_send_apply(uid):
     return lst
 
 
-def handle_apply(uid, gid, res):
+def modify_apply(uid, gid, res):
     """ 管理员处理团体申请请求 """
     group = Group.objects.get(gid=gid)
     applicant = User.objects.get(uid=uid)

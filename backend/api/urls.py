@@ -4,6 +4,7 @@ from api.views.entity import equipment
 from api.views.entity import user
 from api.views.entity import field
 from api.views.entity import group
+from api.views.entity import activity
 
 urlpatterns = [
     # user
@@ -27,6 +28,7 @@ urlpatterns = [
     # field
     path('field/add', field.add),
     path('field/view', field.view),
+    path('field/usage', field.usage),
 
     # equipment
     path('equipment/add', equipment.add),
@@ -41,4 +43,8 @@ urlpatterns = [
     path('friend/apply', user.friend_apply),
     path('friend/list', user.friend_list),
     path('friend/delete', user.friend_delete),
+
+    # activity
+    path('activity/create', activity.create),
+    path('activity/detail', activity.detail),
 ]
