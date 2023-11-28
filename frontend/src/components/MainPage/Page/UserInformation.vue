@@ -4,7 +4,11 @@
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar :size="150" shape="circle" :src="picture || './src/images/emptyAvatar.png'"></el-avatar>
+        <el-avatar
+          :size="150"
+          shape="circle"
+          :src="picture || './src/images/emptyAvatar.png'"
+        ></el-avatar>
       </div>
 
       <!-- 个人账号 -->
@@ -86,9 +90,14 @@
 
       <!-- 更改个人信息按钮 -->
       <div class="changeButton">
-
         <div class="button">
-          <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+          <el-upload
+            v-model:file-list="this.fileList"
+            :limit="1"
+            :show-file-list="false"
+            :auto-upload="false"
+            action="#"
+          >
             <el-button type="primary" plain>选择头像</el-button>
           </el-upload>
         </div>
@@ -150,6 +159,7 @@ export default {
         uid: JSON.parse(sessionStorage.getItem("uid")),
       },
     }).then((result) => {
+      console.log(result);
       if (result.data.status) {
         this.name = result.data.info.name;
         this.age = result.data.info.age;
@@ -169,23 +179,23 @@ export default {
       console.log(this.fileList);
     },
     beforeUpload(file) {
-      let isPic = file.type === 'image/jpeg' || file.type === 'image/png';
+      let isPic = file.type === "image/jpeg" || file.type === "image/png";
       if (!isPic) {
         this.$message({
           showClose: true,
-          message: '只能上传JPG/PNG形式的图片',
-          type: 'error'
+          message: "只能上传JPG/PNG形式的图片",
+          type: "error",
         });
       }
       return isPic;
     },
     upload() {
       const file = this.fileList[0].raw;
-      const uid = sessionStorage.getItem('uid');
+      const uid = sessionStorage.getItem("uid");
       const data = new FormData();
 
-      data.append('uid', uid);
-      data.append('picture', file);
+      data.append("uid", uid);
+      data.append("picture", file);
 
       console.log(file);
 
@@ -208,39 +218,36 @@ export default {
       //     });
       //   }
       // });
-      axios.post('http://127.0.0.1:8000/api/user/modify/pic', data)
-
+      axios.post("http://127.0.0.1:8000/api/user/modify/pic", data);
     },
     uploadFile(file) {
-
       let picInput = null;
-      picInput.append('uid', JSON.parse(sessionStorage.getItem('uid')));
-      picInput.append('picture', file.raw);
-
+      picInput.append("uid", JSON.parse(sessionStorage.getItem("uid")));
+      picInput.append("picture", file.raw);
 
       console.log(file.raw);
 
       axios({
         method: "POST",
         url: "http://127.0.0.1:8000/api/user/modify/pic",
-        data: picInput
+        data: picInput,
       }).then((result) => {
         if (result.data.status) {
           this.$message({
             showClose: true,
             message: result.data.msg,
-            type: 'success'
+            type: "success",
           });
         } else {
           this.$message({
             showClose: true,
             message: result.data.msg,
-            type: 'error'
+            type: "error",
           });
         }
-      })
-    }
-  }
+      });
+    },
+  },
 };
 </script>
 
