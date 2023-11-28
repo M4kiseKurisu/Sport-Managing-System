@@ -47,4 +47,6 @@ urlpatterns = [
     # activity
     path('activity/create', activity.create),
     path('activity/detail', activity.detail),
+    path('activity/view/active', activity.active),
+    path('activity/view/inactive', activity.inactive),
 ]
