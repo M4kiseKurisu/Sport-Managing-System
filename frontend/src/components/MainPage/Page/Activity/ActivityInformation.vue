@@ -1,9 +1,4 @@
 <template>
-    <!-- 界面标题 -->
-    <div class="title">
-        <div>活动列表</div>
-    </div>
-
     <!-- 界面最上方活动走马灯 -->
 
     <el-carousel :autoplay="false" type="card" height="200px">
