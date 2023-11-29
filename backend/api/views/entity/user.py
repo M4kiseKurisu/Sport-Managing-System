@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 
 from api.models import User
+from api.models import UserInActivity
 from api.views.relation import user_activity, user_group, friend
 
 
@@ -64,7 +65,7 @@ def information(request):
     user = User.objects.get(uid=uid)
 
     # 用户参加的活动：
-    activities = user_activity.search_relation(uid)
+    activities = UserInActivity.objects.filter(uid=uid)
     # 用户参加的团体
     groups = user_group.search_relation(uid, None)
     # 用户的好友
