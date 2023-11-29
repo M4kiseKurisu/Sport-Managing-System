@@ -12,6 +12,7 @@ from api.models import User
 from api.models import UserInActivity
 from api.views.relation import user_activity, user_group, friend
 
+
 def genid():
     new_id = random.randint(0, 99999999)
     while User.objects.filter(uid=new_id):

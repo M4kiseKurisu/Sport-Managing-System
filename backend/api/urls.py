@@ -49,4 +49,6 @@ urlpatterns = [
     path('activity/detail', activity.detail),
     path('activity/view/active', activity.active),
     path('activity/view/inactive', activity.inactive),
+    path('activity/join', activity.join),
+    path('activity/exit', activity.exit_out),
 ]

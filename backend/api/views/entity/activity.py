@@ -211,3 +211,24 @@ def detail(request):
         data['group_name'] = creation.gid.group_name
 
     return JsonResponse({"msg": "活动详细信息获取成功", "status": True, "data": data})
+
+
+@require_http_methods(["POST"])
+def join(request):
+    """ 用户加入活动 """
+    data: dict = json.loads(request.body)
+    uid = data.get('uid')
+    aid = data.get('aid')
+    if user_activity.add_relation(uid, aid):
+        return JsonResponse({"msg": "成功加入活动", "status": True})
+    else:
+        return JsonResponse({"msg": "人数已达上限", "status": False})
+
+
+@require_http_methods(["POST"])
+def exit_out(request):
+    data: dict = json.loads(request.body)
+    uid = data.get('uid')
+    aid = data.get('aid')
+    user_activity.delete_relation(uid, aid)
+    return JsonResponse({"msg": "活动已退出", "status": True})
