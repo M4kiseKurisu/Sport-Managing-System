@@ -6,8 +6,6 @@ import MainPage from "./components/MainPage/MainPageContainer.vue"
 
 import UserInformation from "./components/MainPage/Page/UserInformation.vue"
 
-import ActivityInformation from "./components/MainPage/Page/ActivityInformation.vue"
-
 import EBorrowMain from "./components/MainPage/Page/E-Borrow/EBorrowMain.vue"
 import Borrow from "./components/MainPage/Page/E-Borrow/Borrow.vue"
 import Personal from "./components/MainPage/Page/E-Borrow/Personal.vue"
@@ -21,6 +19,10 @@ import PendingReview from './components/MainPage/Page/Group/PendingReview.vue'
 import Details from './components/MainPage/Page/Group/Details.vue'
 
 import Friend from './components/MainPage/Page/FriendInformation.vue'
+
+import Activity from './components/MainPage/Page/Activity/ActivityMain.vue'
+import ActivityInformation from './components/MainPage/Page/Activity/ActivityInformation.vue'
+import ActivityBefore from './components/MainPage/Page/Activity/ActivityBefore.vue'
 
 
 const router = createRouter({
@@ -70,7 +72,18 @@ const router = createRouter({
                 },
                 {
                     path: 'Activity_Information',
-                    component: ActivityInformation
+                    component: Activity,
+                    redirect: '/Page/Activity_Information/Show',
+                    children: [
+                        {
+                            path: 'Show',
+                            component: ActivityInformation
+                        },
+                        {
+                            path: 'Before',
+                            component: ActivityBefore
+                        }
+                    ]
                 },
                 {
                     path: 'GroupInformation',

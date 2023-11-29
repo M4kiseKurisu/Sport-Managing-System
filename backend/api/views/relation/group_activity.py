@@ -1,8 +1,6 @@
 """
 团体和活动联系
 """
-from django.db.models import Q
-
 from api.models import User
 from api.models import Group
 from api.models import Activity

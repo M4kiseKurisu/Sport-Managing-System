@@ -22,11 +22,10 @@ def genid():
 @require_http_methods(["POST"])
 def add(request):
     """ 新增场地 """
-    if request.method == 'POST':
-        data: dict = json.loads(request.body)
-        new_field = Field(fid=genid(), **data)
-        new_field.save()
-        return JsonResponse({"msg": "场地信息添加成功", "status": True})
+    data: dict = json.loads(request.body)
+    new_field = Field(fid=genid(), **data)
+    new_field.save()
+    return JsonResponse({"msg": "场地信息添加成功", "status": True})
 
 
 @require_http_methods(["GET"])

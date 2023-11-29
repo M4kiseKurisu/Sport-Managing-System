@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import ActivityShow from "../Components/ActivityShow.vue";
+import ActivityShow from "../../Components/ActivityShow.vue";
 export default {
     data() {
         return {

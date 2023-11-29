@@ -36,7 +36,7 @@
 import Header from "./SideBar/Header.vue";
 import Sidebar from "./SideBar/Sidebar.vue"; // 请替换为实际的路径
 import UserInformation from "./Page/UserInformation.vue";
-import ActivityInformation from "./Page/ActivityInformation.vue";
+// import ActivityInformation from "./Page/ActivityInformation.vue";
 import EquipmentBorrow from "./Page/EquipmentBorrow.vue";
 import EBorrowMain from "./Page/E-Borrow/EBorrowMain.vue";
 import FriendInformation from "./Page/FriendInformation.vue";
@@ -49,7 +49,7 @@ export default {
     Header,
     Sidebar,
     UserInformation,
-    ActivityInformation,
+    // ActivityInformation,
     EquipmentBorrow,
     EBorrowMain,
     FriendInformation,
