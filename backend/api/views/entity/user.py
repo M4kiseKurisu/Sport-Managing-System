@@ -9,8 +9,9 @@ from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 
 from api.models import User
+from api.models import ActivityUseField
 from api.models import UserInActivity
-from api.views.relation import user_activity, user_group, friend
+from api.views.relation import user_group, friend
 
 
 def genid():
@@ -213,3 +214,35 @@ def friend_delete(request):
     fid = data.get('fid')
     friend.delete_relation(uid, fid)
     return JsonResponse({"msg": '好友删除完成', "status": True})
+
+
+@require_http_methods(["GET"])
+def activity_list(request):
+    """ 查看用户参加的活动 """
+    uid = request.GET.get('uid')
+    user = User.objects.get(uid=uid)
+    activities = set(map(lambda param: param.aid, UserInActivity.objects.filter(uid=user)))
+    lst = list(map(lambda param: {"aid": param.aid.aid, "name": param.aid.name, "type": param.aid.get_type_display(),
+                                  "private": param.aid.private, "category": param.aid.category,
+                                  "capacity": param.aid.capacity, "maximum": param.aid.maximum,
+                                  "picture": param.aid.picture.url if param.aid.picture else None,
+                                  "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                                  "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                                  "favor": param.aid.favor},
+                   ActivityUseField.objects.filter(aid__in=activities).order_by('-start_time')))
+    print(lst)
+    return JsonResponse({"msg": '活动信息获取成功', "status": True, "list": lst})
+
+
+@require_http_methods(["GET"])
+def activity_statistic(request):
+    """ 用户参加的活动数量统计 """
+    uid = request.GET.get('uid')
+    user = User.objects.get(uid=uid)
+    records = UserInActivity.objects.filter(uid=user)
+    statistic = dict()
+    for record in records:
+        category = record.aid.category
+        statistic[category] = statistic.get(category, 0) + 1
+    print(statistic)
+    return JsonResponse({"msg": '活动统计信息获取成功', "status": True, "data": statistic})
