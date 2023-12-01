@@ -6,10 +6,10 @@ from api.system.storage import ImageStorage
 # ----------------------------  实体表  -------------------------------- #
 class User(models.Model):
     """ 用户实体表 """
-    USER_GENDER = {
+    USER_GENDER = (
         (0, '女'),
         (1, '男'),
-    }
+    )
     uid = models.IntegerField(primary_key=True)
     account = models.CharField(max_length=32, unique=True)
     password = models.CharField(max_length=32)
@@ -46,14 +46,21 @@ class Field(models.Model):
 
 class Activity(models.Model):
     """ 活动项目实体表 """
+    TYPE = (
+        (0, "个人"),
+        (1, "团体"),
+    )
     aid = models.IntegerField(primary_key=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.SmallIntegerField(choices=TYPE)
     name = models.CharField(max_length=32)
     desc = models.CharField(max_length=128)
-    tag = models.CharField(max_length=32)
+    category = models.CharField(max_length=32)
+    tags = models.CharField(max_length=128)
     maximum = models.IntegerField()
-    capacity = models.IntegerField(default=1)
+    capacity = models.IntegerField()
+    favor = models.IntegerField()
     picture = models.ImageField(upload_to='images/activity/', storage=ImageStorage(), null=True)
+    private = models.BooleanField()
 
 
 class Equipment(models.Model):
@@ -67,11 +74,11 @@ class Equipment(models.Model):
 # ----------------------------  联系表  -------------------------------- #
 class UserInGroup(models.Model):
     """ 用户从属团体联系表 """
-    TYPE = {
+    TYPE = (
         (0, "创建人"),
         (1, "管理员"),
         (2, "成员"),
-    }
+    )
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     type = models.SmallIntegerField(choices=TYPE)
@@ -84,11 +91,11 @@ class UserInGroup(models.Model):
 
 class UserApplyGroup(models.Model):
     """ 用户申请团体联系表 """
-    STATUS = {
+    STATUS = (
         (0, "申请中"),
         (1, "已接受"),
         (2, "已拒绝"),
-    }
+    )
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     content = models.CharField(max_length=128)
@@ -105,8 +112,8 @@ class ActivityUseField(models.Model):
     """ 活动使用场地联系表"""
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
     fid = models.ForeignKey(Field, on_delete=models.CASCADE)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
 
     class Meta:
         constraints = [
@@ -131,7 +138,6 @@ class UserCreateActivity(models.Model):
     """ 用户发起活动联系表 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
-    private = models.BooleanField()
 
     class Meta:
         constraints = [
@@ -141,6 +147,7 @@ class UserCreateActivity(models.Model):
 
 class GroupCreateActivity(models.Model):
     """ 团体发起活动联系表 """
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
 
@@ -152,10 +159,10 @@ class GroupCreateActivity(models.Model):
 
 class UserEquipment(models.Model):
     """ 用户借用器材联系表 """
-    RETURN_STATUS = {
+    RETURN_STATUS = (
         (0, "未归还"),
         (2, "已归还"),
-    }
+    )
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
@@ -171,10 +178,10 @@ class UserEquipment(models.Model):
 
 class GroupEquipment(models.Model):
     """ 团体借用器材联系表 """
-    RETURN_STATUS = {
+    RETURN_STATUS = (
         (0, "未归还"),
         (2, "已归还"),
-    }
+    )
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
@@ -201,11 +208,11 @@ class Friend(models.Model):
 
 class FriendApply(models.Model):
     """ 好友申请表 """
-    STATUS = {
+    STATUS = (
         (0, "申请中"),
         (1, "已接受"),
         (2, "已拒绝"),
-    }
+    )
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
     content = models.CharField(max_length=128)
@@ -216,3 +223,5 @@ class FriendApply(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['sender', 'receiver', 'apply_time'], name='unique_friend_apply')
         ]
+
+# ----------------------------  辅助表  -------------------------------- #

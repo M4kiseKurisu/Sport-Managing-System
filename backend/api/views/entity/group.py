@@ -20,29 +20,23 @@ def genid():
     return new_id
 
 
+@require_http_methods(["GET"])
 def view(request):
     """ 用户查看团体中心综述 """
-    if request.method == 'GET':
-        key = request.GET.get('keyword') or ''
-        uid = request.GET.get('uid')
-        groups = Group.objects.filter(Q(group_name__icontains=key) | Q(group_desc__icontains=key))
-        joined_groups = list(map(lambda param: param.gid.gid, user_group.search_relation(uid, None)))
+    key = request.GET.get('keyword') or ''
+    uid = request.GET.get('uid')
+    groups = Group.objects.filter(
+        Q(group_name__icontains=key) | Q(group_desc__icontains=key) | Q(tag__icontains=key)
+    )
+    joined_groups = list(map(lambda param: param.gid.gid, user_group.search_relation(uid, None)))
 
-        lst = list(map(lambda param: {"gid": param.gid, "group_name": param.group_name, "group_desc": param.group_desc,
-                                      "tag": param.tag, "capacity": param.capacity, "maximum": param.maximum,
-                                      "creator": param.creator.user_name, "is_joined": param.gid in joined_groups,
-                                      "pic": param.picture.url if param.picture else None},
-                       groups))
+    lst = list(map(lambda param: {"gid": param.gid, "group_name": param.group_name, "group_desc": param.group_desc,
+                                  "tag": param.tag, "capacity": param.capacity, "maximum": param.maximum,
+                                  "creator": param.creator.user_name, "is_joined": param.gid in joined_groups,
+                                  "pic": param.picture.url if param.picture else None},
+                   groups))
 
-        return JsonResponse({"msg": "团体信息请求成功", "status": True, "list": lst})
-
-    else:
-        return JsonResponse({"msg": "请求方式有误", "status": False})
-
-
-def detail(request):
-    """ 团体具体信息 """
-    pass
+    return JsonResponse({"msg": "团体信息请求成功", "status": True, "list": lst})
 
 
 def create(request):
@@ -99,7 +93,6 @@ def apply(request):
         if method == "accept":
             applies = user_group.search_accept_apply(uid)
             for a in applies:
-                print(a.apply_time)
                 temp = {"uid": a.uid.uid, "user_name": a.uid.user_name, "content": a.content,
                         "gid": a.gid.gid, "group_name": a.gid.group_name,
                         "time": a.apply_time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -122,7 +115,7 @@ def apply(request):
         """ 处理团体申请 """
         data: dict = json.loads(request.body)
         print(data)
-        if user_group.handle_apply(data.get('uid'), data.get('gid'), data.get('res')):
+        if user_group.modify_apply(data.get('uid'), data.get('gid'), data.get('res')):
             return JsonResponse({"msg": "处理完成", "status": True})
         else:
             return JsonResponse({"msg": "团体人数已达上限", "status": False})
@@ -176,4 +169,3 @@ def members_authority(request):
     elif member_type == 2:
         user_group.modify_relation(uid, gid, member_type)
         return JsonResponse({"msg": "移除团体管理员成功", "status": True})
-

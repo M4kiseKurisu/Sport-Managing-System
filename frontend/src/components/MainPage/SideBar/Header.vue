@@ -9,7 +9,7 @@
     <div class="right">
       <!-- 头像 -->
       <div>
-        <el-avatar :size="50" :src="picture" />
+        <el-avatar :size="50" :src="picture || './src/images/emptyAvatar.png'" />
       </div>
 
       <!-- 账号 -->
@@ -21,16 +21,30 @@
 </template>
 
 <script>
-import { color } from "echarts/core";
-
+import { color } from "echarts/core"
+import axios from 'axios'
 export default {
   data() {
     return {
-      name: JSON.parse(sessionStorage.getItem("user_name")),
-      picture: sessionStorage.getItem("picture"),
+      name: '',
+      picture: '',
     };
   },
   methods: {},
+  created() {
+    axios({
+      method: "GET",
+      url: "http://127.0.0.1:8000/api/user/information",
+      params: {
+        uid: JSON.parse(sessionStorage.getItem("uid")),
+      },
+    }).then((result) => {
+      if (result.data.status) {
+        this.name = result.data.info.name;
+        this.picture = "http://127.0.0.1:8000" + result.data.info.picture;
+      }
+    });
+  }
 };
 </script>
 

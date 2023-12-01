@@ -35,13 +35,16 @@
                 <!-- 归还状态 -->
                 <el-col :span="3">
                     <div v-if="isTitle" class="text">归还状态</div>
-                    <div v-else class="text">{{ information.state }}</div>
+                    <div v-else class="text"
+                        :style="{ 'color': (information.state === '未归还' && isLate) ? 'red' : 'black' }">
+                        {{ information.state }}</div>
                 </el-col>
 
                 <!-- 归还按钮 -->
                 <el-col :span="3">
                     <div v-if="isTitle" class="text">归还操作</div>
-                    <el-button v-else-if="information.state === '未归还'" type="primary">归还器材</el-button>
+                    <el-button v-else-if="information.state === '未归还' && !isLate" type="primary"
+                        @click="returnEquipment()">归还器材</el-button>
                     <el-button v-else disabled type="primary">归还器材</el-button>
                 </el-col>
             </div>
@@ -53,11 +56,72 @@
 </template>
 
 <script>
+import axios from 'axios';
+import dayjs from 'dayjs'
 export default {
     data() {
         return {
-
+            list: [],
+            returnGid: null,
+            returnEid: null,
+            returnData: null,
         }
+    },
+    methods: {
+
+        applyReturn() {
+            axios({
+                method: "POST",
+                url: "http://127.0.0.1:8000/api/equipment/return",
+                data: this.returnData
+            }).then((result) => {
+                console.log(1);
+                if (result.data.status) {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'success'
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'error'
+                    });
+                }
+            })
+        },
+
+        returnEquipment() {
+            //console.log(this.information);
+            if (this.isGroup) {
+                this.returnData = {
+                    gid: this.information.gid,
+                    eid: this.information.eid,
+                    category: this.information.name,
+                    start_time: this.information.startTime,
+                    end_time: this.information.returnTime
+                }
+            }
+
+            else {
+                this.returnData = {
+                    uid: JSON.parse(sessionStorage.getItem('uid')),
+                    eid: this.information.eid,
+                    category: this.information.name,
+                    start_time: this.information.startTime,
+                    end_time: this.information.returnTime
+                }
+            }
+
+            //console.log(this.returnData);
+            this.applyReturn();
+        }
+    },
+    computed: {
+        isLate() {
+            return this.information.returnTime < dayjs().format('YYYY-MM-DD hh:mm:ss');
+        },
     },
     props: ["information", "isTitle", "isGroup"]
 }

@@ -52,6 +52,7 @@ def delete_relation(uid, gid):
 
 
 def modify_relation(uid, gid, member_type):
+    """ 修改用户团体联系 """
     user = User.objects.get(uid=uid)
     group = Group.objects.get(gid=gid)
     relation = UserInGroup.objects.get(uid=user, gid=group)
@@ -80,10 +81,9 @@ def search_accept_apply(uid):
     user = User.objects.get(uid=uid)
 
     groups = list(map(lambda param: param.gid, UserInGroup.objects.filter(Q(uid=user) & (Q(type=0) | Q(type=1)))))
-    for group in groups:
-        applies = UserApplyGroup.objects.filter(gid=group).order_by('-apply_time')
-        lst += list(applies)
 
+    applies = UserApplyGroup.objects.filter(gid__in=groups).order_by('-apply_time')
+    lst += list(applies)
     return lst
 
 
@@ -91,12 +91,11 @@ def search_send_apply(uid):
     """ 查找发送的团体申请信息 """
     user = User.objects.get(uid=uid)
     applies = UserApplyGroup.objects.filter(uid=user).order_by('-apply_time')
-    print(applies)
     lst = list(applies)
     return lst
 
 
-def handle_apply(uid, gid, res):
+def modify_apply(uid, gid, res):
     """ 管理员处理团体申请请求 """
     group = Group.objects.get(gid=gid)
     applicant = User.objects.get(uid=uid)
