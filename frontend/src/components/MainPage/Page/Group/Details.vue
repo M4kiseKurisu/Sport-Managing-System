@@ -8,16 +8,16 @@
           <div class="group-details">
             <div class="center-content">
               <div v-if="group.image !== null">
-                  <img :src="'http://127.0.0.1:8000' + group.image" class="image" />
+                <img :src="'http://127.0.0.1:8000' + group.image" class="image" />
               </div>
               <div v-else>
-                  <img :src="defaultImage" class="image" />
+                <img :src="defaultImage" class="image" />
               </div>
               <div class="group_name">
                 <h1>{{ group.name }}</h1>
               </div>
-              <div class="group-buttons"  v-if="this.father=='YourGroup' 
-              && (this.group.type=='创建人' || this.group.type=='管理员')">
+              <div class="group-buttons" v-if="this.father == 'YourGroup'
+                && (this.group.type == '创建人' || this.group.type == '管理员')">
                 <el-button @click="addActivity()">新增活动</el-button>
               </div>
             </div>
@@ -32,7 +32,7 @@
           <el-card>
             <el-collapse v-model="activeName" accordion>
               <el-collapse-item name="1" class="group_instrudiction">
-                <template #title class = "collapse_title">
+                <template #title class="collapse_title">
                   <span class="custom-collapse-title">团体简介</span>
                 </template>
                 <p>{{ group.description }}</p>
@@ -40,7 +40,9 @@
             </el-collapse>
           </el-card>
           <ul>
-            <el-card><li>团体活动</li></el-card>
+            <el-card>
+              <li>团体活动</li>
+            </el-card>
             <el-card @click="drawer = true">
               <li>其他成员</li>
             </el-card>
@@ -50,76 +52,59 @@
       </el-main>
     </el-container>
 
-      <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" width="800px">
-        <el-table :data="filteredUsers" style="width:100%">
+    <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" width="800px">
+      <el-table :data="filteredUsers" style="width:100%">
 
-          <el-table-column label="呢称" width="150px">
-            <template #default="scope">
-              <div v-for="user in scope.row" :key="user.uid" class="user-info">
-                <div v-if="user.pic !== null">
-                    <img :src="'http://127.0.0.1:8000' + user.pic" class="avatar" />
-                </div>
-                <div v-else>
-                    <img :src="defaultImage" class="avatar" />
-                </div>
-                <span>{{ user.user_name }}</span>
+        <el-table-column label="呢称" width="150px">
+          <template #default="scope">
+            <div v-for="user in scope.row" :key="user.uid" class="user-info">
+              <div v-if="user.pic !== null">
+                <img :src="'http://127.0.0.1:8000' + user.pic" class="avatar" />
               </div>
-            </template>
-          </el-table-column>
-          
-          <el-table-column label="类型" width="92px">
-            <template #default="scope">
-              <div v-for="user in scope.row" :key="user.uid">
-                <span>{{user.type }}</span>
+              <div v-else>
+                <img :src="defaultImage" class="avatar" />
               </div>
-            </template>
-          </el-table-column>  
-
-          <el-table-column>
-            <template #header>
-              <div class="searchTitle">
-                <div class="searchBox">
-                  <el-input v-model="keyword" placeholder="搜索成员"></el-input>
-                </div>
-                <el-button @click="search" class="searchButton">查询</el-button>
-              </div>
-            </template>
-            <template #default="scope" align="right">
-              <div v-for="user in scope.row" :key="user.uid" class="user-info">
-              <div v-if="this.father=='YourGroup'" class="button-container">
-              <el-button
-                v-if="this.group.type=='创建人' || this.group.type=='管理员'"
-                size="small"
-                type="danger"
-                @click="handleDelete(user.uid)"
-              >踢出</el-button>
-              <el-button
-                v-if="this.group.type=='创建人'"
-                size="small"
-                type="warning"
-                @click="handleSet(user)"
-              >
-                <span v-if="user.type=='管理员'">移除权限</span>
-                <span v-if="user.type=='成员'">设为管理员</span>
-              </el-button>
+              <span>{{ user.user_name }}</span>
             </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="类型" width="92px">
+          <template #default="scope">
+            <div v-for="user in scope.row" :key="user.uid">
+              <span>{{ user.type }}</span>
             </div>
-            </template>
-          </el-table-column>
+          </template>
+        </el-table-column>
 
-        </el-table>
+        <el-table-column>
+          <template #header>
+            <div class="searchTitle">
+              <div class="searchBox">
+                <el-input v-model="keyword" placeholder="搜索成员"></el-input>
+              </div>
+              <el-button @click="search" class="searchButton">查询</el-button>
+            </div>
+          </template>
+          <template #default="scope" align="right">
+            <div v-for="user in scope.row" :key="user.uid" class="user-info">
+              <div v-if="this.father == 'YourGroup'" class="button-container">
+                <el-button v-if="this.group.type == '创建人' || this.group.type == '管理员'" size="small" type="danger"
+                  @click="handleDelete(user.uid)">踢出</el-button>
+                <el-button v-if="this.group.type == '创建人'" size="small" type="warning" @click="handleSet(user)">
+                  <span v-if="user.type == '管理员'">移除权限</span>
+                  <span v-if="user.type == '成员'">设为管理员</span>
+                </el-button>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
 
-        <el-pagination
-        :small="small"
-        :disabled="disabled"
-        :background="background"
-        layout="prev, pager, next"
-        :page-size="10"
-        :total="totalPages"
-        v-model:current-page="currentPage"
-        @current-change="handleCurrentChange"
-        />
-      </el-drawer>
+      </el-table>
+
+      <el-pagination :small="small" :disabled="disabled" :background="background" layout="prev, pager, next"
+        :page-size="10" :total="totalPages" v-model:current-page="currentPage" @current-change="handleCurrentChange" />
+    </el-drawer>
 
   </div>
 </template>
@@ -128,12 +113,13 @@
 import axios from 'axios'
 
 export default {
-  data() {  
+  data ()
+  {
     return {
       drawer: false,
       group: {
         gid: '',
-        image: './src/images/group-default-picture.png', 
+        image: './src/images/group-default-picture.png',
         name: '团体名称',
         description: '团体简介描述',
         type: ''
@@ -150,7 +136,8 @@ export default {
       gid: ''
     };
   },
-  mounted() {
+  mounted ()
+  {
     // 获取传递的参数
     const gid = this.$route.query.gid;
     const groupName = this.$route.query.groupName;
@@ -171,47 +158,58 @@ export default {
     this.getData();
   },
   computed: {
-    totalPages() {
-      return Math.ceil(this.Users.length);
+    totalPages ()
+    {
+      return Math.ceil( this.Users.length );
     },
-    filteredUsers() {
+    filteredUsers ()
+    {
       let buf = [];
       let filterUsers = [];
-      for (let i = 0; i < this.Users.length;i++){
-          if(this.Users[i].uid != sessionStorage.getItem( 'uid' )){
-              buf.push(this.Users[i]);
-          } 
+      for ( let i = 0; i < this.Users.length; i++ )
+      {
+        if ( this.Users[ i ].uid != sessionStorage.getItem( 'uid' ) )
+        {
+          buf.push( this.Users[ i ] );
+        }
       }
 
-      for(let i = 0;i < buf.length; i+=10){
-          filterUsers.push(buf.slice(i,i+10))
+      for ( let i = 0; i < buf.length; i += 10 )
+      {
+        filterUsers.push( buf.slice( i, i + 10 ) )
       }
       return filterUsers
     }
   },
   methods: {
-    addActivity() {
+    addActivity ()
+    {
       // 处理新增活动的逻辑
     },
-    getData() {
-        axios({
-          method: "GET",
-          url: "http://127.0.0.1:8000/api/group/members/list",
-          params: {
-             gid: this.gid
-          }
-        }).then((result) => {
-          if (result.data.status) {
-            console.log( result.data.list )
-            this.Users = result.data.list; // 将后端数据赋值给 Users
-            this.msg = result.data.msg;
-          }
-        }).catch((error) => {
-          console.error('Error fetching group data:', error);
-        });
+    getData ()
+    {
+      axios( {
+        method: "GET",
+        url: "http://127.0.0.1:8000/api/group/members/list",
+        params: {
+          gid: this.gid
+        }
+      } ).then( ( result ) =>
+      {
+        if ( result.data.status )
+        {
+          console.log( result.data.list )
+          this.Users = result.data.list; // 将后端数据赋值给 Users
+          this.msg = result.data.msg;
+        }
+      } ).catch( ( error ) =>
+      {
+        console.error( 'Error fetching group data:', error );
+      } );
     },
 
-    search () {
+    search ()
+    {
       axios( {
         method: "GET",
         url: "http://127.0.0.1:8000/api/group/members/list",
@@ -219,21 +217,23 @@ export default {
           gid: this.group.gid,
           keyword: this.keyword
         }
-      } ).then(( result ) =>
+      } ).then( ( result ) =>
       {
         if ( result.data.status )
         {
           this.Users = result.data.list; // 将后端数据赋值给 Users
           this.msg = result.data.msg;
         }
-      });
+      } );
     },
 
-    handleCurrentChange(val) {
-      console.log(`current page: ${val}`);
+    handleCurrentChange ( val )
+    {
+      console.log( `current page: ${ val }` );
     },
 
-    handleDelete(uid) {
+    handleDelete ( uid )
+    {
       ElMessageBox.confirm( '是否确认踢出该成员',
         'Warning',
         {
@@ -270,9 +270,10 @@ export default {
       } );
     },
 
-    handleSet(user){
+    handleSet ( user )
+    {
       const type = user.type == '成员' ? 1 : 2;
-      const msg = user.type == '成员' ? '是否将其设为管理员':'是否取消其管理员权限';
+      const msg = user.type == '成员' ? '是否将其设为管理员' : '是否取消其管理员权限';
       ElMessageBox.confirm( msg,
         {
           confirmButtonText: '确定',
@@ -309,7 +310,8 @@ export default {
       } );
     },
 
-    getAvatar(user) {
+    getAvatar ( user )
+    {
       return user.pic;
     },
   },
@@ -339,7 +341,8 @@ export default {
 .group-details {
   text-align: right;
 }
-.group_name{
+
+.group_name {
   font-size: 23px;
   text-align: center;
 }
@@ -381,10 +384,13 @@ export default {
   color: #333;
 }
 
-.group_instrudiction p{
-  font-family: Arial, sans-serif; /* 修改字体 */
-  font-size: 14px; /* 修改字体大小 */
-  line-height: 1.5; /* 修改行高 */
+.group_instrudiction p {
+  font-family: Arial, sans-serif;
+  /* 修改字体 */
+  font-size: 14px;
+  /* 修改字体大小 */
+  line-height: 1.5;
+  /* 修改行高 */
   color: #555;
 }
 
@@ -393,8 +399,10 @@ export default {
   font-weight: bold;
   color: #666;
   border-radius: 10px;
-  display: inline-block; /* 让标题内容成为一个块级元素 */
-  cursor: pointer; /* 添加鼠标指针样式 */
+  display: inline-block;
+  /* 让标题内容成为一个块级元素 */
+  cursor: pointer;
+  /* 添加鼠标指针样式 */
 }
 
 .centered-aside {
@@ -425,7 +433,8 @@ export default {
 
 .button-container {
   display: flex;
-  justify-content: space-between; /* 可以根据需要选择其他布局方式 */
+  justify-content: space-between;
+  /* 可以根据需要选择其他布局方式 */
 }
 
 .image {
@@ -436,16 +445,16 @@ export default {
 }
 
 .searchTitle {
-    width: 600px;
-    display: flex;
-    align-items: center;
+  width: 600px;
+  display: flex;
+  align-items: center;
 }
 
 .searchBox {
-    width: 100px;
+  width: 100px;
 }
 
 .searchButton {
-    width: 50px;
+  width: 50px;
 }
 </style>

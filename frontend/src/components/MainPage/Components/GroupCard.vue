@@ -16,16 +16,17 @@
         <span class="creator-info">创建人：{{ props.card.creator }}</span>
       </div>
       <div class="button-container">
-        <router-link :to="{ path: '/Page/GroupInformation/Details', 
-            query: { 
-                gid: card.gid,
-                groupName: card.group_name, 
-                description: card.group_desc, 
-                image: card.pic,
-                father: 'GroupList'
-            }
+        <router-link :to="{
+          path: '/Page/GroupInformation/Details',
+          query: {
+            gid: card.gid,
+            groupName: card.group_name,
+            description: card.group_desc,
+            image: card.pic,
+            father: 'GroupList'
+          }
         }">
-            <el-button text class="button">查看详情</el-button>
+          <el-button text class="button">查看详情</el-button>
         </router-link>
         <span>{{ props.card.capacity }}/{{ props.card.maximum }}</span>
         <el-button v-if="props.card.is_joined === false" @click="applicate(card.gid)" class="button">
@@ -58,11 +59,11 @@ interface CardProps {
     group_desc: ""
   };
   status: number;
-  msg:string;
-  
+  msg: string;
+
 }
 
-const props  = defineProps<CardProps>();
+const props = defineProps<CardProps>();
 
 const applicate = (gid) => {
   ElMessageBox.prompt('发送你的申请', {
@@ -71,47 +72,47 @@ const applicate = (gid) => {
     inputPattern: /.*/,
     inputErrorMessage: '请填写申请',
   }).then(({ value }) => {
-      if (!value) {
-        ElMessage({
-          type: 'warning',
-          message: '申请信息不能为空',
-        });
-        return;
-      }
-
-      console.log(gid)
-      // 发送申请
-      axios.post('http://127.0.0.1:8000/api/group/join', {
-        uid: sessionStorage.getItem('uid'),
-        gid: gid,
-        content: value,
-      }).then(response => {
-          const { status, msg } = response.data;
-
-          if (status === true) {
-            ElMessage({
-              type: 'success',
-              message: msg,
-            });
-          } else {
-            ElMessage({
-              type: 'error',
-              message: msg,
-            });
-          }
-        }).catch(error => {
-          console.error('发送申请时出错:', error);
-          ElMessage({
-            type: 'error',
-            message: '申请发送失败，请稍后重试',
-          });
-        });
-    }).catch(() => {
+    if (!value) {
       ElMessage({
-        type: 'info',
-        message: '你已取消申请',
+        type: 'warning',
+        message: '申请信息不能为空',
+      });
+      return;
+    }
+
+    console.log(gid)
+    // 发送申请
+    axios.post('http://127.0.0.1:8000/api/group/join', {
+      uid: sessionStorage.getItem('uid'),
+      gid: gid,
+      content: value,
+    }).then(response => {
+      const { status, msg } = response.data;
+
+      if (status === true) {
+        ElMessage({
+          type: 'success',
+          message: msg,
+        });
+      } else {
+        ElMessage({
+          type: 'error',
+          message: msg,
+        });
+      }
+    }).catch(error => {
+      console.error('发送申请时出错:', error);
+      ElMessage({
+        type: 'error',
+        message: '申请发送失败，请稍后重试',
       });
     });
+  }).catch(() => {
+    ElMessage({
+      type: 'info',
+      message: '你已取消申请',
+    });
+  });
 };
 
 
@@ -120,8 +121,9 @@ const applicate = (gid) => {
 <style scoped>
 /* 调整 el-card 大小 */
 .custom-card {
-height: 175px;
-width: 90% /* 设置卡片高度 */
+  height: 175px;
+  width: 90%
+    /* 设置卡片高度 */
 }
 
 .button-container {
@@ -135,20 +137,24 @@ width: 90% /* 设置卡片高度 */
 .button {
   padding: 0;
   min-height: auto;
-  color: #070707; /* 按钮文本颜色 */
-  background-color: #ffffff; /* 按钮背景色 */
+  color: #070707;
+  /* 按钮文本颜色 */
+  background-color: #ffffff;
+  /* 按钮背景色 */
 }
 
 .image-container {
   /* Set container size */
   width: 100%;
-  height: 100px; /* Set container height */
+  height: 100px;
+  /* Set container height */
 
   /* Set container as flex to center image */
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* Hide overflow */
+  overflow: hidden;
+  /* Hide overflow */
 }
 
 .image {
@@ -159,8 +165,10 @@ width: 90% /* 设置卡片高度 */
 }
 
 .icon-container {
-  align-self: flex-start; /* Adjust alignment as needed */
-  margin: 5px; /* Adjust margin as needed */
+  align-self: flex-start;
+  /* Adjust alignment as needed */
+  margin: 5px;
+  /* Adjust margin as needed */
   z-index: 1;
 }
 
@@ -172,7 +180,9 @@ width: 90% /* 设置卡片高度 */
 }
 
 .creator-info {
-  color: #888; /* 创建人信息的颜色 */
-  font-size: 14px; /* 创建人信息的字体大小 */
+  color: #888;
+  /* 创建人信息的颜色 */
+  font-size: 14px;
+  /* 创建人信息的字体大小 */
 }
 </style>
