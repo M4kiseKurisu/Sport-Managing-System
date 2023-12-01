@@ -23,6 +23,7 @@ import Friend from './components/MainPage/Page/FriendInformation.vue'
 import Activity from './components/MainPage/Page/Activity/ActivityMain.vue'
 import ActivityInformation from './components/MainPage/Page/Activity/ActivityInformation.vue'
 import ActivityBefore from './components/MainPage/Page/Activity/ActivityBefore.vue'
+import ActivityDetail from './components/MainPage/Page/Activity/ActivityDetail.vue'
 
 
 const router = createRouter({
@@ -82,6 +83,10 @@ const router = createRouter({
                         {
                             path: 'Before',
                             component: ActivityBefore
+                        },
+                        {
+                            path: 'Detail/:aid',
+                            component: ActivityDetail
                         }
                     ]
                 },

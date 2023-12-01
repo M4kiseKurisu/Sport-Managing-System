@@ -38,6 +38,7 @@ export default {
     data() {
         return {
             picture: '',
+            aid: '',
         }
     },
     props: {
@@ -47,12 +48,12 @@ export default {
         }
     },
     mounted() {
-        console.log(this.information);
         this.picture = "http://127.0.0.1:8000" + this.information.picture;
+        this.aid = this.information.aid;
     },
     methods: {
         checkInformation() {
-
+            this.$router.push('/Page/Activity_Information/Detail/' + this.aid);
         }
     }
 }

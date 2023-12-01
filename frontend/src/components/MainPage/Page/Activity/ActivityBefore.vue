@@ -5,8 +5,13 @@
     </div>
 
     <!-- 表项 -->
-    <div>
-        <BeforeActivityRow :information="list[0]" />
+    <div class="form">
+        <BeforeActivityRow v-for="(item, index) in groups" :key="index" :information="item" />
+    </div>
+
+    <!-- 换页器 -->
+    <div class="pagination">
+        <el-pagination background layout="prev, pager, next" :total="this.list.length" @current-change="handlePageChange" />
     </div>
 </template>
 
@@ -16,21 +21,8 @@ import BeforeActivityRow from '../../Components/BeforeActivityRow.vue';
 export default {
     data() {
         return {
-            list: [
-                {
-                    "aid": 1111,
-                    "name": "1111",
-                    "type": "个人",
-                    "category": "篮球",
-                    "capacity": 1,
-                    "maximum": 500,
-                    "start_time": "2023-10-30 15:00:00",
-                    "end_time": "2023-10-30 18:00:00",
-                    "picture": "/media/images/activity/20231127190029_59.jpg",
-                    "favor": 0,
-                    "is_joined": false
-                }
-            ],
+            current_page: 1,
+            list: [],
         };
     },
     methods: {
@@ -48,12 +40,21 @@ export default {
                     this.list = result.data.list;
                 }
             });
+        },
+        handlePageChange(pageNo) {
+            this.current_page = pageNo;
         }
     },
     created() {
         this.draw()
     },
-    components: { BeforeActivityRow }
+    components: { BeforeActivityRow },
+    computed: {
+        groups() {
+            let end = this.list.length < 6 * this.current_page ? this.list.length : 6 * this.current_page;
+            return this.list.slice(6 * (this.current_page - 1), end);
+        }
+    }
 }
 </script>
 
@@ -67,5 +68,17 @@ export default {
 .row {
     width: 60%;
     height: 200px;
+}
+
+.form {
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-right: 7%;
 }
 </style>
