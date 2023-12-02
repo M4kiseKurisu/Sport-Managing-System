@@ -14,6 +14,8 @@ urlpatterns = [
     path('user/modify/text', user.modify_text),
     path('user/modify/pic', user.modify_pic),
     path('user/group', user.group_list),
+    path('user/activity/statistic', user.activity_statistic),
+    path('user/activity/view', user.activity_list),
 
     # group
     path('group/view', group.view),
@@ -24,6 +26,8 @@ urlpatterns = [
     path('group/members/list', group.members_list),
     path('group/members/remove', group.members_remove),
     path('group/members/authority', group.members_authority),
+    path('group/activity/statistic', group.activity_statistic),
+    path('group/activity/view', group.activity_list),
 
     # field
     path('field/add', field.add),
@@ -51,4 +55,5 @@ urlpatterns = [
     path('activity/view/inactive', activity.inactive),
     path('activity/join', activity.join),
     path('activity/exit', activity.exit_out),
+    path('activity/favor', activity.favor),
 ]

@@ -224,4 +224,15 @@ class FriendApply(models.Model):
             models.UniqueConstraint(fields=['sender', 'receiver', 'apply_time'], name='unique_friend_apply')
         ]
 
+
 # ----------------------------  辅助表  -------------------------------- #
+class UserFavor(models.Model):
+    """ 用户点赞过的活动数量 """
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.CharField(max_length=32)
+    cnt = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['uid', 'category'], name='unique_user_favor')
+        ]
