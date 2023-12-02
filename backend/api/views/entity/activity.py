@@ -4,17 +4,19 @@
 import json
 import random
 
-from django.http import JsonResponse
 from django.db.models import Q
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.dateparse import parse_date
 from django.utils import timezone
 
+from api.models import User
 from api.models import Activity
+from api.models import UserInActivity
 from api.models import ActivityUseField
 from api.models import UserCreateActivity
-from api.models import UserInActivity
 from api.models import GroupCreateActivity
+from api.models import UserFavor
 from api.views.relation import user_activity
 from api.views.relation import user_group
 from api.views.relation import group_activity
@@ -227,8 +229,41 @@ def join(request):
 
 @require_http_methods(["POST"])
 def exit_out(request):
+    """ 用户退出、撤销活动 """
     data: dict = json.loads(request.body)
     uid = data.get('uid')
     aid = data.get('aid')
     user_activity.delete_relation(uid, aid)
     return JsonResponse({"msg": "活动已退出", "status": True})
+
+
+@require_http_methods(["POST"])
+def favor(request):
+    """ 用户点赞活动 """
+    data: dict = json.loads(request.body)
+    method = data.get('method')
+    user = User.objects.get(uid=data.get('uid'))
+    activity = Activity.objects.get(aid=data.get('aid'))
+    category = activity.category
+    favor_rec = UserFavor.objects.filter(uid=user, category=category).first()
+    if method == "like":
+        if favor_rec:
+            favor_rec.cnt = favor_rec.cnt + 1
+            favor_rec.save()
+        else:
+            new_rec = UserFavor(uid=user, category=category, cnt=1)
+            new_rec.save()
+        activity.favor = activity.favor + 1
+        activity.save()
+        return JsonResponse({"msg": "点赞成功", "status": True})
+    elif method == "remove":
+        if favor_rec:
+            favor_rec.cnt = favor_rec.cnt - 1
+            favor_rec.save() if favor_rec.cnt > 0 else favor_rec.delete()
+            activity.favor = activity.favor - 1
+            activity.save()
+            return JsonResponse({"msg": "点赞已取消", "status": True})
+        else:
+            return JsonResponse({"msg": "不存在点赞记录", "status": False})
+    else:
+        return JsonResponse({"msg": "method参数有误", "status": False})
