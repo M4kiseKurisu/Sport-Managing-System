@@ -71,6 +71,31 @@ class Equipment(models.Model):
     picture = models.ImageField(upload_to='images/equipment/', storage=ImageStorage(), null=True)
 
 
+class Stream(models.Model):
+    """ 动态表 """
+    PRIVACY = (
+        (0, "仅自己可见"),
+        (1, "好友可见"),
+        (2, "所有人可见"),
+    )
+    sid = models.IntegerField(primary_key=True)
+    time = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=512)
+    picture = models.ImageField(upload_to='images/stream/', storage=ImageStorage(), null=True)
+    favor = models.IntegerField(default=0)
+    private = models.SmallIntegerField(choices=PRIVACY)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    activity = models.ForeignKey(Activity, on_delete=models.CASCADE)
+
+
+class Notice(models.Model):
+    """ 系统通知表 """
+    nid = models.IntegerField(primary_key=True)
+    time = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=128)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 # ----------------------------  联系表  -------------------------------- #
 class UserInGroup(models.Model):
     """ 用户从属团体联系表 """
@@ -127,6 +152,7 @@ class UserInActivity(models.Model):
     """ 用户参加项目联系表 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    like = models.BooleanField()
 
     class Meta:
         constraints = [
@@ -225,9 +251,20 @@ class FriendApply(models.Model):
         ]
 
 
+class UserFavorStream(models.Model):
+    """ 用户点赞动态记录表 """
+    uid = models.ForeignKey(User, on_delete=models.CASCADE)
+    sid = models.ForeignKey(Stream, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['uid', 'sid'], name='unique_user_favor_stream')
+        ]
+
+
 # ----------------------------  辅助表  -------------------------------- #
 class UserFavor(models.Model):
-    """ 用户点赞过的活动数量 """
+    """ 用户点赞过的活动类型 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=32)
     cnt = models.IntegerField()

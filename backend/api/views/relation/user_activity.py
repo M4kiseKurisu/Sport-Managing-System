@@ -29,7 +29,7 @@ def add_relation(uid, aid):
         activity.capacity += 1
         activity.save()
         # 增加用户参与记录
-        rec = UserInActivity(uid=user, aid=activity)
+        rec = UserInActivity(uid=user, aid=activity, like=False)
         rec.save()
         return True
 
