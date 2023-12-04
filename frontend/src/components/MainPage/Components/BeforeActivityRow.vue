@@ -12,6 +12,10 @@
                 {{ information.name }}
             </div>
             <div class="likes-container">
+                <!-- <button class="likes-icon" :class="{ 'liked': liked }" @click="toggleLike()">
+                    <span v-if="liked">❤️</span>
+                    <span v-else>🤍</span>
+                </button> -->
                 <span class="likes-icon">❤️</span>
                 <span class="likes-count">{{ information.favor }}</span>
             </div>
@@ -34,11 +38,13 @@
 </template>
   
 <script>
+import axios from 'axios'
 export default {
     data() {
         return {
             picture: '',
             aid: '',
+            liked: false,
         }
     },
     props: {
@@ -54,6 +60,37 @@ export default {
     methods: {
         checkInformation() {
             this.$router.push('/Page/Activity_Information/Detail/' + this.aid);
+        },
+        toggleLike() {
+            if (this.liked) {
+                let liking = {
+                    uid: JSON.parse(sessionStorage.getItem("uid")),
+                    aid: this.aid,
+                    method: "remove"
+                }
+                //取消点赞
+                axios({
+                    method: "POST",
+                    url: "http://127.0.0.1:8000/api/activity/favor",
+                    data: liking
+                })
+            }
+
+            else {
+                let liking = {
+                    uid: JSON.parse(sessionStorage.getItem("uid")),
+                    aid: this.aid,
+                    method: "like"
+                }
+                //点赞
+                axios({
+                    method: "POST",
+                    url: "http://127.0.0.1:8000/api/activity/favor",
+                    data: liking
+                })
+            }
+
+            this.liked = !this.liked;
         }
     }
 }
@@ -118,6 +155,23 @@ export default {
 .likes-icon {
     font-size: 18px;
     margin-right: 5px;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    cursor: pointer;
+    margin-top: -2px;
+}
+
+.likes-icon:focus {
+    outline: none;
+}
+
+.likes-icon span {
+    font-size: 18px;
+}
+
+.likes-icon.liked span {
+    color: red;
 }
 
 .likes-count {
@@ -170,5 +224,9 @@ export default {
 
 .button {
     margin-top: 15px;
+}
+
+.likes-icon.liked {
+    color: red;
 }
 </style>
