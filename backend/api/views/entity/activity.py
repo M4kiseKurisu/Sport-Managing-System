@@ -244,9 +244,16 @@ def favor(request):
     method = data.get('method')
     user = User.objects.get(uid=data.get('uid'))
     activity = Activity.objects.get(aid=data.get('aid'))
+
     category = activity.category
     favor_rec = UserFavor.objects.filter(uid=user, category=category).first()
+    participate_rec = UserInActivity.objects.get(uid=user, aid=activity)
     if method == "like":
+        if participate_rec.like:
+            return JsonResponse({"msg": "无法重复点赞", "status": False})
+        else:
+            participate_rec.like = True
+            participate_rec.save()
         if favor_rec:
             favor_rec.cnt = favor_rec.cnt + 1
             favor_rec.save()
@@ -257,6 +264,11 @@ def favor(request):
         activity.save()
         return JsonResponse({"msg": "点赞成功", "status": True})
     elif method == "remove":
+        if not participate_rec.like:
+            return JsonResponse({"msg": "不存在点赞记录", "status": False})
+        else:
+            participate_rec.like = False
+            participate_rec.save()
         if favor_rec:
             favor_rec.cnt = favor_rec.cnt - 1
             favor_rec.save() if favor_rec.cnt > 0 else favor_rec.delete()
