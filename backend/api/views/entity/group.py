@@ -13,6 +13,7 @@ from api.models import User
 from api.models import ActivityUseField
 from api.models import GroupCreateActivity
 from api.views.relation import user_group
+from api.views.entity import notice
 
 
 def genid():
@@ -76,7 +77,6 @@ def join(request):
         uid = data.get("uid")
         gid = data.get("gid")
         content = data.get("content")
-
         msg, status = user_group.add_apply(uid, gid, content)
         return JsonResponse({"msg": msg, "status": status})
 
@@ -153,7 +153,9 @@ def members_remove(request):
     data: dict = json.loads(request.body)
     uid = data.get('uid')
     gid = data.get('gid')
+    group = Group.objects.get(gid=gid)
     user_group.delete_relation(uid, gid)
+    notice.add_notice_to_uid(uid, "很抱歉，您已被移出团体 (" + group.group_name + ")")
     return JsonResponse({"msg": "成员已移除", "status": True})
 
 

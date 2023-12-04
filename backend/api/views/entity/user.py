@@ -168,7 +168,6 @@ def friend_add(request):
     sender = data.get('sender')
     receiver = data.get('receiver')
     content = data.get('content')
-
     msg, status = friend.add_apply(sender, receiver, content)
     return JsonResponse({"msg": msg, "status": status})
 
