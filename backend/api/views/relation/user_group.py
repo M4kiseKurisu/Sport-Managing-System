@@ -7,6 +7,7 @@ from api.models import UserInGroup
 from api.models import UserApplyGroup
 from api.models import User
 from api.models import Group
+from api.views.entity import notice
 
 
 def search_relation(uid, gid):
@@ -43,7 +44,9 @@ def delete_relation(uid, gid):
     group = Group.objects.get(gid=gid)
     relation = UserInGroup.objects.filter(uid=user, gid=group).first()
     if relation:
-        if relation.type == 0:
+        if relation.type == 0:  # 删除团体
+            for rec in UserInGroup.objects.filter(gid=group):
+                notice.add_notice_to_user(rec.uid, "您所在的团体 (" + group.group_name + ") 已被解散")
             group.delete()
         else:
             relation.delete()
@@ -72,6 +75,8 @@ def add_apply(uid, gid, content):
     else:
         apply = UserApplyGroup(uid=user, gid=group, content=content, status=0)
         apply.save()
+        for rec in UserInGroup.objects.filter(Q(gid=group) & Q(Q(TYPE=0) | Q(TYPE=1))):
+            notice.add_notice_to_user(rec.uid, user.user_name + "申请加入团体" + group.group_name)
         return "申请信息已发送", True
 
 
@@ -108,7 +113,9 @@ def modify_apply(uid, gid, res):
         group.save()
         rec = UserInGroup(uid=applicant, gid=group, type=2)
         rec.save()
+        notice.add_notice_to_uid(uid, "您的团体申请 (" + group.group_name + ") 已被接受")
     else:
         apply.status = 2
+        notice.add_notice_to_uid(uid, "您的团体申请 (" + group.group_name + ") 已被拒绝")
     apply.save()
     return True
