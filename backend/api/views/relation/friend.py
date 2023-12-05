@@ -12,11 +12,11 @@ from api.views.entity import notice
 
 def search_relation(uid):
     """ 查询用户的好友 """
-    lst = []
+    lst = set()
     user = User.objects.filter(uid=uid).first()
     if user:
-        lst += list(map(lambda param: param.uid2, Friend.objects.filter(uid1=user)))
-        lst += list(map(lambda param: param.uid1, Friend.objects.filter(uid2=user)))
+        lst = lst.union(set(map(lambda param: param.uid2, Friend.objects.filter(uid1=user))))
+        lst = lst.union(set(map(lambda param: param.uid1, Friend.objects.filter(uid2=user))))
         return lst
     else:
         return None

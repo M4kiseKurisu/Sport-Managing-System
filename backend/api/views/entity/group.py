@@ -177,7 +177,7 @@ def members_authority(request):
 
 @require_http_methods(["GET"])
 def activity_list(request):
-    """ 查看用户参加的活动 """
+    """ 查看团体创建过的活动 """
     gid = request.GET.get('gid')
     group = Group.objects.get(gid=gid)
     activities = set(map(lambda param: param.aid, GroupCreateActivity.objects.filter(gid=group)))

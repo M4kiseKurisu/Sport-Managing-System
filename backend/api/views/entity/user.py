@@ -155,7 +155,8 @@ def friend_list(request):
     for param in friend.search_relation(uid):
         if keyword in param.user_name:
             lst.append({'uid': param.uid, 'user_name': param.user_name,
-                        "pic": param.picture.url if param.picture else None})
+                        "pic": param.picture.url if param.picture else None,
+                        "signature": param.user_signature})
     print(lst)
     return JsonResponse({"msg": '好友列表请求成功', "status": True, "list": lst})
 
@@ -220,14 +221,19 @@ def activity_list(request):
     """ 查看用户参加的活动 """
     uid = request.GET.get('uid')
     user = User.objects.get(uid=uid)
-    activities = set(map(lambda param: param.aid, UserInActivity.objects.filter(uid=user)))
+    activities = set()
+    liked_activities = set()
+    for rec in UserInActivity.objects.filter(uid=user):
+        if rec.like:
+            liked_activities.add(rec.aid)
+        activities.add(rec.aid)
     lst = list(map(lambda param: {"aid": param.aid.aid, "name": param.aid.name, "type": param.aid.get_type_display(),
                                   "private": param.aid.private, "category": param.aid.category,
                                   "capacity": param.aid.capacity, "maximum": param.aid.maximum,
                                   "picture": param.aid.picture.url if param.aid.picture else None,
                                   "start_time": param.start_time.strftime("%Y-%m-%d %H:%M:%S"),
                                   "end_time": param.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                                  "favor": param.aid.favor},
+                                  "favor": param.aid.favor, "is_favor": param.aid in liked_activities},
                    ActivityUseField.objects.filter(aid__in=activities).order_by('-start_time')))
     print(lst)
     return JsonResponse({"msg": '活动信息获取成功', "status": True, "list": lst})
