@@ -31,7 +31,7 @@
       <template #title>团体信息</template>
     </el-menu-item>
 
-    <el-menu-item index="4">
+    <el-menu-item index="/Page/MyActivity">
       <el-icon>
         <DocumentChecked />
       </el-icon>

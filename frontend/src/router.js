@@ -25,6 +25,12 @@ import ActivityInformation from './components/MainPage/Page/Activity/ActivityInf
 import ActivityBefore from './components/MainPage/Page/Activity/ActivityBefore.vue'
 import ActivityDetail from './components/MainPage/Page/Activity/ActivityDetail.vue'
 
+import MyActivityMain from './components/MainPage/Page/MyActivity/MyActivityMain.vue'
+import MyActivityShow from './components/MainPage/Page/MyActivity/MyActivityShow.vue'
+import MyActivityApply from './components/MainPage/Page/MyActivity/MyActivityApply.vue'
+import MyActivityApplyMain from './components/MainPage/Page/MyActivity/MyActivityApplyMain.vue'
+import MyActivitySelectField from './components/MainPage/Page/MyActivity/MyActivitySelectField.vue'
+
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -87,6 +93,32 @@ const router = createRouter({
                         {
                             path: 'Detail/:aid',
                             component: ActivityDetail
+                        }
+                    ]
+                },
+                {
+                    path: 'MyActivity',
+                    component: MyActivityMain,
+                    redirect: '/Page/MyActivity/Show',
+                    children: [
+                        {
+                            path: 'Show',
+                            component: MyActivityShow
+                        },
+                        {
+                            path: 'Apply',
+                            component: MyActivityApplyMain,
+                            redirect: '/Page/MyActivity/Apply/Basic',
+                            children: [
+                                {
+                                    path: 'Basic',
+                                    component: MyActivityApply
+                                },
+                                {
+                                    path: 'Field',
+                                    component: MyActivitySelectField
+                                }
+                            ]
                         }
                     ]
                 },

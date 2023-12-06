@@ -7,15 +7,16 @@ from django.db.models import Q
 from api.models import User
 from api.models import Friend
 from api.models import FriendApply
+from api.views.entity import notice
 
 
 def search_relation(uid):
     """ 查询用户的好友 """
-    lst = []
+    lst = set()
     user = User.objects.filter(uid=uid).first()
     if user:
-        lst += list(map(lambda param: param.uid2, Friend.objects.filter(uid1=user)))
-        lst += list(map(lambda param: param.uid1, Friend.objects.filter(uid2=user)))
+        lst = lst.union(set(map(lambda param: param.uid2, Friend.objects.filter(uid1=user))))
+        lst = lst.union(set(map(lambda param: param.uid1, Friend.objects.filter(uid2=user))))
         return lst
     else:
         return None
@@ -29,6 +30,7 @@ def delete_relation(uid1, uid2):
         Q(uid1=user1, uid2=user2) |
         Q(uid1=user2, uid2=user1)
     ).delete()
+    notice.add_notice_to_user(user2, "您和" + user1.user_name + "的好友关系已被解除")
 
 
 def add_apply(sid, rid, content):
@@ -41,6 +43,7 @@ def add_apply(sid, rid, content):
     else:
         apply = FriendApply(sender=sender, receiver=receiver, content=content, status=0)
         apply.save()
+        notice.add_notice_to_user(receiver, sender.user_name + "申请添加好友")
         return "申请信息已发送", True
 
 
@@ -67,6 +70,8 @@ def handle_apply(sid, rid, res):
         apply.status = 1
         friendship = Friend(uid1=receiver, uid2=sender)
         friendship.save()
+        notice.add_notice_to_user(sender, "您成功添加" + receiver.user_name + "为好友")
     else:
         apply.status = 2
+        notice.add_notice_to_user(sender, "很遗憾，您向" + receiver.user_name + "发送的好友申请未通过")
     apply.save()

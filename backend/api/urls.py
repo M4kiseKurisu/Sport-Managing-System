@@ -4,7 +4,9 @@ from api.views.entity import equipment
 from api.views.entity import user
 from api.views.entity import field
 from api.views.entity import group
+from api.views.entity import notice
 from api.views.entity import activity
+from api.views.entity import stream
 
 urlpatterns = [
     # user
@@ -56,4 +58,15 @@ urlpatterns = [
     path('activity/join', activity.join),
     path('activity/exit', activity.exit_out),
     path('activity/favor', activity.favor),
+
+    # notice
+    path('notice/list', notice.notice_list),
+    path('notice/confirm', notice.notice_confirm),
+
+    # stream
+    path('stream/publish', stream.publish),
+    path('stream/delete', stream.remove),
+    path('stream/favor', stream.favor),
+    path('stream/view', stream.view),
+
 ]

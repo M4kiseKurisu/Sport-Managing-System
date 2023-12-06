@@ -8,7 +8,7 @@ from api.models import Activity
 from api.models import UserInActivity
 from api.models import UserCreateActivity
 from api.models import GroupCreateActivity
-
+from api.views.entity import notice
 
 def add_create_relation(uid, aid):
     """ 增加用户创建活动记录 """
@@ -48,6 +48,8 @@ def delete_relation(uid, aid):
 
     if rec.exists():
         # 撤销活动
+        for rec in UserInActivity.objects.filter(aid=activity):
+            notice.add_notice_to_user(rec.uid, "您参加的活动 (" + activity.name + ") 已被取消")
         activity.delete()
     else:
         # 删除用户参与活动记录
