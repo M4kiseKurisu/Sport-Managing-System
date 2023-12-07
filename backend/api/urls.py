@@ -58,6 +58,7 @@ urlpatterns = [
     path('activity/join', activity.join),
     path('activity/exit', activity.exit_out),
     path('activity/favor', activity.favor),
+    path('activity/recommend', activity.recommend),
 
     # notice
     path('notice/list', notice.notice_list),
