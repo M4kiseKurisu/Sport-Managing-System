@@ -31,6 +31,8 @@ import MyActivityApply from './components/MainPage/Page/MyActivity/MyActivityApp
 import MyActivityApplyMain from './components/MainPage/Page/MyActivity/MyActivityApplyMain.vue'
 import MyActivitySelectField from './components/MainPage/Page/MyActivity/MyActivitySelectField.vue'
 
+import Stream from './components/MainPage/Page/MomentsList.vue'
+
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -153,6 +155,10 @@ const router = createRouter({
                 {
                     path: 'Friend',
                     component: Friend
+                },
+                {
+                    path: 'Stream',
+                    component: Stream
                 }
             ]
         }

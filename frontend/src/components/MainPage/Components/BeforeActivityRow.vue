@@ -7,7 +7,7 @@
             <el-tag v-if="information.is_joined" class="additional-tag2" effect="dark" size="large"
                 type="success">已参与</el-tag>
             <el-tag v-else class="additional-tag2" effect="dark" size="large" type="info">未参与</el-tag>
-            <img :src="this.picture" class="image">
+            <img :src="'http://127.0.0.1:8000' + this.information.picture" class="image">
             <div class="text-overlay">
                 {{ information.name }}
             </div>
@@ -40,7 +40,8 @@
 <script>
 import axios from 'axios'
 export default {
-    data() {
+    data ()
+    {
         return {
             picture: '',
             aid: '',
@@ -53,41 +54,46 @@ export default {
             required: true
         }
     },
-    mounted() {
+    mounted ()
+    {
         this.picture = "http://127.0.0.1:8000" + this.information.picture;
         this.aid = this.information.aid;
     },
     methods: {
-        checkInformation() {
-            this.$router.push('/Page/Activity_Information/Detail/' + this.aid);
+        checkInformation ()
+        {
+            this.$router.push( '/Page/Activity_Information/Detail/' + this.information.aid );
         },
-        toggleLike() {
-            if (this.liked) {
+        toggleLike ()
+        {
+            if ( this.liked )
+            {
                 let liking = {
-                    uid: JSON.parse(sessionStorage.getItem("uid")),
-                    aid: this.aid,
+                    uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
+                    aid: this.information.aid,
                     method: "remove"
                 }
                 //取消点赞
-                axios({
+                axios( {
                     method: "POST",
                     url: "http://127.0.0.1:8000/api/activity/favor",
                     data: liking
-                })
+                } )
             }
 
-            else {
+            else
+            {
                 let liking = {
-                    uid: JSON.parse(sessionStorage.getItem("uid")),
-                    aid: this.aid,
+                    uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
+                    aid: this.information.aid,
                     method: "like"
                 }
                 //点赞
-                axios({
+                axios( {
                     method: "POST",
                     url: "http://127.0.0.1:8000/api/activity/favor",
                     data: liking
-                })
+                } )
             }
 
             this.liked = !this.liked;

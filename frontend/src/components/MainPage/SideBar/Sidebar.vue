@@ -51,6 +51,13 @@
       </el-icon>
       <template #title>器材租借</template>
     </el-menu-item>
+
+    <el-menu-item index="/Page/Stream">
+      <el-icon>
+        <ChatDotRound />
+      </el-icon>
+      <template #title>好友动态</template>
+    </el-menu-item>
   </el-menu>
 </template>
    
