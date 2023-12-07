@@ -21,6 +21,7 @@ from api.views.relation import user_activity
 from api.views.relation import user_group
 from api.views.relation import group_activity
 from api.views.relation import activity_field
+from api.views.util import recommend as rcd
 
 
 def genid():
@@ -279,3 +280,11 @@ def favor(request):
             return JsonResponse({"msg": "不存在点赞记录", "status": False})
     else:
         return JsonResponse({"msg": "method参数有误", "status": False})
+
+
+@require_http_methods(["GET"])
+def recommend(request):
+    uid = request.GET.get('uid')
+    print(uid)
+    lst = rcd.get_recommend_activity(uid)
+    return JsonResponse({"msg": "推荐活动获取成功", "status": True, "list": lst})
