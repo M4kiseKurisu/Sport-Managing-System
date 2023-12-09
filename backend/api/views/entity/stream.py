@@ -98,7 +98,7 @@ def view(request):
                 liked_stream.add(rec.sid)
 
     lst = list(map(lambda param: {"owner": {"check": param.user == user, "name": param.user.user_name,
-                                            "picture": param.picture.url if param.picture else None},
+                                            "picture": param.user.picture.url if param.user.picture else None},
                                   "sid": param.sid, "time": param.time.strftime("%Y-%m-%d %H:%M:%S"),
                                   "text": param.text, "picture": param.picture.url if param.picture else None,
                                   "favor": param.favor, "is_favor": param in liked_stream,

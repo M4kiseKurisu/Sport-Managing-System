@@ -83,14 +83,16 @@ def active(request):
     if activity_type != 2:
         query &= Q(aid__type__icontains=activity_type)
     records = ActivityUseField.objects.filter(query).order_by('start_time')
-
     lst = []
     groups = list(map(lambda param: param.gid, user_group.search_relation(uid, None)))
     actives = list((map(lambda param: param.aid, UserInActivity.objects.filter(uid=uid))))
     for record in records:
         flag = False
-        if record.aid.type == 0 and not record.aid.private:  # 个人
-            flag = True
+        if record.aid.type == 0:  # 个人
+            if not record.aid.private:
+                flag = True
+            elif UserCreateActivity.objects.filter(aid=record.aid, uid=uid):
+                flag = True
         elif record.aid.type == 1:  # 团体
             if not record.aid.private:
                 flag = True
