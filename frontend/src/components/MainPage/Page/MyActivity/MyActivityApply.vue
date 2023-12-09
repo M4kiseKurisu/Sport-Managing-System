@@ -63,19 +63,6 @@
                 </div>
 
                 <div class="formItem">
-                    <div class="formTip">开始时间：</div>
-                    <div class="formInput">
-                        <el-date-picker v-model="startTime" type="datetime" placeholder="选择开始时间"
-                            format="YYYY-MM-DD hh:mm:ss" value-format="YYYY-MM-DD hh:mm:ss" />
-                    </div>
-                    <div class="formTip">结束时间：</div>
-                    <div class="formInput">
-                        <el-date-picker v-model="endTime" type="datetime" placeholder="选择结束时间" format="YYYY-MM-DD hh:mm:ss"
-                            value-format="YYYY-MM-DD hh:mm:ss" />
-                    </div>
-                </div>
-
-                <div class="formItem">
                     <div class="formTip">是否公开：</div>
                     <div class="formInput">
                         <el-radio-group v-model="private">
@@ -122,7 +109,7 @@
             <div>
                 <div class="nextstep">
                     <div class="formTip">
-                        <el-button type="primary" @click="">去选择场地</el-button>
+                        <el-button type="primary" @click="toNextStep">去选择场地</el-button>
                     </div>
                 </div>
             </div>
@@ -142,6 +129,7 @@
 
 <script>
 import axios from "axios"
+import dayjs from 'dayjs'
 export default {
     data() {
         return {
@@ -181,8 +169,6 @@ export default {
             tagName: '',
             tags: [],
             maximum: '',
-            startTime: '',
-            endTime: '',
             private: '',
             fileList: [],
             pic: '',
@@ -225,6 +211,67 @@ export default {
             reader.readAsDataURL(file);  // 使用 Data URL 将文件读取为图片 URL
 
             console.log(this.pic);
+        },
+        toNextStep() {
+            if (this.fondType != ''
+                && ((this.fondType === '1' && this.fondGroup != '') || this.fondType === '0')
+                && this.name != ''
+                && this.category != ''
+                && this.tags != []
+                && (this.maximum != '' && this.maximum > 0)
+                && this.private != ''
+                && this.desc != ''
+                && this.pic != '') {
+
+                let allTags = this.tags[0].value;
+                for (let i = 1; i < this.tags.length; i++) {
+                    allTags += ("-" + this.tags[i].value);
+                }
+
+                let start = this.date + " " + this.startTime;
+                let end = this.date + " " + this.endTime;
+
+                console.log(allTags);
+                console.log(this.fondType);
+
+                this.$emit("returnData", {
+                    status: true,
+                    information: {
+                        type: this.fondType,
+                        gid: this.fondGroup,
+                        name: this.name,
+                        desc: this.desc,
+                        category: this.category,
+                        tags: allTags,
+                        maximum: this.maximum,
+                        private: (this.private === '公开') ? true : false,
+                        picture: this.fileList[0].raw
+                    },
+                    msg: "活动申请基本信息录入成功"
+                })
+            }
+
+            else if (this.maximum == 0) {
+                this.$emit("returnData", {
+                    status: false,
+                    information: null,
+                    msg: "活动最大人数至少为1人！"
+                })
+            }
+
+            else {
+                this.$emit("returnData", {
+                    status: false,
+                    information: null,
+                    msg: "有条目未填写！"
+                })
+            }
+        },
+        updateDatePicker() {
+            this.$nextTick(() => {
+                // 更新日期选择框
+                // 可以在这里执行其他逻辑
+            });
         }
     },
     created() {
