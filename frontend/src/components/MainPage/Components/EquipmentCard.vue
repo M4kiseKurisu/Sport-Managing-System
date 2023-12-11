@@ -44,11 +44,11 @@
 
         <div class="selector">
             <div style="font-size: 16px; margin-right: 12px;">开始时间：</div>
-            <el-date-picker v-model="startTime" type="datetime" placeholder="设置开始时间" value-format="YYYY-MM-DD hh:mm:ss" />
+            <el-date-picker v-model="startTime" type="datetime" placeholder="设置开始时间" value-format="YYYY-MM-DD HH:mm:ss" />
         </div>
         <div class="selector">
             <div style="font-size: 16px; margin-right: 12px;">结束时间：</div>
-            <el-date-picker v-model="endTime" type="datetime" placeholder="设置结束时间" value-format="YYYY-MM-DD hh:mm:ss" />
+            <el-date-picker v-model="endTime" type="datetime" placeholder="设置结束时间" value-format="YYYY-MM-DD HH:mm:ss" />
         </div>
 
         <div class="selector">
@@ -122,7 +122,7 @@ export default {
             // console.log(dayjs().format('YYYY-MM-DD hh:mm:ss'));
             // console.log(this.endTime);
 
-            if (this.endTime < dayjs().format('YYYY-MM-DD hh:mm:ss')) {
+            if (this.endTime < dayjs().format('YYYY-MM-DD HH:mm:ss')) {
                 this.$message({
                     showClose: true,
                     message: '结束时间必须晚于当前时间',
