@@ -9,6 +9,9 @@
   },
   "dependencies": {
     "@element-plus/icons": "^0.0.11",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "axios": "^1.6.0",
     "dayjs": "^1.11.10",
     "echarts": "^5.4.3",
