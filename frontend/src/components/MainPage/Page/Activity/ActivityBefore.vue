@@ -82,7 +82,8 @@
 import axios from 'axios'
 import BeforeActivityRow from '../../Components/BeforeActivityRow.vue';
 export default {
-    data() {
+    data ()
+    {
         return {
             current_page: 1,
             list: [],
@@ -118,93 +119,113 @@ export default {
         };
     },
     methods: {
-        draw() {
-            axios({
+        draw ()
+        {
+            axios( {
                 method: "GET",
                 url: "http://127.0.0.1:8000/api/activity/view/inactive",
                 params: {
-                    uid: JSON.parse(sessionStorage.getItem("uid")),
+                    uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
                     type: 2,
                     method: "time"
                 }
-            }).then((result) => {
+            } ).then( ( result ) =>
+            {
                 this.categoryOptions = [];
-                if (result.data.status) {
+                if ( result.data.status )
+                {
                     this.list = result.data.list;
-                    for (let i = 0; i < this.list.length; i++) {
+                    for ( let i = 0; i < this.list.length; i++ )
+                    {
                         let category = {
-                            label: this.list[i].category,
-                            value: this.list[i].category,
+                            label: this.list[ i ].category,
+                            value: this.list[ i ].category,
                         }
-                        if (!this.categoryOptions.includes(category)) {
-                            this.categoryOptions.push(category);
+                        if ( !this.categoryOptions.includes( category ) )
+                        {
+                            this.categoryOptions.push( category );
                         }
                     }
                 }
-            });
+            } );
         },
-        handlePageChange(pageNo) {
+        handlePageChange ( pageNo )
+        {
             this.current_page = pageNo;
         },
-        reShow() {
+        reShow ()
+        {
             // let search = {
             //     uid: JSON.parse(sessionStorage.getItem("uid"))
             // };
             let search = {
-                uid: JSON.parse(sessionStorage.getItem("uid"))
+                uid: JSON.parse( sessionStorage.getItem( "uid" ) )
             };
-            if (this.time != "") {
+            if ( this.time != "" )
+            {
                 search.time = this.time
             }
-            if (this.input != "") {
+            if ( this.input != "" )
+            {
                 search.input = this.input
             }
-            if (this.category != "") {
+            if ( this.category != "" )
+            {
                 search.category = this.category
             }
-            if (this.foundType != "") {
+            if ( this.foundType != "" )
+            {
                 search.type = this.foundType
-            } else {
+            } else
+            {
                 search.type = 2
             }
-            if (this.method != "") {
+            if ( this.method != "" )
+            {
                 search.method = this.method
-            } else {
+            } else
+            {
                 search.method = "time"
             }
 
-            console.log(search);
+            console.log( search );
 
-            axios({
+            axios( {
                 method: "GET",
                 url: "http://127.0.0.1:8000/api/activity/view/inactive",
                 params: search
-            }).then((result) => {
-                if (result.data.status) {
+            } ).then( ( result ) =>
+            {
+                if ( result.data.status )
+                {
                     this.list = result.data.list;
                     this.categoryOptions = [];
-                    for (let i = 0; i < this.list.length; i++) {
+                    for ( let i = 0; i < this.list.length; i++ )
+                    {
                         let category = {
-                            label: this.list[i].category,
-                            value: this.list[i].category,
+                            label: this.list[ i ].category,
+                            value: this.list[ i ].category,
                         }
-                        if (!this.categoryOptions.includes(category)) {
-                            this.categoryOptions.push(category);
+                        if ( !this.categoryOptions.includes( category ) )
+                        {
+                            this.categoryOptions.push( category );
                         }
                     }
                 }
-            });
+            } );
             this.current_page = 1;
         }
     },
-    created() {
+    created ()
+    {
         this.draw()
     },
     components: { BeforeActivityRow },
     computed: {
-        groups() {
+        groups ()
+        {
             let end = this.list.length < 6 * this.current_page ? this.list.length : 6 * this.current_page;
-            return this.list.slice(6 * (this.current_page - 1), end);
+            return this.list.slice( 6 * ( this.current_page - 1 ), end );
         }
     }
 }
@@ -254,5 +275,4 @@ export default {
     margin-top: 30px;
     margin-bottom: 30px;
     margin-right: 7%;
-}
-</style>
+}</style>
