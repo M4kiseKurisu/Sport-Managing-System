@@ -36,8 +36,10 @@ def create(request):
     """ 创建新的活动 """
     data = request.POST
     print(data)
+    if int(data.get('maximum')) < 1:
+        return JsonResponse({"msg": "活动人数至少为1", "status": False})
     # 检查场地是否被占用
-    if not activity_field.check_relation(data.get('fid'), data.get('start_time'), data.get('end_time')):
+    elif not activity_field.check_relation(data.get('fid'), data.get('start_time'), data.get('end_time')):
         return JsonResponse({"msg": "当前时段场地不开放或已被占用", "status": False})
     else:
         activity = Activity(aid=genid(), type=data.get('type'), name=data.get('name'), desc=data.get('desc'),
