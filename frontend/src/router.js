@@ -30,6 +30,7 @@ import MyActivityShow from './components/MainPage/Page/MyActivity/MyActivityShow
 import MyActivityApply from './components/MainPage/Page/MyActivity/MyActivityApply.vue'
 import MyActivityApplyMain from './components/MainPage/Page/MyActivity/MyActivityApplyMain.vue'
 import MyActivitySelectField from './components/MainPage/Page/MyActivity/MyActivitySelectField.vue'
+import MyActivityResultShow from './components/MainPage/Page/MyActivity/MyActivityResultShow.vue'
 
 import Stream from './components/MainPage/Page/MomentsList.vue'
 
@@ -119,6 +120,10 @@ const router = createRouter({
                                 {
                                     path: 'Field',
                                     component: MyActivitySelectField
+                                },
+                                {
+                                    path: 'Result',
+                                    component: MyActivityResultShow
                                 }
                             ]
                         }

@@ -4,7 +4,7 @@
     <div class="show">
         <!-- 活动图片 -->
         <div class="image">
-            <img style="width: 80%; " :src="this.pic" fit="fill" />
+            <img style="width: 90%; height: 180px;" :src="this.pic" class="pic" />
         </div>
 
         <!-- 活动名称及id -->
@@ -14,7 +14,7 @@
 
         <!-- 活动详细内容介绍（弹出窗口） -->
         <div class="dialog">
-            <el-button text type="primary" @click="checkInformation()" style="font-size: 16px;">
+            <el-button plain type="primary" @click="checkInformation()" style="font-size: 16px;">
                 点击查看活动具体信息
             </el-button>
 
@@ -83,9 +83,17 @@ export default {
 </script>
 
 <style scoped>
+/* .show {
+
+} */
+
 .image {
     display: flex;
     justify-content: center;
+}
+
+.pic {
+    object-fit: fill;
 }
 
 .content {

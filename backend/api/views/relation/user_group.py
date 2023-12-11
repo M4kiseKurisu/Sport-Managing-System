@@ -75,7 +75,7 @@ def add_apply(uid, gid, content):
     else:
         apply = UserApplyGroup(uid=user, gid=group, content=content, status=0)
         apply.save()
-        for rec in UserInGroup.objects.filter(Q(gid=group) & Q(Q(TYPE=0) | Q(TYPE=1))):
+        for rec in UserInGroup.objects.filter(Q(gid=group) & Q(Q(type=0) | Q(type=1))):
             notice.add_notice_to_user(rec.uid, user.user_name + "申请加入团体" + group.group_name)
         return "申请信息已发送", True
 

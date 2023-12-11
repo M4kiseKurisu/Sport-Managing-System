@@ -44,7 +44,9 @@
                     value-format="YYYY-MM-DD" />
             </div>
         </div>
+    </div>
 
+    <div class="header">
         <div class="search">
             <div>活动类型：</div>
             <div class="form">
@@ -72,7 +74,6 @@
 
         <el-button @click="reShow()">查 询</el-button>
     </div>
-
 
     <!-- 整体活动列表 -->
     <!-- 设计：每一个版面拥有9个单项活动展示 -->
@@ -214,8 +215,10 @@ export default {
                 uid: JSON.parse(sessionStorage.getItem("uid")),
             },
         }).then((result) => {
+            console.log(result);
             if (result.data.status) {
                 this.prefer = result.data.list;
+                console.log("finish recommend");
             }
         })
     },
@@ -251,12 +254,14 @@ export default {
 .header {
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .activity {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .pagination {
@@ -271,7 +276,7 @@ export default {
     width: 220px;
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .el-carousel__item h3 {
