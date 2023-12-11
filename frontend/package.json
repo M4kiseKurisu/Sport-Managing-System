@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@element-plus/icons": "^0.0.11",
+    "@fortawesome/fontawesome-free": "^6.5.1",
     "axios": "^1.6.0",
     "dayjs": "^1.11.10",
     "echarts": "^5.4.3",

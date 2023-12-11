@@ -14,6 +14,7 @@ import store from './store/index.js'
 import router from "./router.js"
 
 import 'element-plus/dist/index.css'
+import '@fortawesome/fontawesome-free/css/all.css';
 
 
 
