@@ -245,7 +245,7 @@ export default {
                         category: this.category,
                         tags: allTags,
                         maximum: this.maximum,
-                        private: (this.private === '公开') ? true : false,
+                        private: (this.private === '公开') ? false : true,
                         picture: this.fileList[0].raw
                     },
                     msg: "活动申请基本信息录入成功"

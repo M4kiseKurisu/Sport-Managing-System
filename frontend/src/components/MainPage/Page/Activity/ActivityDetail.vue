@@ -178,8 +178,8 @@ export default {
                         message: "您已经在活动中！",
                         type: 'error'
                     });
+                    return;
                 }
-                return;
             }
 
 
@@ -188,11 +188,14 @@ export default {
                 aid: this.aid
             }
 
+            console.log(information);
+
             axios({
                 method: "POST",
                 url: "http://127.0.0.1:8000/api/activity/join",
                 data: information
             }).then((result) => {
+                console.log(result);
                 if (result.data.status) {
                     this.$message({
                         showClose: true,

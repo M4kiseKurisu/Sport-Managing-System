@@ -40,8 +40,7 @@
 <script>
 import axios from 'axios'
 export default {
-    data ()
-    {
+    data() {
         return {
             picture: '',
             aid: '',
@@ -54,46 +53,41 @@ export default {
             required: true
         }
     },
-    mounted ()
-    {
+    mounted() {
         this.picture = "http://127.0.0.1:8000" + this.information.picture;
         this.aid = this.information.aid;
     },
     methods: {
-        checkInformation ()
-        {
-            this.$router.push( '/Page/Activity_Information/Detail/' + this.aid );
+        checkInformation() {
+            this.$router.push('/Page/Activity_Information/Detail/' + this.aid);
         },
-        toggleLike ()
-        {
-            if ( this.liked )
-            {
+        toggleLike() {
+            if (this.liked) {
                 let liking = {
-                    uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
+                    uid: JSON.parse(sessionStorage.getItem("uid")),
                     aid: this.aid,
                     method: "remove"
                 }
                 //取消点赞
-                axios( {
+                axios({
                     method: "POST",
                     url: "http://127.0.0.1:8000/api/activity/favor",
                     data: liking
-                } )
+                })
             }
 
-            else
-            {
+            else {
                 let liking = {
-                    uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
+                    uid: JSON.parse(sessionStorage.getItem("uid")),
                     aid: this.aid,
                     method: "like"
                 }
                 //点赞
-                axios( {
+                axios({
                     method: "POST",
                     url: "http://127.0.0.1:8000/api/activity/favor",
                     data: liking
-                } )
+                })
             }
 
             this.liked = !this.liked;
@@ -200,7 +194,7 @@ export default {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    margin-left: 5%;
+    margin-left: 4%;
 }
 
 .additional-tag {

@@ -71,7 +71,7 @@ export default {
 
             inputData.append("uid", JSON.parse(sessionStorage.getItem("uid")));
             inputData.append("type", this.information1.type);
-            if (this.information1.type === 1) {
+            if (this.information1.type === "1") {
                 inputData.append("gid", this.information1.gid);
             }
             inputData.append("name", this.information1.name);
