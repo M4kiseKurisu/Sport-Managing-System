@@ -54,7 +54,7 @@ def create(request):
         tag = data.get("tag")
 
         if Group.objects.filter(group_name=group_name):
-            return JsonResponse({"msg": "团体名称已存在", "status": False})
+            return JsonResponse({"msg": "团体名称已被使用", "status": False})
         else:
             # 添加团体信息
             gid = genid()
