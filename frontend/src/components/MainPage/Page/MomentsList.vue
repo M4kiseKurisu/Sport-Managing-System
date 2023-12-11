@@ -1,6 +1,9 @@
 <template>
-    <el-switch v-model="show" class="switch" inline-prompt size="large"
-        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #1890ff" active-text="所有动态" inactive-text="你的动态" />
+    <div class="switch">
+        <el-switch v-model="show" inline-prompt size="large"
+            style="--el-switch-on-color: #13ce66; --el-switch-off-color: #1890ff" active-text="所有动态" inactive-text="你的动态" />
+    </div>
+
     <keep-alive>
         <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
             <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
@@ -23,12 +26,12 @@ export default {
             yourStreamList: [],
             cnt: 0,
             myName: JSON.parse( sessionStorage.getItem( "user_name" ) ),
-            show: true
+            show: true,
         }
 
     },
     components: {
-        MomentCard
+        MomentCard,
     },
     methods: {
         load ()
@@ -55,7 +58,7 @@ export default {
                             this.yourStreamList.push( this.streamList[ i ] );
                         }
                     }
-                    console.log( this.streamList )
+                    // console.log( this.streamList )
                 }
             } );
         },
@@ -64,13 +67,13 @@ export default {
             // 在这里更新 streamList，删除对应的数据
             const index = this.streamList.findIndex( stream => stream.id === deletedStream.id );
             const index1 = this.yourStreamList.findIndex( stream => stream.id === deletedStream.id );
-            console.log( index )
+            // console.log( index )
             if ( index !== -1 )
             {
                 this.streamList.splice( index, 1 );
                 this.yourStreamList.splice( index1, 1 );
             }
-        }
+        },
     },
     created ()
     {

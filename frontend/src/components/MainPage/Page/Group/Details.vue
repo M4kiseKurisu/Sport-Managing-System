@@ -27,8 +27,18 @@
 
 
       <el-main width="20%">
+
         <div class="group-navigation">
           <!-- Right section for navigation -->
+
+          <el-card>
+            <div ref="chart" style="width: 400px; height: 400px;" class="group-activity"></div>
+            <el-divider />
+            <ul @click="openActivity = true">
+              <li>团体活动</li>
+            </ul>
+          </el-card>
+
           <el-card>
             <el-collapse v-model="activeName" accordion>
               <el-collapse-item name="1" class="group_instrudiction">
@@ -40,9 +50,6 @@
             </el-collapse>
           </el-card>
           <ul>
-            <el-card>
-              <li>团体活动</li>
-            </el-card>
             <el-card @click="drawer = true">
               <li>其他成员</li>
             </el-card>
@@ -111,6 +118,7 @@
 
 <script lang="js">
 import axios from 'axios'
+import * as echarts from 'echarts';
 
 export default {
   data ()
@@ -132,8 +140,53 @@ export default {
       keyword: '',
       currentPage: 1,
       defaultImage: "./src/images/group-default-picture.png",
-      activeName: '1',
-      gid: ''
+      activeName: '',
+      showActivity: '',
+      gid: '',
+      option: {
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          top: '5%',
+          left: 'center'
+        },
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: [ '40%', '70%' ],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: 40,
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              { value: 1048, name: 'Search Engine' },
+              { value: 735, name: 'Direct' },
+              { value: 580, name: 'Email' },
+              { value: 484, name: 'Union Ads' },
+              { value: 300, name: 'Video Ads' }
+            ]
+          }
+        ]
+      },
+      myOpData: []
     };
   },
   mounted ()
@@ -156,6 +209,7 @@ export default {
     this.father = father;
 
     this.getData();
+    this.getMyOpData();
   },
   computed: {
     totalPages ()
@@ -182,30 +236,30 @@ export default {
     }
   },
   methods: {
-    addActivity ()
-    {
-      // 处理新增活动的逻辑
-    },
     getData ()
     {
-      axios( {
-        method: "GET",
-        url: "http://127.0.0.1:8000/api/group/members/list",
-        params: {
-          gid: this.gid
-        }
-      } ).then( ( result ) =>
+
+      if ( this.gid !== '' )
       {
-        if ( result.data.status )
+        // console.log( "data: " + this.gid )
+        axios( {
+          method: "GET",
+          url: "http://127.0.0.1:8000/api/group/members/list",
+          params: {
+            gid: this.gid
+          }
+        } ).then( ( result ) =>
         {
-          console.log( result.data.list )
-          this.Users = result.data.list; // 将后端数据赋值给 Users
-          this.msg = result.data.msg;
-        }
-      } ).catch( ( error ) =>
-      {
-        console.error( 'Error fetching group data:', error );
-      } );
+          if ( result.data.status )
+          {
+            this.Users = result.data.list; // 将后端数据赋值给 Users
+            this.msg = result.data.msg;
+          }
+        } ).catch( ( error ) =>
+        {
+          console.error( 'Error fetching group data:', error );
+        } );
+      }
     },
 
     search ()
@@ -314,6 +368,52 @@ export default {
     {
       return user.pic;
     },
+    getMyOpData ()
+    {
+      // console.log( "MyOp: " + this.gid )
+      axios( {
+        method: "GET",
+        url: "http://127.0.0.1:8000/api/group/activity/statistic",
+        params: {
+          gid: this.gid
+        }
+      } ).then( response =>
+      {
+        for ( const key in response.data.data )
+        {
+          const item = {
+            value: response.data.data[ key ],
+            name: key
+          };
+          this.myOpData.push( item );
+        }
+        console.log( this.myOpData )
+        if ( this.myOpData.length == 0 )
+        {
+          this.myOpData = [
+            {
+              value: 1,
+              name: '该团队暂无活动' // 如果是饼图，使用name字段
+              // key: "该团队暂无举办活动~" // 如果是其他图表类型，可以使用key字段
+            }
+          ];
+        }
+        this.renderChart();
+      } ).catch( error =>
+      {
+        console.error( 'Error fetching data:', error );
+      } );
+    },
+    renderChart ()
+    {
+      const chartDom = this.$refs.chart;
+      const myChart = echarts.init( chartDom );
+
+      // 使用从后端获取的数据更新图表配置
+      this.option.series[ 0 ].data = this.myOpData
+
+      myChart.setOption( this.option );
+    }
   },
 };
 
@@ -347,6 +447,19 @@ export default {
   text-align: center;
 }
 
+.group-activity {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  /* 将左右边距设置为 auto，使其居中 */
+  text-align: left;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+
+}
+
 /* Adjustments for navigation section */
 .group-navigation {
   display: flex;
@@ -362,6 +475,7 @@ export default {
 }
 
 .group-navigation ul {
+  cursor: pointer;
   list-style: none;
   padding: 0;
 }

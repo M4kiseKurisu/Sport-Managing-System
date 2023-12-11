@@ -22,6 +22,7 @@
           <!-- <EBorrowMain /> -->
           <!-- <GroupInformation /> -->
           <router-view></router-view>
+          <!-- <UploadMoment /> -->
           <!-- <FriendInformation /> -->
           <!-- <Details /> -->
           <!-- <CreateGroup /> -->
@@ -42,6 +43,7 @@ import EBorrowMain from "./Page/E-Borrow/EBorrowMain.vue";
 import FriendInformation from "./Page/FriendInformation.vue";
 import GroupInformation from "./Page/GroupInformation.vue";
 import Details from "./Page/Group/Details.vue";
+// import UploadMoment from "./Page/Moments/UploadMoment.vue";
 //import CreateGroup from "./Components/CreateGroup.vue";
 
 export default {
@@ -56,6 +58,7 @@ export default {
     GroupInformation,
     UserInformation,
     Details,
+    // UploadMoment
     //CreateGroup,
   },
 };

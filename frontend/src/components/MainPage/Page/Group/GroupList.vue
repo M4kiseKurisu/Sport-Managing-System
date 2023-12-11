@@ -224,9 +224,14 @@ export default {
 
         axios.post('http://127.0.0.1:8000/api/group/create', data)
           .then(response => {
+            if (response.data.status) {
+              this.$message.success('创建成功');
+            } else {
+              this.$message.error('创建失败，请重试');
+            }
             this.getData();
-          }).catch(error => {
-          });
+
+          })
 
         this.showCreateGroup = false
       } else {
