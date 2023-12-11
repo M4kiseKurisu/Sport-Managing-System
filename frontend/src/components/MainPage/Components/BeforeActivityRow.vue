@@ -62,7 +62,7 @@ export default {
     methods: {
         checkInformation ()
         {
-            this.$router.push( '/Page/Activity_Information/Detail/' + this.information.aid );
+            this.$router.push( '/Page/Activity_Information/Detail/' + this.aid );
         },
         toggleLike ()
         {
@@ -70,7 +70,7 @@ export default {
             {
                 let liking = {
                     uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
-                    aid: this.information.aid,
+                    aid: this.aid,
                     method: "remove"
                 }
                 //取消点赞
@@ -85,7 +85,7 @@ export default {
             {
                 let liking = {
                     uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
-                    aid: this.information.aid,
+                    aid: this.aid,
                     method: "like"
                 }
                 //点赞

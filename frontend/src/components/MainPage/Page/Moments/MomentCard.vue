@@ -1,5 +1,5 @@
 <template>
-    <div class="common-layout">
+    <div class="common-layout" v-if="stream">
         <el-container class="container">
             <!-- 姓名头像 -->
             <el-header class="header">
@@ -13,19 +13,25 @@
                     <span class="name">{{ stream.owner.name }}</span>
                     <span class="timestamp">{{ stream.time }}</span>
                 </div>
-            </el-header>
-            <el-main>
-                <!-- 活动 -->
-                <div class="showform">
-                    <BeforeActivityRow :information="activity" />
+
+                <div class="delete-button" @click="deleteStream" v-if="stream.owner.name == myName">
+                    删除动态
                 </div>
+            </el-header>
+
+            <el-main>
                 <!-- 图片文字 -->
                 <div class="content">
+                    <span class="activity" @click="checkInformation">
+                        {{ "#" + this.stream.activity_name }}
+                    </span>
+                    <div class="spacer"></div>
                     <img :src="'http://127.0.0.1:8000' + stream.picture" class="streamPic" v-if="stream.picture !== null" />
-                    <span>{{ stream.text }}</span>
+                    <span class="streamText">{{ stream.text }}</span>
                 </div>
             </el-main>
             <div class="spacer"></div>
+
             <el-footer class="footer">
                 <div class="likeSection">
                     <!-- 点赞、展开 -->
@@ -59,13 +65,13 @@
                     </div>
                 </div>
             </el-footer>
+            <el-divider />
         </el-container>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-import BeforeActivityRow from '../../Components/BeforeActivityRow.vue';
 import { Bottom, Top } from '@element-plus/icons-vue'
 export default {
     data ()
@@ -84,56 +90,17 @@ export default {
                 "favor": 1,
                 "is_favor": false,
                 "liker": [
-                    {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    },
-                    {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    }, {
-                        "uid": 2135220,
-                        "user_name": "牧濑红莉栖"
-                    },
                 ],
                 "private": "所有人可见",
                 "aid": 44709897,
                 "activity_name": "RAOS 发布会"
             },
-            activity: {
-            },
             defaultImage: "./src/images/group-default-picture.png",
-            liked: false,
+            liked: this.stream.is_favor,
             showLikers: true,
             Bottom,
-            Top
+            Top,
+            myName: JSON.parse( sessionStorage.getItem( "user_name" ) )
         }
     },
     props: {
@@ -141,42 +108,74 @@ export default {
             required: true
         }
     },
-    created ()
-    {
-        this.getActivity();
-    },
     components: {
-        BeforeActivityRow,
         Bottom,
         Top
     },
     methods: {
+        checkInformation ()
+        {
+            this.$router.push( '/Page/Activity_Information/Detail/' + this.stream.aid );
+        },
         toggleLike ()
         {
-            this.liked = !this.liked
+            const uid = JSON.parse( sessionStorage.getItem( "uid" ) );
+            axios.post( "http://127.0.0.1:8000/api/stream/favor", {
+                uid: uid,
+                sid: this.stream.sid
+            } ).then( ( result ) =>
+            {
+                if ( result.data.status )
+                {
+                    this.liked = !this.liked
+                }
+                if ( this.liked )
+                {
+                    this.stream.liker.push( {
+                        uid: uid,
+                        user_name: JSON.parse( sessionStorage.getItem( "user_name" ) )
+                    } )
+                } else
+                {
+                    const index = this.stream.liker.findIndex(
+                        ( liker ) => liker.uid === uid
+                    );
+
+                    // 如果找到索引，从数组中移除点赞者信息
+                    if ( index !== -1 )
+                    {
+                        this.stream.liker.splice( index, 1 );
+                    }
+                }
+
+            } );
+
         },
         toggleLikersDisplay ()
         {
             this.showLikers = !this.showLikers;
         },
-        getActivity ()
+        deleteStream ()
         {
-            axios( {
-                method: "GET",
-                url: "http://127.0.0.1:8000/api/activity/detail",
-                params: {
-                    aid: this.stream.aid
-                }
+            axios.post( "http://127.0.0.1:8000/api/stream/delete", {
+                sid: this.stream.sid
             } ).then( ( result ) =>
             {
                 if ( result.data.status )
                 {
-                    this.activity = result.data.data;
-                    this.activity.name = this.activity.activity_name
-                    this.activity.is_joined = false
+                    ElMessage.success( result.data.msg );
+                    this.$emit( 'delete-stream', this.stream );
+                    this.stream = [];
+                } else
+                {
+                    ElMessage.error( result.data.msg );
                 }
+            } ).catch( error =>
+            {
+                console.error( 'Error deleting stream:', error );
+                ElMessage.error( '删除失败，请重试' );
             } );
-        },
+        }
     }
 }
 
@@ -220,6 +219,22 @@ export default {
     /* 其他样式 */
 }
 
+.delete-button {
+    cursor: pointer;
+    margin-left: auto;
+    /* 将按钮放置到最右边 */
+    padding: 8px 16px;
+    /* 按钮的内边距 */
+    background-color: #d60404;
+    /* 红色背景 */
+    color: white;
+    /* 文字颜色 */
+    border: none;
+    /* 去除边框 */
+    border-radius: 4px;
+    /* 圆角边框 */
+}
+
 .showform {
     margin-top: 20px;
 }
@@ -229,6 +244,12 @@ export default {
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+.activity {
+    font-size: 20px;
+    color: rgb(119, 12, 240);
+    cursor: pointer;
 }
 
 .content {
@@ -241,6 +262,10 @@ export default {
 
 .streamPic {
     width: 30%;
+}
+
+.streamText {
+    font-size: 20px;
 }
 
 .footer {
