@@ -38,7 +38,7 @@ class Field(models.Model):
     """ 运动场地实体表 """
     fid = models.IntegerField(primary_key=True)
     location = models.CharField(max_length=32, unique=True)
-    category = models.CharField(max_length=16)
+    category = models.CharField(max_length=16, db_index=True)
     limit = models.BooleanField()
     open_time = models.TimeField()
     close_time = models.TimeField()
@@ -51,10 +51,10 @@ class Activity(models.Model):
         (1, "团体"),
     )
     aid = models.IntegerField(primary_key=True)
-    type = models.SmallIntegerField(choices=TYPE)
-    name = models.CharField(max_length=32)
+    type = models.SmallIntegerField(choices=TYPE, db_index=True)
+    name = models.CharField(max_length=32, db_index=True)
     desc = models.CharField(max_length=128)
-    category = models.CharField(max_length=32)
+    category = models.CharField(max_length=32, db_index=True)
     tags = models.CharField(max_length=128)
     maximum = models.IntegerField()
     capacity = models.IntegerField()
@@ -79,7 +79,7 @@ class Stream(models.Model):
         (2, "所有人可见"),
     )
     sid = models.IntegerField(primary_key=True)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(auto_now_add=True, db_index=True)
     text = models.CharField(max_length=512)
     picture = models.ImageField(upload_to='images/stream/', storage=ImageStorage(), null=True)
     favor = models.IntegerField(default=0)
@@ -91,7 +91,7 @@ class Stream(models.Model):
 class Notice(models.Model):
     """ 系统通知表 """
     nid = models.IntegerField(primary_key=True)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(auto_now_add=True, db_index=True)
     text = models.CharField(max_length=128)
     receiver = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -105,7 +105,7 @@ class UserInGroup(models.Model):
         (2, "成员"),
     )
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    gid = models.ForeignKey(Group, on_delete=models.CASCADE)
+    gid = models.ForeignKey(Group, on_delete=models.CASCADE, db_index=True)
     type = models.SmallIntegerField(choices=TYPE)
 
     class Meta:
@@ -122,9 +122,9 @@ class UserApplyGroup(models.Model):
         (2, "已拒绝"),
     )
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    gid = models.ForeignKey(Group, on_delete=models.CASCADE)
+    gid = models.ForeignKey(Group, on_delete=models.CASCADE, db_index=True)
     content = models.CharField(max_length=128)
-    apply_time = models.DateTimeField(auto_now_add=True)
+    apply_time = models.DateTimeField(auto_now_add=True, db_index=True)
     status = models.SmallIntegerField(choices=STATUS)
 
     class Meta:
@@ -137,8 +137,8 @@ class ActivityUseField(models.Model):
     """ 活动使用场地联系表"""
     aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
     fid = models.ForeignKey(Field, on_delete=models.CASCADE)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(db_index=True)
+    end_time = models.DateTimeField(db_index=True)
 
     class Meta:
         constraints = [
@@ -150,8 +150,8 @@ class ActivityUseField(models.Model):
 
 class UserInActivity(models.Model):
     """ 用户参加项目联系表 """
-    uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    uid = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE, db_index=True)
     like = models.BooleanField()
 
     class Meta:
@@ -163,7 +163,7 @@ class UserInActivity(models.Model):
 class UserCreateActivity(models.Model):
     """ 用户发起活动联系表 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE, db_index=True)
 
     class Meta:
         constraints = [
@@ -175,7 +175,7 @@ class GroupCreateActivity(models.Model):
     """ 团体发起活动联系表 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
     gid = models.ForeignKey(Group, on_delete=models.CASCADE)
-    aid = models.ForeignKey(Activity, on_delete=models.CASCADE)
+    aid = models.ForeignKey(Activity, on_delete=models.CASCADE, db_index=True)
 
     class Meta:
         constraints = [
@@ -190,7 +190,7 @@ class UserEquipment(models.Model):
         (2, "已归还"),
     )
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
-    uid = models.ForeignKey(User, on_delete=models.CASCADE)
+    uid = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     lend_amount = models.IntegerField()
@@ -209,7 +209,7 @@ class GroupEquipment(models.Model):
         (2, "已归还"),
     )
     eid = models.ForeignKey(Equipment, on_delete=models.CASCADE)
-    gid = models.ForeignKey(Group, on_delete=models.CASCADE)
+    gid = models.ForeignKey(Group, on_delete=models.CASCADE, db_index=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     lend_amount = models.IntegerField()
@@ -242,7 +242,7 @@ class FriendApply(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
     content = models.CharField(max_length=128)
-    apply_time = models.DateTimeField(auto_now_add=True)
+    apply_time = models.DateTimeField(auto_now_add=True, db_index=True)
     status = models.SmallIntegerField(choices=STATUS)
 
     class Meta:
@@ -254,7 +254,7 @@ class FriendApply(models.Model):
 class UserFavorStream(models.Model):
     """ 用户点赞动态记录表 """
     uid = models.ForeignKey(User, on_delete=models.CASCADE)
-    sid = models.ForeignKey(Stream, on_delete=models.CASCADE)
+    sid = models.ForeignKey(Stream, on_delete=models.CASCADE, db_index=True)
 
     class Meta:
         constraints = [
