@@ -66,10 +66,13 @@ export default {
 
             let inputData = new FormData();
 
+            console.log(this.information1.type);
+            console.log(this.information1.gid);
+
             inputData.append("uid", JSON.parse(sessionStorage.getItem("uid")));
             inputData.append("type", this.information1.type);
             if (this.information1.type === 1) {
-                inputData.append("gid", this.gid);
+                inputData.append("gid", this.information1.gid);
             }
             inputData.append("name", this.information1.name);
             inputData.append("desc", this.information1.desc);

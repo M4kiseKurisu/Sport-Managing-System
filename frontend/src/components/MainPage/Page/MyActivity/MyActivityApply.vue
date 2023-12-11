@@ -233,6 +233,7 @@ export default {
 
                 console.log(allTags);
                 console.log(this.fondType);
+                console.log(this.fondGroup);
 
                 this.$emit("returnData", {
                     status: true,

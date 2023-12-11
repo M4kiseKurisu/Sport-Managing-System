@@ -117,6 +117,11 @@
                         <div class="text">喜欢数：{{ this.data.favors }}</div>
                     </div>
 
+                    <div class="row">
+                        <el-button v-if="canIn()" type="primary" @click="getIn()">加入活动</el-button>
+                        <el-button v-else disabled type="primary" @click="getIn()">加入活动</el-button>
+                    </div>
+
                 </div>
 
             </div>
@@ -151,6 +156,7 @@
 
 <script>
 import axios from 'axios'
+import dayjs from 'dayjs'
 import FriendShow from '../../Components/FriendShow.vue'
 import { Document, SetUp, User, Compass, Guide, Odometer, AlarmClock, Location, Star } from "@element-plus/icons-vue";
 export default {
@@ -159,6 +165,57 @@ export default {
             aid: '',
             data: '',
             picture: '',
+        }
+    },
+    methods: {
+        getIn() {
+
+            //need test
+            for (let i = 0; i < this.data.participants.length; i++) {
+                if (this.data.participants[i].uid === parseInt(JSON.parse(sessionStorage.getItem('uid')))) {
+                    this.$message({
+                        showClose: true,
+                        message: "您已经在活动中！",
+                        type: 'error'
+                    });
+                }
+                return;
+            }
+
+
+            let information = {
+                uid: JSON.parse(sessionStorage.getItem('uid')),
+                aid: this.aid
+            }
+
+            axios({
+                method: "POST",
+                url: "http://127.0.0.1:8000/api/activity/join",
+                data: information
+            }).then((result) => {
+                if (result.data.status) {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'success'
+                    });
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: result.data.msg,
+                        type: 'error'
+                    });
+                }
+            });
+        },
+        canIn() {
+            console.log(1);
+
+            if (this.data.start_time <= dayjs().format('YYYY-MM-DD HH:mm:ss')) {
+                return false;
+            }
+
+            return true;
         }
     },
     mounted() {
@@ -172,7 +229,9 @@ export default {
                 aid: this.aid
             }
         }).then((result) => {
+            console.log(2);
             if (result.data.status) {
+                console.log(result);
                 this.data = result.data.data;
             }
         });
@@ -188,6 +247,8 @@ export default {
         AlarmClock,
         Location,
         Star
+    },
+    computed: {
     }
 }
 </script>
@@ -215,8 +276,10 @@ export default {
 }
 
 .image {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
+    max-height: 400px;
+    max-width: 100%;
     object-fit: cover;
 }
 
