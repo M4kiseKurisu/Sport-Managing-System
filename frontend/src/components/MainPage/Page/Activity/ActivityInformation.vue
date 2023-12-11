@@ -2,8 +2,9 @@
     <!-- 界面最上方活动走马灯 -->
 
     <el-carousel :autoplay="false" type="card" height="200px">
-        <el-carousel-item v-for="item in 6" :key="item">
-            <h3 text="2xl" justify="center">{{ item }}</h3>
+        <el-carousel-item v-for="item in this.prefer" :key="item.aid">
+            <!-- <h3 text="2xl" justify="center">{{ item }}</h3> -->
+            <img :src="'http://127.0.0.1:8000' + item.picture" class="image">
         </el-carousel-item>
     </el-carousel>
 
@@ -116,6 +117,7 @@ export default {
             categoryOptions: [],
             category: '',
             tag: '',
+            prefer: [],
         }
     },
     components: {
@@ -189,6 +191,7 @@ export default {
                 type: 2,
             },
         }).then((result) => {
+            console.log(result);
             if (result.data.status) {
                 this.list = result.data.list;
                 this.categoryOptions = [];
@@ -203,6 +206,18 @@ export default {
                 }
             }
         });
+
+        axios({
+            method: "GET",
+            url: "http://127.0.0.1:8000/api/activity/recommend",
+            params: {
+                uid: JSON.parse(sessionStorage.getItem("uid")),
+            },
+        }).then((result) => {
+            if (result.data.status) {
+                this.prefer = result.data.list;
+            }
+        })
     },
     computed: {
         groups() {
@@ -217,6 +232,12 @@ export default {
 </script>
   
 <style scoped>
+.image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
 .el-row {
     margin-top: 40px;
 }
