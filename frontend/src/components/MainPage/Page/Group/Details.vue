@@ -4,22 +4,21 @@
 
       <el-aside width="200px" class="centered-aside">
         <div class="group-info">
-          <!-- Left section for group information -->
           <div class="group-details">
             <div class="center-content">
               <div v-if="group.image !== null">
-                <img :src="'http://127.0.0.1:8000' + group.image" class="image" />
+                <img :src="'http://127.0.0.1:8000' + group.image" class="image enlarged-image" />
               </div>
               <div v-else>
-                <img :src="defaultImage" class="image" />
+                <img :src="defaultImage" class="image enlarged-image" />
               </div>
               <div class="group_name">
-                <h1>{{ group.name }}</h1>
+                <h1 class="enlarged-name">{{ group.name }}</h1>
               </div>
-              <div class="group-buttons" v-if="this.father == 'YourGroup'
+              <!-- <div class="group-buttons" v-if="this.father == 'YourGroup'
                 && (this.group.type == '创建人' || this.group.type == '管理员')">
                 <el-button @click="addActivity()">新增活动</el-button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -400,7 +399,7 @@ export default {
           this.myOpData = [
             {
               value: 1,
-              name: "该团队暂无活动" // 如果是饼图，使用name字段
+              name: "暂无活动" // 如果是饼图，使用name字段
               // key: "该团队暂无举办活动~" // 如果是其他图表类型，可以使用key字段
             }
           ];
@@ -459,6 +458,26 @@ export default {
   text-align: center;
 }
 
+.image.enlarged-image {
+  width: 100%;
+  /* 图片最大宽度 */
+  height: auto;
+  /* 自适应高度 */
+  max-width: 100%;
+  /* 图片最大宽度 */
+  max-height: 100%;
+  /* 图片最大高度 */
+}
+
+.group_name .enlarged-name {
+  font-size: 28px;
+  /* 调整字体大小 */
+  font-weight: bold;
+  /* 加粗字体 */
+  margin-top: 10px;
+  /* 可以根据需要调整上边距 */
+}
+
 .group-activity {
   display: flex;
   text-align: left;
@@ -466,10 +485,6 @@ export default {
   height: 100%;
   position: relative;
   z-index: 1;
-}
-
-.GroupActivityCard {
-  cursor: pointer;
 }
 
 /* Adjustments for navigation section */
@@ -582,5 +597,4 @@ export default {
 
 .searchButton {
   width: 50px;
-}
-</style>
+}</style>
