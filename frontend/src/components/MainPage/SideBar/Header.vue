@@ -7,6 +7,15 @@
 
     <!-- 右侧内容 -->
     <div class="right">
+
+      <el-badge v-if="nNum > 0" :value="nNum" class="item">
+        <el-button type="primary" @click="table = true">查看通知</el-button>
+      </el-badge>
+
+      <div v-else class="item">
+        <el-button type="primary" @click="table = true">查看通知</el-button>
+      </div>
+
       <!-- 头像 -->
       <div>
         <el-avatar :size="50" :src="picture || './src/images/emptyAvatar.png'" />
@@ -18,6 +27,22 @@
       </div>
     </div>
   </div>
+
+  <el-drawer v-model="table" title="尚未查看的通知信息" direction="rtl" size="50%">
+    <el-table :data="nList">
+      <el-table-column property="time" label="通知时间" width="230" />
+      <el-table-column property="text" label="通知内容" width="300" />
+      <el-table-column label="操作">
+        <template #default="scope">
+          <el-button type="danger" plain @click="deleteRow(scope.$index, scope.row)">删除通知</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <el-button type="danger" @click="deleteAllNotifications">删除所有通知</el-button>
+    </div>
+  </el-drawer>
 </template>
 
 <script>
@@ -28,9 +53,42 @@ export default {
     return {
       name: '',
       picture: '',
+      nList: [],
+      nNum: 0,
+
+      table: false,
     };
   },
-  methods: {},
+  methods: {
+    deleteRow(index, row) {
+      let deleteRow = { nid: row.nid };
+      axios({
+        method: "POST",
+        url: "http://127.0.0.1:8000/api/notice/confirm",
+        data: deleteRow,
+      }).then((result) => {
+        console.log(result);
+        if (result.data.status) {
+          this.nList.splice(index, 1);
+          this.nNum--;
+        }
+      })
+    },
+    deleteAllNotifications() {
+      let deleteAll = { uid: JSON.parse(sessionStorage.getItem("uid")) };
+      axios({
+        method: "POST",
+        url: "http://127.0.0.1:8000/api/notice/confirm",
+        data: deleteAll,
+      }).then((result) => {
+        console.log(result);
+        if (result.data.status) {
+          this.nList = [];
+          this.nNum = 0;
+        }
+      })
+    }
+  },
   created() {
     axios({
       method: "GET",
@@ -44,6 +102,20 @@ export default {
         this.picture = "http://127.0.0.1:8000" + result.data.info.picture;
       }
     });
+
+    axios({
+      method: "GET",
+      url: "http://127.0.0.1:8000/api/notice/list",
+      params: {
+        uid: JSON.parse(sessionStorage.getItem("uid")),
+      }
+    }).then((result) => {
+      console.log(result);
+      if (result.data.status) {
+        this.nList = result.data.list;  //nid, text, time
+        this.nNum = result.data.list.length;
+      }
+    })
   }
 };
 </script>
@@ -54,6 +126,11 @@ export default {
   display: flex;
   justify-content: space-between;
   background-color: #5d85a6;
+}
+
+.item {
+  margin-top: 10px;
+  margin-right: 30px;
 }
 
 .picLocation {

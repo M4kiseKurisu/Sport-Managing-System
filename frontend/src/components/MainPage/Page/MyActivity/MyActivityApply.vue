@@ -162,8 +162,36 @@ export default {
                     value: "跑步"
                 },
                 {
-                    label: "impart",
-                    value: "impart"
+                    label: "健身",
+                    value: "健身"
+                },
+                {
+                    label: "飞盘",
+                    value: "飞盘"
+                },
+                {
+                    label: "羽毛球",
+                    value: "羽毛球"
+                },
+                {
+                    label: "桌球",
+                    value: "桌球"
+                },
+                {
+                    label: "排球",
+                    value: "排球"
+                },
+                {
+                    label: "乒乓球",
+                    value: "乒乓球"
+                },
+                {
+                    label: "游泳",
+                    value: "游泳"
+                },
+                {
+                    label: "其他",
+                    value: "其他"
                 },
             ],
             tagName: '',

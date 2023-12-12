@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 400px; height: 400px" id="main"></div>
+    <div style="width: 400px; height: 400px; margin-top: 30px;" id="main"></div>
 </template>
   
 <script>
@@ -33,6 +33,14 @@ export default {
                     this.dataList.push({ name: "篮球", value: activityResponse.data.data["篮球"] ? activityResponse.data.data["篮球"] : 0 });
                     this.dataList.push({ name: "足球", value: activityResponse.data.data["足球"] ? activityResponse.data.data["足球"] : 0 });
                     this.dataList.push({ name: "跑步", value: activityResponse.data.data["跑步"] ? activityResponse.data.data["跑步"] : 0 });
+                    this.dataList.push({ name: "健身", value: activityResponse.data.data["健身"] ? activityResponse.data.data["健身"] : 0 });
+                    this.dataList.push({ name: "飞盘", value: activityResponse.data.data["飞盘"] ? activityResponse.data.data["飞盘"] : 0 });
+                    this.dataList.push({ name: "羽毛球", value: activityResponse.data.data["羽毛球"] ? activityResponse.data.data["羽毛球"] : 0 });
+                    this.dataList.push({ name: "桌球", value: activityResponse.data.data["桌球"] ? activityResponse.data.data["桌球"] : 0 });
+                    this.dataList.push({ name: "排球", value: activityResponse.data.data["排球"] ? activityResponse.data.data["排球"] : 0 });
+                    this.dataList.push({ name: "乒乓球", value: activityResponse.data.data["乒乓球"] ? activityResponse.data.data["乒乓球"] : 0 });
+                    this.dataList.push({ name: "游泳", value: activityResponse.data.data["游泳"] ? activityResponse.data.data["游泳"] : 0 });
+                    this.dataList.push({ name: "其他", value: activityResponse.data.data["其他"] ? activityResponse.data.data["其他"] : 0 });
                 }
 
                 console.log(this.dataList);
@@ -47,7 +55,7 @@ export default {
                     trigger: 'item'
                 },
                 legend: {
-                    top: '5%',
+                    top: '0%',
                     left: 'center'
                 },
                 series: [
