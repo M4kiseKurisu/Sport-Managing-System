@@ -4,15 +4,43 @@
   
 <script>
 import * as echarts from 'echarts';
+import axios from 'axios';
 export default {
     name: "echarts",
     data() {
-        return {}
+        return {
+            dataList: [],
+        }
     },
     mounted() {
-        this.echartsInit()
+        this.dataList = this.inputList;
+        console.log(this.dataList);
+        this.fetchUserInfoAndActivity()
     },
     methods: {
+        async fetchUserInfoAndActivity() {
+            try {
+                const activityResponse = await axios.get("http://127.0.0.1:8000/api/user/activity/statistic", {
+                    params: {
+                        uid: JSON.parse(sessionStorage.getItem("uid")),
+                    },
+                });
+
+                console.log(activityResponse);
+
+                if (activityResponse.data.status) {
+                    this.dataList = [];
+                    this.dataList.push({ name: "篮球", value: activityResponse.data.data["篮球"] ? activityResponse.data.data["篮球"] : 0 });
+                    this.dataList.push({ name: "足球", value: activityResponse.data.data["足球"] ? activityResponse.data.data["足球"] : 0 });
+                    this.dataList.push({ name: "跑步", value: activityResponse.data.data["跑步"] ? activityResponse.data.data["跑步"] : 0 });
+                }
+
+                console.log(this.dataList);
+            } catch (error) {
+                console.error(error);
+            }
+            this.echartsInit()
+        },
         echartsInit() {
             echarts.init(document.getElementById('main')).setOption({
                 tooltip: {
@@ -24,7 +52,7 @@ export default {
                 },
                 series: [
                     {
-                        name: 'Access From',
+                        name: '活动类型统计',
                         type: 'pie',
                         radius: ['40%', '70%'],
                         avoidLabelOverlap: false,
@@ -47,13 +75,7 @@ export default {
                         labelLine: {
                             show: false
                         },
-                        data: [
-                            { value: 2, name: '活动A' },
-                            { value: 6, name: '活动B' },
-                            { value: 5, name: '活动C' },
-                            { value: 4, name: '活动D' },
-                            { value: 8, name: '活动E' }
-                        ]
+                        data: this.dataList,
                     }
                 ]
             })
