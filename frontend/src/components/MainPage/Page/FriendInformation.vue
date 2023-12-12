@@ -1,48 +1,16 @@
 <template>
   <div>
     <!-- 好友列表逻辑 -->
-    <el-table :data="filteredFriends" style="width: 80%">
-      <el-table-column label="呢称" width="200">
-        <template #default="scope">
-          <div v-for="friend in scope.row" :key="friend.uid" class="friend-info">
-            <div v-if="friend.pic !== null">
-              <img :src="'http://127.0.0.1:8000' + friend.pic" class="avatar" />
-            </div>
-            <div v-else>
-              <img :src="defaultImage" class="avatar" />
-            </div>
-            <span>{{ friend.user_name }}</span>
-          </div>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="个性签名">
-        <template #default="scope">
-          <div v-for="friend in scope.row" :key="friend.uid">
-            {{ friend.signature }}
-          </div>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="right">
-        <template #header>
-          <div class="searchTitle">
-            <div class="searchBox">
-              <el-input v-model="keyword" placeholder="搜索你的好友"></el-input>
-            </div>
-            <el-button @click="search" class="searchButton">查询</el-button>
-          </div>
-        </template>
-        <template #default="scope" align="center">
-          <div v-for="friend in scope.row" :key="friend.uid" class="user-info">
-            <el-button size="small" type="danger" @click="handleDelete(friend)">删除好友</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="centered-content">
+      <el-row>
+        <el-col v-for="(friend, index) in filteredFriends" :key="index">
+          <FriendCard :user="friend" />
+        </el-col>
+      </el-row>
+    </div>
 
     <!-- 分页逻辑 -->
-    <el-pagination :small="small" :disabled="disabled" :background="background" layout="prev, pager, next" :page-size="10"
+    <el-pagination :small="small" :disabled="disabled" :background="background" layout="prev, pager, next" :page-size="4"
       :total="totalPages" v-model:current-page="currentPage" @current-change="handleCurrentChange" />
 
     <!-- 添加按钮 -->
@@ -88,6 +56,8 @@ import { Plus, Bell } from '@element-plus/icons-vue'
 import AddFriendDialog from './Friend/AddFriend.vue'
 import Pending from './Friend/Pending.vue'
 import Receive from './Friend/Receive.vue'
+import FriendCard from '../Components/FriendCard.vue'
+
 export default {
   data ()
   {
@@ -113,7 +83,8 @@ export default {
     Bell,
     AddFriendDialog,
     Pending,
-    Receive
+    Receive,
+    FriendCard
   },
   created ()
   {
@@ -126,32 +97,10 @@ export default {
     },
     filteredFriends ()
     {
-      let buf = [];
-      let filterfriends = [];
+      const startIndex = ( this.currentPage - 1 ) * 4; // 每页显示 6 个好友信息
+      const endIndex = startIndex + 4;
 
-      // 检查是否存在 is_friend 属性
-      let hasIsFriendProperty = this.friends.length > 0 && this.friends[ 0 ].hasOwnProperty( 'is_friend' );
-
-      if ( hasIsFriendProperty )
-      {
-        for ( let i = 0; i < this.friends.length; i++ )
-        {
-          if ( this.friends[ i ].is_friend === true )
-          {
-            buf.push( this.friends[ i ] );
-          }
-        }
-      } else
-      {
-        buf = this.friends;
-      }
-
-      for ( let i = 0; i < buf.length; i += 10 )
-      {
-        filterfriends.push( buf.slice( i, i + 10 ) );
-      }
-
-      return filterfriends;
+      return this.friends.slice( startIndex, endIndex );
     },
   },
 
@@ -180,44 +129,10 @@ export default {
     handleCurrentChange ( val )
     {
       console.log( `current page: ${ val }` );
-    },
-
-    handleDelete ( friend )
-    {
-      ElMessageBox.confirm( '是否删除该好友',
-        'Warning',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then( () =>
+      if ( val >= 1 && val <= this.totalPages )
       {
-        axios.post( 'http://127.0.0.1:8000/api/friend/delete', {
-          uid: sessionStorage.getItem( 'uid' ),
-          fid: friend.uid,
-        } ).then( response =>
-        {
-          ElMessage( {
-            type: 'success',
-            message: '删除成功',
-          } );
-
-          this.getData();
-        } ).catch( error =>
-        {
-          ElMessage( {
-            type: 'error',
-            message: '删除失败，请重试',
-          } );
-        } );
-      } ).catch( () =>
-      {
-        ElMessage( {
-          type: 'info',
-          message: '你已取消操作',
-        } );
-      } );
+        this.currentPage = val;
+      }
     },
 
     search ()
@@ -238,11 +153,6 @@ export default {
           this.msg = result.data.msg;
         }
       } );
-    },
-
-    getAvatar ( friend )
-    {
-      return friend.pic;
     },
 
     openDialog ()
@@ -267,6 +177,7 @@ export default {
     closeRequestDialog ()
     {
       this.requestDialogVisible = false;
+      this.getData()
     },
 
     handleMenuSelect ( index )
@@ -279,6 +190,12 @@ export default {
 </script>
 
 <style scoped>
+.centered-content {
+  padding: 0 60px;
+  /* 左右空间 */
+
+}
+
 .friend-info {
   display: flex;
   align-items: center;
@@ -344,5 +261,19 @@ export default {
   color: #333;
   /* 文本颜色 */
   /* 可以根据需要添加其他样式，比如字体样式、字重等 */
+}
+
+.el-pagination {
+  font-size: 25px;
+  /* 调整分页器的字体大小 */
+  position: fixed;
+  /* 使分页器固定 */
+  bottom: 10%;
+  /* 确保分页器位于页面底部 */
+  left: 50%;
+  /* 调整分页器水平位置 */
+  transform: translateX(-50%);
+  z-index: 1000;
+  /* 可以调整分页器的 z-index 以确保它在其他内容上方 */
 }
 </style>

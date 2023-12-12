@@ -198,4 +198,23 @@ group {
   border-radius: 50%;
   margin-right: 10px;
 }
+
+.el-table,
+.el-table th,
+.el-table td {
+  font-size: 16px;
+}
+
+/* 美化表格样式 */
+.el-table__header-wrapper {
+  background-color: #f5f7fa;
+}
+
+.el-table__header th {
+  background-color: #e4e7ed;
+}
+
+.el-table__body td {
+  background-color: #ffffff;
+}
 </style>

@@ -17,7 +17,7 @@
 
     <div style="padding: 14px">
       <div class="card-title-info">
-        <span>{{ props.card.group_name }}</span>
+        <span class="group-name">{{ props.card.group_name }}</span>
         <span class="creator-info">创建人：{{ props.card.creator }}</span>
       </div>
       <div class="button-container">
@@ -127,12 +127,12 @@ const applicate = (gid) => {
 <style scoped>
 /* 调整 el-card 大小 */
 .custom-card {
-  height: 175px;
+  height: 200px;
   width: 90%;
   margin-bottom: 20px;
   /* 增加卡片下方间距 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* 添加阴影效果 */
+
 }
 
 .button-container {
@@ -188,10 +188,19 @@ const applicate = (gid) => {
   margin-bottom: 10px;
 }
 
+.group-name {
+  font-size: 18px;
+  /* 调整名字字体大小 */
+  font-weight: bold;
+  /* 加粗名字 */
+  color: #333;
+  /* 调整名字颜色 */
+}
+
 .creator-info {
   color: #888;
   /* 创建人信息的颜色 */
-  font-size: 14px;
+  font-size: 16px;
   /* 创建人信息的字体大小 */
 }
 
