@@ -102,11 +102,8 @@ def initialize(user):
 
 
 def get_recommend_activity(uid):
-    print("begin")
     user = User.objects.get(uid=uid)
-    print("user")
     initialize(user)
-    print("init")
     activity_weight = []
     for activity in total_activities:
         weight1 = cal_pog_weight(activity)

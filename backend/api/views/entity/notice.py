@@ -41,7 +41,7 @@ def notice_list(request):
     user = User.objects.get(uid=uid)
     lst = list(map(lambda param: {"nid": param.nid, "text": param.text,
                                   "time": param.time.strftime("%Y-%m-%d %H:%M:%S")},
-                   Notice.objects.filter(receiver=user)))
+                   Notice.objects.filter(receiver=user).order_by('-time')))
     return JsonResponse({"msg": '通知获取成功', "status": True, "list": lst})
 
 
