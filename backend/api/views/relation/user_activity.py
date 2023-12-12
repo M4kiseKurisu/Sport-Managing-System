@@ -54,3 +54,5 @@ def delete_relation(uid, aid):
     else:
         # 删除用户参与活动记录
         UserInActivity.objects.get(uid=user, aid=activity).delete()
+        activity.capacity -= 1
+        activity.save()
