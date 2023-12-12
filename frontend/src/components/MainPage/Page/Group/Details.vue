@@ -43,7 +43,7 @@
                 </el-aside>
                 <el-divider direction="vertical" style="height: 400px;"></el-divider>
                 <el-main>
-                  <GroupActivityCard :gid="this.$route.query.gid" />
+                  <GroupActivityCard :gid="this.$route.query.gid" class="GroupActivityCard" />
                 </el-main>
               </el-container>
             </div>
@@ -418,7 +418,8 @@ export default {
       // 使用从后端获取的数据更新图表配置
       this.option.series[ 0 ].data = this.myOpData;
       myChart.setOption( this.option );
-    }
+    },
+
   },
   components: { GroupActivityCard }
 };
@@ -465,6 +466,10 @@ export default {
   height: 100%;
   position: relative;
   z-index: 1;
+}
+
+.GroupActivityCard {
+  cursor: pointer;
 }
 
 /* Adjustments for navigation section */
