@@ -4,7 +4,11 @@
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar :size="150" shape="circle" :src="picture || './src/images/emptyAvatar.png'"></el-avatar>
+        <el-avatar
+          :size="150"
+          shape="circle"
+          :src="picture || './src/images/emptyAvatar.png'"
+        ></el-avatar>
       </div>
 
       <!-- 个人账号 -->
@@ -87,7 +91,13 @@
       <!-- 更改个人信息按钮 -->
       <div class="changeButton">
         <div class="button">
-          <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+          <el-upload
+            v-model:file-list="this.fileList"
+            :limit="1"
+            :show-file-list="false"
+            :auto-upload="false"
+            action="#"
+          >
             <el-button type="primary" plain>选择头像</el-button>
           </el-upload>
         </div>
@@ -189,25 +199,6 @@ export default {
 
       console.log(file);
 
-      // axios({
-      //   method: "POST",
-      //   url: "http://127.0.0.1:8000/api/user/modify/pic",
-      //   data: data
-      // }).then((result) => {
-      //   if (result.data.status) {
-      //     this.$message({
-      //       showClose: true,
-      //       message: result.data.msg,
-      //       type: 'success'
-      //     });
-      //   } else {
-      //     this.$message({
-      //       showClose: true,
-      //       message: result.data.msg,
-      //       type: 'error'
-      //     });
-      //   }
-      // });
       axios.post("http://127.0.0.1:8000/api/user/modify/pic", data);
     },
     uploadFile(file) {

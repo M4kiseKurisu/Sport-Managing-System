@@ -9,23 +9,7 @@
           <Sidebar />
         </el-aside>
         <el-main>
-          <!-- <UserInformation /> -->
-          <!-- <ActivityInformation /> -->
-          <!-- <GroupInformation /> -->
-          <!-- <EquipmentBorrow />  -->
-
-          <!-- <UserInformation /> -->
-          <!-- <ActivityInformation /> -->
-          <!-- <GroupInformation /> -->
-          <!-- <EquipmentBorrow /> -->
-
-          <!-- <EBorrowMain /> -->
-          <!-- <GroupInformation /> -->
           <router-view></router-view>
-          <!-- <UploadMoment /> -->
-          <!-- <FriendInformation /> -->
-          <!-- <Details /> -->
-          <!-- <CreateGroup /> -->
         </el-main>
       </el-container>
     </el-container>
