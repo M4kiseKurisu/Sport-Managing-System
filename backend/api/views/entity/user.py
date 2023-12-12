@@ -7,6 +7,8 @@ import random
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
 
 from api.models import User
 from api.models import ActivityUseField
@@ -251,3 +253,45 @@ def activity_statistic(request):
         statistic[category] = statistic.get(category, 0) + 1
     print(statistic)
     return JsonResponse({"msg": '活动统计信息获取成功', "status": True, "data": statistic})
+
+
+@require_http_methods(["GET"])
+def activity_arrangement(request):
+    """ 用户未来七天活动安排 """
+    uid = request.GET.get('uid')
+    user = User.objects.get(uid=uid)
+
+    # 获取当前日期范围
+    now = timezone.now()
+    start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_7_days = start_of_today + timedelta(days=7)
+
+    # 用户参加的活动
+    activities = set()
+    for rec in UserInActivity.objects.filter(uid=user):
+        activities.add(rec.aid)
+
+    records = ActivityUseField.objects.filter(
+        aid__in=activities,
+        start_time__gte=start_of_today,
+        end_time__lt=end_of_7_days
+    ).order_by('start_time')
+
+    data = dict()
+    for rec in records:
+        data.setdefault(rec.start_time.strftime("%Y-%m-%d"), []).append(rec.aid.name)
+    return JsonResponse({"msg": '活动安排获取成功', "status": True, "data": data})
+
+
+@require_http_methods(["GET"])
+def group_statistic(request):
+    """ 用户参加的团体统计 """
+    uid = request.GET.get('uid')
+    records = user_group.search_relation(uid, None)
+    statistic = dict()
+
+    for record in records:
+        tag = record.gid.tag
+        statistic[tag] = statistic.get(tag, 0) + 1
+    print(statistic)
+    return JsonResponse({"msg": '团体统计信息获取成功', "status": True, "data": statistic})

@@ -16,8 +16,10 @@ urlpatterns = [
     path('user/modify/text', user.modify_text),
     path('user/modify/pic', user.modify_pic),
     path('user/group', user.group_list),
+    path('user/group/statistic', user.group_statistic),
     path('user/activity/statistic', user.activity_statistic),
     path('user/activity/view', user.activity_list),
+    path('user/activity/arrangement', user.activity_arrangement),
 
     # group
     path('group/view', group.view),
