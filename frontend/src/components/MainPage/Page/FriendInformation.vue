@@ -1,4 +1,5 @@
 <template>
+  <h1 class="page-title">好友列表</h1>
   <div>
     <!-- 好友列表逻辑 -->
     <div class="centered-content">
@@ -190,6 +191,15 @@ export default {
 </script>
 
 <style scoped>
+.page-title {
+  text-align: center;
+  /* 居中显示 */
+  font-size: 25px;
+  /* 字体较大 */
+  margin-bottom: 20px;
+  /* 与下方内容有一定间隔 */
+}
+
 .centered-content {
   padding: 0 60px;
   /* 左右空间 */

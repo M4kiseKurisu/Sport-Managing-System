@@ -5,6 +5,10 @@
       <img src="../../../images/logo.png" class="pic" />
     </div>
 
+    <div class="label">
+      <BreadcrumbLabel />
+    </div>
+
     <!-- 右侧内容 -->
     <div class="right">
 
@@ -49,7 +53,8 @@
 import { color } from "echarts/core"
 import axios from 'axios'
 export default {
-  data() {
+  data ()
+  {
     return {
       name: '',
       picture: '',
@@ -60,62 +65,73 @@ export default {
     };
   },
   methods: {
-    deleteRow(index, row) {
+    deleteRow ( index, row )
+    {
       let deleteRow = { nid: row.nid };
-      axios({
+      axios( {
         method: "POST",
         url: "http://127.0.0.1:8000/api/notice/confirm",
         data: deleteRow,
-      }).then((result) => {
-        console.log(result);
-        if (result.data.status) {
-          this.nList.splice(index, 1);
+      } ).then( ( result ) =>
+      {
+        console.log( result );
+        if ( result.data.status )
+        {
+          this.nList.splice( index, 1 );
           this.nNum--;
         }
-      })
+      } )
     },
-    deleteAllNotifications() {
-      let deleteAll = { uid: JSON.parse(sessionStorage.getItem("uid")) };
-      axios({
+    deleteAllNotifications ()
+    {
+      let deleteAll = { uid: JSON.parse( sessionStorage.getItem( "uid" ) ) };
+      axios( {
         method: "POST",
         url: "http://127.0.0.1:8000/api/notice/confirm",
         data: deleteAll,
-      }).then((result) => {
-        console.log(result);
-        if (result.data.status) {
+      } ).then( ( result ) =>
+      {
+        console.log( result );
+        if ( result.data.status )
+        {
           this.nList = [];
           this.nNum = 0;
         }
-      })
+      } )
     }
   },
-  created() {
-    axios({
+  created ()
+  {
+    axios( {
       method: "GET",
       url: "http://127.0.0.1:8000/api/user/information",
       params: {
-        uid: JSON.parse(sessionStorage.getItem("uid")),
+        uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
       },
-    }).then((result) => {
-      if (result.data.status) {
+    } ).then( ( result ) =>
+    {
+      if ( result.data.status )
+      {
         this.name = result.data.info.name;
         this.picture = "http://127.0.0.1:8000" + result.data.info.picture;
       }
-    });
+    } );
 
-    axios({
+    axios( {
       method: "GET",
       url: "http://127.0.0.1:8000/api/notice/list",
       params: {
-        uid: JSON.parse(sessionStorage.getItem("uid")),
+        uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
       }
-    }).then((result) => {
-      console.log(result);
-      if (result.data.status) {
+    } ).then( ( result ) =>
+    {
+      console.log( result );
+      if ( result.data.status )
+      {
         this.nList = result.data.list;  //nid, text, time
         this.nNum = result.data.list.length;
       }
-    })
+    } )
   }
 };
 </script>
@@ -137,6 +153,16 @@ export default {
   height: 90%;
   width: 100px;
   margin-top: 6px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  /* 让面包屑和右侧内容在垂直方向上居中对齐 */
+  flex-grow: 1;
+  /* 让父级容器撑满可用空间 */
+  justify-content: space-between;
+  /* 左右两侧分隔 */
 }
 
 .pic {
@@ -163,5 +189,4 @@ export default {
 .textStyle {
   font-size: 18px;
   color: white;
-}
-</style>
+}</style>

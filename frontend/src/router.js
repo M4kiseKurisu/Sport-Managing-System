@@ -46,6 +46,7 @@ const router = createRouter({
             path: '/Login',
             component: Login,
             meta: {
+                breadcrumbLabel: '登录',
                 requireAuth: false
             }
         },
@@ -54,53 +55,84 @@ const router = createRouter({
             component: MainPage,
             redirect: '/Page/User_Information',
             meta: {
+                breadcrumbLabel: '主页面',
                 requireAuth: true
             },
             children: [
                 {
                     path: 'Borrow_Equipment',
                     component: EBorrowMain,
+                    meta: {
+                        breadcrumbLabel: '器材租借'
+                    },
                     redirect: '/Page/Borrow_Equipment/Equipment_Information',
                     children: [
                         {
                             path: 'Equipment_Information',
+                            meta: {
+                                breadcrumbLabel: '器材信息'
+                            },
                             component: Borrow
                         },
                         {
                             path: 'Borrow/Personal',
+                            meta: {
+                                breadcrumbLabel: '个人器材'
+                            },
                             component: Personal
                         },
                         {
                             path: 'Borrow/Group',
+                            meta: {
+                                breadcrumbLabel: '团体器材'
+                            },
                             component: Group
                         }
                     ]
                 },
                 {
                     path: 'User_Information',
+                    meta: {
+                        breadcrumbLabel: '个人主页'
+                    },
                     component: UserInformation
                 },
                 {
                     path: 'Activity_Information',
+                    meta: {
+                        breadcrumbLabel: '活动信息'
+                    },
                     component: Activity,
                     redirect: '/Page/Activity_Information/Show',
                     children: [
                         {
                             path: 'Show',
+                            meta: {
+                                breadcrumbLabel: '热门活动'
+                            },
                             component: ActivityInformation
                         },
                         {
                             path: 'Before',
+                            meta: {
+                                breadcrumbLabel: '过往活动'
+                            },
                             component: ActivityBefore
                         },
                         {
                             path: 'Detail/:aid',
+                            meta: {
+                                breadcrumbLabel: '活动详情'
+                            },
                             component: ActivityDetail
                         }
                     ]
                 },
                 {
                     path: 'MyActivity',
+                    meta: {
+                        breadcrumbLabel: '我的活动'
+                    },
                     component: MyActivityMain,
                     redirect: '/Page/MyActivity/Show',
                     children: [
@@ -110,6 +142,9 @@ const router = createRouter({
                         },
                         {
                             path: 'Apply',
+                            meta: {
+                                breadcrumbLabel: '申请活动'
+                            },
                             component: MyActivityApplyMain,
                             redirect: '/Page/MyActivity/Apply/Basic',
                             children: [
@@ -132,37 +167,61 @@ const router = createRouter({
                 {
                     path: 'GroupInformation',
                     component: GroupInformation,
+                    meta: {
+                        breadcrumbLabel: '团体' // 面包屑显示的文本
+                    },
                     redirect: '/Page/GroupInformation/GroupList',
                     children: [
                         {
                             path: 'YourGroup',
+                            meta: {
+                                breadcrumbLabel: '你的团体' // 面包屑显示的文本
+                            },
                             component: YourGroup
                         },
                         {
                             path: 'GroupList',
+                            meta: {
+                                breadcrumbLabel: '团体中心' // 面包屑显示的文本
+                            },
                             component: GroupList
                         },
                         {
                             path: 'YourApplication',
+                            meta: {
+                                breadcrumbLabel: '你的申请' // 面包屑显示的文本
+                            },
                             component: YourApplication
                         },
                         {
                             path: 'PendingReview',
+                            meta: {
+                                breadcrumbLabel: '待办审核' // 面包屑显示的文本
+                            },
                             component: PendingReview
                         },
                         {
                             path: 'Details',
                             name: 'Details',
+                            meta: {
+                                breadcrumbLabel: '团体详情' // 面包屑显示的文本
+                            },
                             component: Details,
                         }
                     ]
                 },
                 {
                     path: 'Friend',
+                    meta: {
+                        breadcrumbLabel: '好友列表' // 面包屑显示的文本
+                    },
                     component: Friend
                 },
                 {
                     path: 'Stream',
+                    meta: {
+                        breadcrumbLabel: '好友动态' // 面包屑显示的文本
+                    },
                     component: Stream
                 }
             ]

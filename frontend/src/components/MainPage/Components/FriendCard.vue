@@ -91,7 +91,7 @@ export default {
     width: auth;
     height: 80px;
     /* 调整卡片宽度 */
-    background: linear-gradient(to right, #ffafbd, #f8e3d7);
+    background: linear-gradient(to right, #f5edee, #faddcd);
 }
 
 .avatar-container {
