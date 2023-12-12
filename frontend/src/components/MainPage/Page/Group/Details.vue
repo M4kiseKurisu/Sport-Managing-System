@@ -26,17 +26,27 @@
       </el-aside>
 
 
-      <el-main width="20%">
+      <el-main width="800px">
 
         <div class="group-navigation">
           <!-- Right section for navigation -->
 
           <el-card>
-            <div ref="chart" style="width: 400px; height: 400px;" class="group-activity"></div>
-            <el-divider />
             <ul @click="openActivity = true">
               <li>团体活动</li>
             </ul>
+            <el-divider />
+            <div class="activity-layout">
+              <el-container>
+                <el-aside width="300px">
+                  <div ref="chart" style="width: 300px; height: 300px;" class="group-activity"></div>
+                </el-aside>
+                <el-divider direction="vertical" style="height: 400px;"></el-divider>
+                <el-main>
+                  <GroupActivityCard :gid="this.$route.query.gid" />
+                </el-main>
+              </el-container>
+            </div>
           </el-card>
 
           <el-card>
@@ -119,69 +129,82 @@
 <script lang="js">
 import axios from 'axios'
 import * as echarts from 'echarts';
+import GroupActivityCard from '../../Components/GroupActivityCard.vue';
 
 export default {
   data ()
   {
     return {
+      select: "",
       drawer: false,
       group: {
-        gid: '',
-        image: './src/images/group-default-picture.png',
-        name: '团体名称',
-        description: '团体简介描述',
-        type: ''
+        gid: "",
+        image: "./src/images/group-default-picture.png",
+        name: "团体名称",
+        description: "团体简介描述",
+        type: ""
       },
-      father: '',
+      father: "",
       Users: [],
       small: false,
       background: false,
       disabled: false,
-      keyword: '',
+      keyword: "",
       currentPage: 1,
       defaultImage: "./src/images/group-default-picture.png",
-      activeName: '',
-      showActivity: '',
-      gid: '',
+      activeName: "",
+      showActivity: "",
+      gid: "",
       option: {
+        title: {
+          text: '团队活动统计',
+          left: 'center'
+        },
         tooltip: {
-          trigger: 'item'
+          trigger: "item",
         },
         legend: {
-          top: '5%',
-          left: 'center'
+          orient: 'vertical',
+          top: "5%",
+          left: "left"
         },
         series: [
           {
-            name: 'Access From',
-            type: 'pie',
-            radius: [ '40%', '70%' ],
+            name: "该类型数量",
+            type: "pie",
+            radius: [ "40%", "70%" ],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 10,
-              borderColor: '#fff',
+              borderColor: "#fff",
               borderWidth: 2
             },
             label: {
-              show: false,
-              position: 'center'
+              rotate: 0, // 文本旋转角度，单位为度（逆时针方向为正）
+              show: true, // 是否显示标签
+              overflow: 'truncate', // 文本溢出截断，可以是 'truncate' 或者 'break'
+              position: 'outer', // 标签位置，'outer' 表示外部，可以是 'inner' 内部
+              alignTo: 'none', // 对齐方式，例如 'labelLine' 或 'none'
+              edgeDistance: '25%', // 边缘距离，例如 '10%' 或者具体数值
+              bleedMargin: 10, // 超出边缘的补偿大小
+              distanceToLabelLine: 5 // 标签与标签引导线之间的距离
             },
             emphasis: {
               label: {
                 show: true,
-                fontSize: 40,
-                fontWeight: 'bold'
+                fontSize: 25,
+                fontWeight: "bold"
               }
             },
             labelLine: {
-              show: false
+              show: true
             },
             data: [
-              { value: 1048, name: 'Search Engine' },
-              { value: 735, name: 'Direct' },
-              { value: 580, name: 'Email' },
-              { value: 484, name: 'Union Ads' },
-              { value: 300, name: 'Video Ads' }
+              { value: 1048, name: "Search Engine" },
+              { value: 735, name: "Direct" },
+              { value: 580, name: "Email" },
+              { value: 484, name: "Union Ads" },
+              { value: 300, name: "Video Ads" }
             ]
           }
         ]
@@ -198,7 +221,6 @@ export default {
     const image = this.$route.query.image;
     const father = this.$route.query.father;
     const type = this.$route.query.type;
-
     // 将参数存储在 group 对象中
     this.group.gid = gid;
     this.gid = gid;
@@ -207,7 +229,6 @@ export default {
     this.group.image = image;
     this.group.type = type;
     this.father = father;
-
     this.getData();
     this.getMyOpData();
   },
@@ -222,24 +243,22 @@ export default {
       let filterUsers = [];
       for ( let i = 0; i < this.Users.length; i++ )
       {
-        if ( this.Users[ i ].uid != sessionStorage.getItem( 'uid' ) )
+        if ( this.Users[ i ].uid != sessionStorage.getItem( "uid" ) )
         {
           buf.push( this.Users[ i ] );
         }
       }
-
       for ( let i = 0; i < buf.length; i += 10 )
       {
-        filterUsers.push( buf.slice( i, i + 10 ) )
+        filterUsers.push( buf.slice( i, i + 10 ) );
       }
-      return filterUsers
+      return filterUsers;
     }
   },
   methods: {
     getData ()
     {
-
-      if ( this.gid !== '' )
+      if ( this.gid !== "" )
       {
         // console.log( "data: " + this.gid )
         axios( {
@@ -257,11 +276,10 @@ export default {
           }
         } ).catch( ( error ) =>
         {
-          console.error( 'Error fetching group data:', error );
+          console.error( "Error fetching group data:", error );
         } );
       }
     },
-
     search ()
     {
       axios( {
@@ -280,90 +298,79 @@ export default {
         }
       } );
     },
-
     handleCurrentChange ( val )
     {
       console.log( `current page: ${ val }` );
     },
-
     handleDelete ( uid )
     {
-      ElMessageBox.confirm( '是否确认踢出该成员',
-        'Warning',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then( () =>
+      ElMessageBox.confirm( "是否确认踢出该成员", "Warning", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      } ).then( () =>
       {
-        axios.post( 'http://127.0.0.1:8000/api/group/members/remove', {
+        axios.post( "http://127.0.0.1:8000/api/group/members/remove", {
           uid: uid,
           gid: this.group.gid
         } ).then( response =>
         {
           ElMessage( {
-            type: 'success',
-            message: '踢出成功',
+            type: "success",
+            message: "踢出成功",
           } );
-
           this.getData();
         } ).catch( error =>
         {
           ElMessage( {
-            type: 'error',
-            message: '踢出失败，请重试',
+            type: "error",
+            message: "踢出失败，请重试",
           } );
         } );
       } ).catch( () =>
       {
         ElMessage( {
-          type: 'info',
-          message: '你已取消操作',
+          type: "info",
+          message: "你已取消操作",
         } );
       } );
     },
-
     handleSet ( user )
     {
-      const type = user.type == '成员' ? 1 : 2;
-      const msg = user.type == '成员' ? '是否将其设为管理员' : '是否取消其管理员权限';
-      ElMessageBox.confirm( msg,
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then( () =>
+      const type = user.type == "成员" ? 1 : 2;
+      const msg = user.type == "成员" ? "是否将其设为管理员" : "是否取消其管理员权限";
+      ElMessageBox.confirm( msg, {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      } ).then( () =>
       {
-        axios.post( 'http://127.0.0.1:8000/api/group/members/authority', {
+        axios.post( "http://127.0.0.1:8000/api/group/members/authority", {
           uid: user.uid,
           gid: this.group.gid,
           type: type
         } ).then( response =>
         {
           ElMessage( {
-            type: 'success',
-            message: '操作成功',
+            type: "success",
+            message: "操作成功",
           } );
-
           this.getData();
         } ).catch( error =>
         {
           ElMessage( {
-            type: 'error',
-            message: '操作失败，请重试',
+            type: "error",
+            message: "操作失败，请重试",
           } );
         } );
       } ).catch( () =>
       {
         ElMessage( {
-          type: 'info',
-          message: '你已取消操作',
+          type: "info",
+          message: "你已取消操作",
         } );
       } );
     },
-
     getAvatar ( user )
     {
       return user.pic;
@@ -387,13 +394,13 @@ export default {
           };
           this.myOpData.push( item );
         }
-        console.log( this.myOpData )
+        console.log( this.myOpData );
         if ( this.myOpData.length == 0 )
         {
           this.myOpData = [
             {
               value: 1,
-              name: '该团队暂无活动' // 如果是饼图，使用name字段
+              name: "该团队暂无活动" // 如果是饼图，使用name字段
               // key: "该团队暂无举办活动~" // 如果是其他图表类型，可以使用key字段
             }
           ];
@@ -401,20 +408,19 @@ export default {
         this.renderChart();
       } ).catch( error =>
       {
-        console.error( 'Error fetching data:', error );
+        console.error( "Error fetching data:", error );
       } );
     },
     renderChart ()
     {
       const chartDom = this.$refs.chart;
       const myChart = echarts.init( chartDom );
-
       // 使用从后端获取的数据更新图表配置
-      this.option.series[ 0 ].data = this.myOpData
-
+      this.option.series[ 0 ].data = this.myOpData;
       myChart.setOption( this.option );
     }
   },
+  components: { GroupActivityCard }
 };
 
 </script>
@@ -423,13 +429,18 @@ export default {
 /* Adjustments for group information section */
 .common-layout {
   display: flex;
-  max-width: 80%;
+  max-width: 100%;
   max-height: 100%;
   margin: 20px;
-  background-color: #f1e9fd;
+  background-color: #e8e5ec;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.activity-layout {
+  position: relative;
+  z-index: 1;
 }
 
 .group-info {
@@ -449,15 +460,11 @@ export default {
 
 .group-activity {
   display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  /* 将左右边距设置为 auto，使其居中 */
   text-align: left;
   width: 100%;
   height: 100%;
   position: relative;
   z-index: 1;
-
 }
 
 /* Adjustments for navigation section */
