@@ -11,6 +11,11 @@
             <div v-else>
               <img :src="defaultImage" class="image" />
             </div>
+            <div style="padding: 14px; position: relative;">
+              <div class="tag-container">
+                <span class="tag">{{ card.tag }}</span>
+              </div>
+            </div>
           </div>
           <div style="padding: 14px">
             <div class="card-title-info">
@@ -168,8 +173,12 @@ export default {
 /* 调整 el-card 大小 */
 .custom-card {
   height: 175px;
-  width: 90%
-    /* 设置卡片高度 */
+  width: 90%;
+
+  margin-bottom: 25px;
+  /* 增加卡片下方间距 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* 设置卡片高度 */
 }
 
 .button-container {
@@ -204,7 +213,7 @@ export default {
 }
 
 .image {
-  width: 100%;
+  width: 520px;
   height: 100%;
   object-fit: cover;
 }
@@ -221,5 +230,25 @@ export default {
   /* 创建人人信息的颜色 */
   font-size: 14px;
   /* 创建人人信息的字体大小 */
+}
+
+.scrollbar {
+  margin-top: 30px;
+}
+
+.tag-container {
+  position: absolute;
+  top: -35px;
+  left: -490px;
+  padding: 5px;
+  z-index: 1;
+}
+
+.tag {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: rgb(135, 198, 235);
+  font-weight: bold;
 }
 </style>
