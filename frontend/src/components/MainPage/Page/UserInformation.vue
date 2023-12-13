@@ -1,10 +1,12 @@
 <template>
-  <el-row :gutter="20">
+  <el-row>
     <el-col :span="8">
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar :size="150" shape="circle" :src="picture || './src/images/emptyAvatar.png'"></el-avatar>
+        <el-avatar v-if="this.picture === 'http://127.0.0.1:8000null'" :size="150" shape="circle"
+          :src="'./src/images/emptyAvatar.png'"></el-avatar>
+        <el-avatar v-else :size="150" shape="circle" :src="picture"></el-avatar>
       </div>
 
       <!-- 个人账号 -->
@@ -102,23 +104,36 @@
 
     <el-col :span="8">
       <!-- 活动饼状图 -->
+      <div class="tipContainer">
+        <div class="chartTip">当前已参加活动</div>
+      </div>
+
       <div class="pieChart">
         <Echart />
       </div>
     </el-col>
 
-    <el-col :span="8"> </el-col>
+    <el-col :span="8">
+      <!-- 团体饼状图 -->
+      <div class="tipContainer">
+        <div class="chartTip">当前已参加团体</div>
+      </div>
+
+      <div class="pieChart">
+        <Echart2 />
+      </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
 import Echart from "../Components/Echart.vue";
+import Echart2 from "../Components/Echart2.vue"
 import ChangeUserInformation from "../Components/ChangeUserInformation.vue";
 import axios from "axios";
 import { Female, Male, User, Phone, Message } from "@element-plus/icons-vue";
 export default {
-  data ()
-  {
+  data() {
     return {
       fileList: [],
       name: "",
@@ -137,6 +152,7 @@ export default {
   },
   components: {
     Echart,
+    Echart2,
     ChangeUserInformation,
     Female,
     Male,
@@ -144,19 +160,16 @@ export default {
     Phone,
     Message,
   },
-  created ()
-  {
-    axios( {
+  created() {
+    axios({
       method: "GET",
       url: "http://127.0.0.1:8000/api/user/information",
       params: {
-        uid: JSON.parse( sessionStorage.getItem( "uid" ) ),
+        uid: JSON.parse(sessionStorage.getItem("uid")),
       },
-    } ).then( ( result ) =>
-    {
-      console.log( result );
-      if ( result.data.status )
-      {
+    }).then((result) => {
+      console.log(result);
+      if (result.data.status) {
         this.name = result.data.info.name;
         this.age = result.data.info.age;
         this.gender = result.data.info.gender;
@@ -167,72 +180,65 @@ export default {
         this.activity = result.data.info.activity;
         this.friend = result.data.info.friend;
         this.group = result.data.info.group;
+        console.log(this.picture);
       }
-    } );
+    });
 
 
   },
   methods: {
-    show ()
-    {
-      console.log( this.fileList );
+    show() {
+      console.log(this.fileList);
     },
-    beforeUpload ( file )
-    {
+    beforeUpload(file) {
       let isPic = file.type === "image/jpeg" || file.type === "image/png";
-      if ( !isPic )
-      {
-        this.$message( {
+      if (!isPic) {
+        this.$message({
           showClose: true,
           message: "只能上传JPG/PNG形式的图片",
           type: "error",
-        } );
+        });
       }
       return isPic;
     },
-    upload ()
-    {
-      const file = this.fileList[ 0 ].raw;
-      const uid = sessionStorage.getItem( "uid" );
+    upload() {
+      const file = this.fileList[0].raw;
+      const uid = sessionStorage.getItem("uid");
       const data = new FormData();
 
-      data.append( "uid", uid );
-      data.append( "picture", file );
+      data.append("uid", uid);
+      data.append("picture", file);
 
-      console.log( file );
+      console.log(file);
 
-      axios.post( "http://127.0.0.1:8000/api/user/modify/pic", data );
+      axios.post("http://127.0.0.1:8000/api/user/modify/pic", data);
     },
-    uploadFile ( file )
-    {
+    uploadFile(file) {
       let picInput = null;
-      picInput.append( "uid", JSON.parse( sessionStorage.getItem( "uid" ) ) );
-      picInput.append( "picture", file.raw );
+      picInput.append("uid", JSON.parse(sessionStorage.getItem("uid")));
+      picInput.append("picture", file.raw);
 
-      console.log( file.raw );
+      console.log(file.raw);
 
-      axios( {
+      axios({
         method: "POST",
         url: "http://127.0.0.1:8000/api/user/modify/pic",
         data: picInput,
-      } ).then( ( result ) =>
-      {
-        if ( result.data.status )
-        {
-          this.$message( {
+      }).then((result) => {
+        if (result.data.status) {
+          this.$message({
             showClose: true,
             message: result.data.msg,
             type: "success",
-          } );
-        } else
-        {
-          this.$message( {
+          });
+        } else {
+          this.$message({
             showClose: true,
             message: result.data.msg,
             type: "error",
-          } );
+          });
         }
-      } );
+      });
     },
   },
 };
@@ -308,5 +314,16 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-right: 20px;
-}</style>
+}
+
+.tipContainer {
+  margin-top: 36px;
+  display: flex;
+}
+
+.chartTip {
+  margin-left: 8%;
+  font-size: 18px;
+}
+</style>
   
