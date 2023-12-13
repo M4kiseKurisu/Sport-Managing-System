@@ -68,55 +68,44 @@
       </el-main>
     </el-container>
 
-    <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" width="800px">
-      <el-table :data="filteredUsers" style="width:100%">
+    <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" size="630px">
+      <div class="custom-table">
+        <div class="table-row header">
+          <div class="table-cell">呢称</div>
+          <div class="table-cell">类型</div>
+          <div class="table-cell">操作</div>
+        </div>
 
-        <el-table-column label="呢称" width="150px">
-          <template #default="scope">
-            <div v-for="user in scope.row" :key="user.uid" class="user-info">
+        <div v-for="user in filteredUsers[currentPage - 1]" :key="user.uid" class="table-row">
+          <div class="table-cell">
+            <div class="user-info">
               <div v-if="user.pic !== null">
                 <img :src="'http://127.0.0.1:8000' + user.pic" class="avatar" />
               </div>
-              <div v-else>
-                <img :src="defaultImage" class="avatar" />
+              <div class="user-name">
+                <span>{{ user.user_name }}</span>
               </div>
-              <span>{{ user.user_name }}</span>
             </div>
-          </template>
-        </el-table-column>
+          </div>
 
-        <el-table-column label="类型" width="92px">
-          <template #default="scope">
-            <div v-for="user in scope.row" :key="user.uid">
+          <div class="table-cell">
+            <div class="type">
               <span>{{ user.type }}</span>
             </div>
-          </template>
-        </el-table-column>
+          </div>
 
-        <el-table-column>
-          <template #header>
-            <div class="searchTitle">
-              <div class="searchBox">
-                <el-input v-model="keyword" placeholder="搜索成员"></el-input>
-              </div>
-              <el-button @click="search" class="searchButton">查询</el-button>
+          <div class="table-cell">
+            <div v-if="father == 'YourGroup'" class="button-container">
+              <el-button v-if="this.group.type == '创建人' || this.group.type == '管理员'" size="small" type="danger"
+                @click="handleDelete(user.uid)">踢出</el-button>
+              <el-button v-if="this.group.type == '创建人'" size="small" type="warning" @click="handleSet(user)">
+                <span v-if="user.type == '管理员'">移除权限</span>
+                <span v-if="user.type == '成员'">设为管理员</span>
+              </el-button>
             </div>
-          </template>
-          <template #default="scope" align="right">
-            <div v-for="user in scope.row" :key="user.uid" class="user-info">
-              <div v-if="this.father == 'YourGroup'" class="button-container">
-                <el-button v-if="this.group.type == '创建人' || this.group.type == '管理员'" size="small" type="danger"
-                  @click="handleDelete(user.uid)">踢出</el-button>
-                <el-button v-if="this.group.type == '创建人'" size="small" type="warning" @click="handleSet(user)">
-                  <span v-if="user.type == '管理员'">移除权限</span>
-                  <span v-if="user.type == '成员'">设为管理员</span>
-                </el-button>
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-
-      </el-table>
+          </div>
+        </div>
+      </div>
 
       <el-pagination :small="small" :disabled="disabled" :background="background" layout="prev, pager, next"
         :page-size="10" :total="totalPages" v-model:current-page="currentPage" @current-change="handleCurrentChange" />
@@ -251,8 +240,9 @@ export default {
       {
         filterUsers.push( buf.slice( i, i + 10 ) );
       }
+      console.log( filterUsers )
       return filterUsers;
-    }
+    },
   },
   methods: {
     getData ()
@@ -427,6 +417,31 @@ export default {
 
 <style scoped>
 /* Adjustments for group information section */
+.type {
+  margin: 35px 0;
+}
+
+.custom-table {
+  width: 100%;
+}
+
+.table-row {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  width: 600px;
+}
+
+.header {
+  font-weight: bold;
+}
+
+.table-cell {
+  flex: 1;
+  padding: 8px;
+  align-items: center;
+}
+
+
 .common-layout {
   display: flex;
   max-width: 100%;
@@ -559,6 +574,7 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
+  margin: 23px;
 }
 
 .avatar {
@@ -568,13 +584,10 @@ export default {
   margin-right: 10px;
 }
 
-.group-buttons {
-  margin-top: 20px;
-}
-
 .button-container {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  margin-top: 35px;
   /* 可以根据需要选择其他布局方式 */
 }
 
@@ -584,17 +597,4 @@ export default {
   max-width: 100%;
   max-height: 100%;
 }
-
-.searchTitle {
-  width: 600px;
-  display: flex;
-  align-items: center;
-}
-
-.searchBox {
-  width: 100px;
-}
-
-.searchButton {
-  width: 50px;
-}</style>
+</style>
