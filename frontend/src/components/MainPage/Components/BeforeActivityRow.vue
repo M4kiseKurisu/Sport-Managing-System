@@ -104,6 +104,7 @@ export default {
     border-right: 4px solid #4c82ff63;
     border-bottom: 4px solid #4c82ff63;
     border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .text {
