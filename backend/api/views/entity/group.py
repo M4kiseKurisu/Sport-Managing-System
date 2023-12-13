@@ -69,19 +69,16 @@ def create(request):
         return JsonResponse({"msg": "请求方式有误", "status": False})
 
 
+@require_http_methods(["POST"])
 def join(request):
     """ 用户申请加入团体 """
-    if request.method == 'POST':
-        data: dict = json.loads(request.body)
-        print(data)
-        uid = data.get("uid")
-        gid = data.get("gid")
-        content = data.get("content")
-        msg, status = user_group.add_apply(uid, gid, content)
-        return JsonResponse({"msg": msg, "status": status})
-
-    else:
-        return JsonResponse({"msg": "请求方式有误", "status": False})
+    data: dict = json.loads(request.body)
+    print(data)
+    uid = data.get("uid")
+    gid = data.get("gid")
+    content = data.get("content")
+    msg, status = user_group.add_apply(uid, gid, content)
+    return JsonResponse({"msg": msg, "status": status})
 
 
 @require_http_methods(["GET", "POST"])
