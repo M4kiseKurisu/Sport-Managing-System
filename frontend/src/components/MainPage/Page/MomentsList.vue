@@ -1,5 +1,5 @@
 <template>
-    <h1 class="page-title">好友动态</h1>
+    <h1 class="page-title">动态广场</h1>
 
     <div class="switch">
         <el-switch v-model="show" inline-prompt size="large"

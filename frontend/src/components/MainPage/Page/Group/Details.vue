@@ -68,7 +68,7 @@
       </el-main>
     </el-container>
 
-    <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" width="800px">
+    <el-drawer v-model="drawer" :open-method="getData()" title="成员列表" :with-header="false" width="1000px">
       <el-table :data="filteredUsers" style="width:100%">
 
         <el-table-column label="呢称" width="150px">
@@ -87,7 +87,7 @@
 
         <el-table-column label="类型" width="92px">
           <template #default="scope">
-            <div v-for="user in scope.row" :key="user.uid">
+            <div v-for="user in scope.row" :key="user.uid" class="type">
               <span>{{ user.type }}</span>
             </div>
           </template>
@@ -252,7 +252,7 @@ export default {
         filterUsers.push( buf.slice( i, i + 10 ) );
       }
       return filterUsers;
-    }
+    },
   },
   methods: {
     getData ()
@@ -427,6 +427,10 @@ export default {
 
 <style scoped>
 /* Adjustments for group information section */
+.type {
+  margin: 23px 0;
+}
+
 .common-layout {
   display: flex;
   max-width: 100%;
@@ -559,6 +563,7 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
+  margin: 23px;
 }
 
 .avatar {
@@ -566,10 +571,6 @@ export default {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
-}
-
-.group-buttons {
-  margin-top: 20px;
 }
 
 .button-container {
@@ -597,4 +598,5 @@ export default {
 
 .searchButton {
   width: 50px;
-}</style>
+}
+</style>
