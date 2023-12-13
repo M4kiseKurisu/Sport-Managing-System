@@ -153,13 +153,13 @@ export default {
             if (this.tag != "") {
                 search.tag = this.tag
             }
-            if (this.foundType != "") {
+            if (this.foundType !== "") {
                 search.type = this.foundType
             } else {
                 search.type = 2
             }
-
-            console.log(search);
+            console.log("-----------")
+            console.log(this.foundType);
 
             axios({
                 method: "GET",
