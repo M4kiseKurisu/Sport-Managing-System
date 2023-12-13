@@ -352,7 +352,7 @@ export default {
 .el-pagination {
   position: fixed;
   /* 使分页器固定 */
-  bottom: 10%;
+  bottom: 0;
   /* 确保分页器位于页面底部 */
   left: 50%;
   /* 调整分页器水平位置 */
