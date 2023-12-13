@@ -10,7 +10,7 @@
         </div>
 
         <!-- 用户性别 -->
-        <el-icon v-if="this.gender === '女'">
+        <el-icon v-if="this.participant.gender === 0">
             <Female />
         </el-icon>
         <el-icon v-else>
