@@ -33,17 +33,24 @@
                         <div class="tips">性别</div>
                         <div class="error" ref="genderError">不能为空！</div>
                     </div>
-                    <input type="radio" id="male" name="gender" value="male" :class="'radioClass'" checked />
+                    <input type="radio" id="male" name="gender" value="male" :class="'radioClass'" checked v-model="male" />
                     <label for="male">男</label>
-                    <input type="radio" id="female" name="gender" value="female" :class="'radioClass'" />
+                    <input type="radio" id="female" name="gender" value="female" :class="'radioClass'" v-model="female" />
                     <label for="female">女</label>
+                </div>
+                <div class="contentBlock">
+                    <div class="flex">
+                        <div class="tips">年龄</div>
+                        <div class="error" ref="ageError">不能为空！</div>
+                    </div>
+                    <input type="number" :class="'inputClass'" v-model="age" ref="age">
                 </div>
                 <div class="contentBlock">
                     <div class="flex">
                         <div class="tips">电话号码</div>
                         <div class="error" ref="telError">不能为空！</div>
                     </div>
-                    <input type="tel" :class="'inputClass'" v-model="phone" ref="tel">
+                    <input type="number" :class="'inputClass'" v-model="phone" ref="tel">
                 </div>
                 <div class="contentBlock">
                     <div class="flex">
@@ -60,6 +67,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
@@ -67,6 +76,7 @@ export default {
             password: '',
             name: '',
             phone: '',
+            age: '',
             email: '',
             male: '',
             female: ''
@@ -76,8 +86,8 @@ export default {
         input() {
             this.onEvent("Input");
         },
-        createAccount(e) {
-            console.log(1);
+        createAccount() {
+            console.log(this.male);
             /*未填写报错*/
             //this.$refs.textError.style.opacity = (this.account != "") ? '0' : '1'
 
@@ -86,18 +96,22 @@ export default {
             this.$refs.pwd.style.border = (this.password) ? '' : 'solid 1px red'
             this.$refs.realNameError.style.opacity = (this.name) ? '0' : '1'
             this.$refs.realName.style.border = (this.name) ? '' : 'solid 1px red'
+            this.$refs.ageError.style.opacity = (this.phone) ? '0' : '1'
+            this.$refs.age.style.border = (this.phone) ? '' : 'solid 1px red'
             this.$refs.telError.style.opacity = (this.phone) ? '0' : '1'
             this.$refs.tel.style.border = (this.phone) ? '' : 'solid 1px red'
             this.$refs.emailError.style.opacity = (this.email) ? '0' : '1'
             this.$refs.email.style.border = (this.email) ? '' : 'solid 1px red'
 
             /*填写格式错误报错*/
-            const phoneFlag1 = (this.phone.length == 11) ? 1 : 0
-            const phoneFlag2 = (/\d*/.test(this.phone)) ? 1 : 0
+            console.log(this.phone.toString().length);
+            const phoneFlag1 = (this.phone.toString().length == 11) ? 1 : 0
+            const phoneFlag2 = (/\d*/.test(this.phone.toString())) ? 1 : 0
             if ((phoneFlag1 == 0 || phoneFlag2 == 0) && this.phone) {
                 console.log(phoneFlag2)
                 this.$refs.telError.innerHTML = (phoneFlag1 == 0) ? "电话号码需要为11位！" : "电话号码需要为纯数字！"
                 this.$refs.telError.style.opacity = '1'
+                return;
             }
 
             const emailForm = new RegExp(/.{1,}@.{1,}(\..{1,}){1,}/);
@@ -105,6 +119,48 @@ export default {
             if (emailFlag == 0) {
                 this.$refs.emailError.innerHTML = "邮箱格式错误！"
                 this.$refs.emailError.style.opacity = '1'
+                return;
+            }
+
+            if (isNaN(this.age.toString())) {
+                this.$refs.ageError.innerHTML = "年龄必须是数字！"
+                this.$refs.ageError.style.opacity = '1'
+                return;
+            }
+
+            if (this.account && this.password && this.name && this.phone && this.email && this.age) {
+                let content = {
+                    account: this.account,
+                    password: this.password,
+                    user_name: this.name,
+                    user_age: this.age,
+                    user_gender: (this.male) ? 1 : 0,
+                    phone_number: this.phone,
+                    email: this.email,
+                }
+
+                console.log(content);
+
+                axios({
+                    method: "POST",
+                    url: "http://127.0.0.1:8000/api/user/register",
+                    data: content
+                }).then((result) => {
+                    console.log(result);
+                    if (result.data.status) {
+                        this.$message({
+                            showClose: true,
+                            message: result.data.msg,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message({
+                            showClose: true,
+                            message: result.data.msg,
+                            type: 'error'
+                        });
+                    }
+                })
             }
         }
     },
@@ -123,7 +179,7 @@ export default {
     position: fixed;
     overflow: hidden;
     width: 600px;
-    height: 690px;
+    height: 720px;
     z-index: 10;
     border-radius: 30px;
     display: flex;
