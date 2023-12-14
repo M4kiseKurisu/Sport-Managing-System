@@ -105,7 +105,15 @@ export default {
                 {
                     if ( result.data.status )
                     {
-                        this.newFriends = result.data.list;
+                        let cnt = 0;
+                        for ( let i = 0; i < result.data.list.length; i++ )
+                        {
+                            if ( result.data.list[ i ].uid != sessionStorage.getItem( 'uid' ) )
+                            {
+                                this.newFriends[ cnt ] = result.data.list[ i ];
+                                cnt++;
+                            }
+                        }
                         this.msg = result.data.msg;
                     }
                 } )

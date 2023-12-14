@@ -4,8 +4,12 @@
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar v-if="this.picture === 'http://127.0.0.1:8000null'" :size="150" shape="circle"
-          :src="'./src/images/emptyAvatar.png'"></el-avatar>
+        <el-avatar
+          v-if="this.picture === 'http://127.0.0.1:8000null'"
+          :size="150"
+          shape="circle"
+          :src="'./src/images/emptyAvatar.png'"
+        ></el-avatar>
         <el-avatar v-else :size="150" shape="circle" :src="picture"></el-avatar>
       </div>
 
@@ -89,7 +93,13 @@
       <!-- 更改个人信息按钮 -->
       <div class="changeButton">
         <div class="button">
-          <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
+          <el-upload
+            v-model:file-list="this.fileList"
+            :limit="1"
+            :show-file-list="false"
+            :auto-upload="false"
+            action="#"
+          >
             <el-button type="primary" plain>选择头像</el-button>
           </el-upload>
         </div>
@@ -128,7 +138,7 @@
 
 <script>
 import Echart from "../Components/Echart.vue";
-import Echart2 from "../Components/Echart2.vue"
+import Echart2 from "../Components/Echart2.vue";
 import ChangeUserInformation from "../Components/ChangeUserInformation.vue";
 import axios from "axios";
 import { Female, Male, User, Phone, Message } from "@element-plus/icons-vue";
@@ -183,8 +193,6 @@ export default {
         console.log(this.picture);
       }
     });
-
-
   },
   methods: {
     show() {
@@ -253,6 +261,7 @@ export default {
   display: flex;
   justify-content: center;
   padding-top: 20px;
+  margin-top: 80px;
 }
 
 .nameDiv {
@@ -283,6 +292,7 @@ export default {
 }
 
 .information {
+  font-size: 16px;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
@@ -290,8 +300,7 @@ export default {
 
 .informationRow {
   display: flex;
-
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   margin-left: 16px;
 }
 
@@ -317,7 +326,7 @@ export default {
 }
 
 .tipContainer {
-  margin-top: 36px;
+  margin-top: 150px;
   display: flex;
 }
 
