@@ -71,7 +71,7 @@ def initialize(user):
     groups = list(map(lambda param: param.gid, UserInGroup.objects.filter(uid=user)))
     for record in records:
         if record.aid.type == 0:    # 个人
-            if not record.aid.private or UserCreateActivity.objects.filter(aid=record.aid, uid=user).first():
+            if (not record.aid.private) or UserCreateActivity.objects.filter(aid=record.aid, uid=user).first():
                 total_activities[str(record.aid.aid)] = {"type": 0, "activity": record.aid, "time": record.start_time}
         elif record.aid.type == 1:  # 团体
             if not record.aid.private:
@@ -108,11 +108,8 @@ def get_recommend_activity(uid):
     activity_weight = []
     for activity in total_activities:
         weight1 = cal_pog_weight(activity)
-        print(weight1)
         weight2 = cal_scale_weight(activity)
-        print(weight2)
         weight3 = cal_favor_weight(activity)
-        print(weight3)
         activity_weight.append((total_activities.get(activity)['activity'], weight1 + weight2 + weight3))
 
     # 排序取前五个
