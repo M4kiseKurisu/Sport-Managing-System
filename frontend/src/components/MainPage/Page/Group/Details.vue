@@ -96,8 +96,8 @@
 
           <div class="table-cell">
             <div v-if="father == 'YourGroup'" class="button-container">
-              <el-button v-if="this.group.type == '创建人' || this.group.type == '管理员'" size="small" type="danger"
-                @click="handleDelete(user.uid)">踢出</el-button>
+              <el-button v-if="this.group.type == '创建人' || (this.group.type == '管理员'
+                && user.type == '成员')" size="small" type="danger" @click="handleDelete(user.uid)">踢出</el-button>
               <el-button v-if="this.group.type == '创建人'" size="small" type="warning" @click="handleSet(user)">
                 <span v-if="user.type == '管理员'">移除权限</span>
                 <span v-if="user.type == '成员'">设为管理员</span>
