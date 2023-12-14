@@ -1,7 +1,15 @@
 <template>
   <div class="button-row">
     <!-- 创建团体按钮和创建逻辑 -->
-    <el-button text @click="showCreateGroup = true">创建团体</el-button>
+    <el-button text @click="showCreateGroup = true" class="button">创建团体</el-button>
+
+    <!-- 搜索逻辑 -->
+    <div class="searchTitle">
+      <div class="searchBox">
+        <el-input v-model="keyword" placeholder="输入查询信息"></el-input>
+      </div>
+      <el-button @click="search">查 询</el-button>
+    </div>
 
     <el-dialog title="创建团体" v-model="showCreateGroup" width="60%">
       <el-form :model="form" label-width="120px" :rules="rules">
@@ -16,6 +24,10 @@
             <el-option label="娱乐" value="娱乐" />
             <el-option label="竞技" value="竞技" />
             <el-option label="综合" value="综合" />
+            <el-option label="户外" value="户外" />
+            <el-option label="社交" value="社交" />
+            <el-option label="健身" value="健身" />
+            <el-option label="摸鱼" value="摸鱼" />
           </el-select>
         </el-form-item>
 
@@ -76,15 +88,7 @@
     </el-dialog>
     <!-- 创建团体按钮和创建逻辑 -->
 
-    <!-- 搜索逻辑 -->
-    <div class="searchTitle">
-      <div class="searchBox">
-        <el-input v-model="keyword" placeholder="输入查询信息"></el-input>
-      </div>
-      <el-button @click="search">查 询</el-button>
-    </div>
   </div>
-  <!-- 搜索逻辑 -->
 
 
   <!-- 分页逻辑 -->
@@ -307,7 +311,6 @@ export default {
 .searchTitle {
   display: flex;
   align-items: center;
-  margin-top: 20px;
 }
 
 .searchBox {
@@ -320,7 +323,41 @@ export default {
   align-items: center;
 }
 
+.button-row .button {
+  padding: 10px 20px;
+  border: 1px solid #409eff;
+  background-color: white;
+  color: #66b1ff;
+  transition: background-color 0.3s;
+}
+
+/* 设置按钮悬停效果 */
+.button-row .button:hover {
+  background-color: #409eff;
+  color: #409eff;
+  cursor: pointer;
+}
+
+
 .dialog-footer button:first-child {
   margin-right: 10px;
+}
+
+.scrollbar {
+  margin-top: 30px;
+}
+
+
+
+.el-pagination {
+  position: fixed;
+  /* 使分页器固定 */
+  bottom: 0;
+  /* 确保分页器位于页面底部 */
+  left: 50%;
+  /* 调整分页器水平位置 */
+  transform: translateX(-50%);
+  z-index: 1000;
+  /* 可以调整分页器的 z-index 以确保它在其他内容上方 */
 }
 </style>

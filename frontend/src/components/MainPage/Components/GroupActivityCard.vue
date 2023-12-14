@@ -1,6 +1,7 @@
 <template>
     <el-scrollbar height="400px">
-        <el-card class="activity-card" v-for="(activity, index) in activityList" :key="index">
+        <el-card class="activity-card" v-for="(activity, index) in activityList" :key="index"
+            @click="viewActivity(activity.aid)">
             <div class="card-content">
                 <div class="image-container">
                     <div class="image-blurred"
@@ -25,18 +26,6 @@ export default {
     {
         return {
             activityList: [],
-            // activity: {
-            //     name: "夜跑团建",
-            //     type: "团体",
-            //     private: true,
-            //     category: "跑步",
-            //     capacity: 1,
-            //     maximum: 25,
-            //     picture: "./src/images/group-default-picture.png",
-            //     start_time: "2024-01-01 20:30:00",
-            //     end_time: "2024-01-01 21:40:00",
-            //     favor: 0
-            // }
         };
     },
     created ()
@@ -70,6 +59,10 @@ export default {
                     console.error( "Error fetching group data:", error );
                 } );
             }
+        },
+        viewActivity ( aid )
+        {
+            this.$router.push( '/Page/Activity_Information/Detail/' + aid );
         }
     },
 };
@@ -86,11 +79,6 @@ export default {
     position: relative;
 }
 
-/* .image-container {
-    width: 100px;
-    height: 100px;
-    margin-right: 10px;
-} */
 
 .image-blurred {
     width: 100%;

@@ -27,25 +27,36 @@
 
 
             <el-table-column label="个性签名">
-                <!-- 根据搜索结果渲染列表 -->
                 <template #default="scope">
-                    <div v-for="friend in scope.row" :key="friend.uid">
-                        {{ friend.signature }}
+                    <div v-for="friend in scope.row" :key="friend.uid" class="signature">
+                        <!-- 添加间隔 -->
+                        <div class="signature-content">
+                            <!-- 根据搜索结果渲染列表 -->
+                            <div v-if="friend.signature !== ''">
+                                <span>{{ friend.signature }}</span>
+                            </div>
+                            <div v-else>
+                                <span>这个人很懒，没有填写简介</span>
+                            </div>
+                        </div>
                     </div>
                 </template>
             </el-table-column>
 
-
+            <!-- 第二个列 -->
             <el-table-column align="center" label="申请添加">
-                <!-- 根据搜索结果渲染不同的按钮 -->
                 <template #default="scope">
-                    <div v-for="friend in scope.row" :key="friend.uid">
-                        <el-button v-if="!isFriend(friend)" size="small" type="primary" @click="addFriend(friend)">
-                            添加好友
-                        </el-button>
-                        <el-button v-else size="small" type="primary" disabled>
-                            已添加
-                        </el-button>
+                    <div v-for="friend in scope.row" :key="friend.uid" class="apply-button">
+                        <!-- 添加间隔 -->
+                        <div class="apply-button-content">
+                            <!-- 根据搜索结果渲染不同的按钮 -->
+                            <el-button v-if="!isFriend(friend)" size="small" type="primary" @click="addFriend(friend)">
+                                添加好友
+                            </el-button>
+                            <el-button v-else size="small" type="primary" disabled>
+                                已添加
+                            </el-button>
+                        </div>
                     </div>
                 </template>
             </el-table-column>
@@ -174,6 +185,22 @@ export default {
 </script>
 
 <style scoped>
+.signature {
+    margin: 25px 0;
+}
+
+.apply-button {
+    margin: 25px 0;
+}
+
+/* 中间内容居中显示 */
+.signature-content,
+.apply-button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .searchTitleNew {
     width: 100%;
     display: flex;
@@ -198,9 +225,7 @@ export default {
 /* 表格样式 */
 .friend-list {
     max-height: 400px;
-    /* 调整列表最大高度 */
     overflow-y: auto;
-    /* 当内容超出高度时显示滚动条 */
 }
 
 .friend-info {

@@ -8,11 +8,16 @@
       <div v-else>
         <img :src="defaultImage" class="image" />
       </div>
+      <div style="padding: 14px; position: relative;">
+        <div class="tag-container">
+          <span class="tag">{{ props.card.tag }}</span>
+        </div>
+      </div>
     </div>
 
     <div style="padding: 14px">
       <div class="card-title-info">
-        <span>{{ props.card.group_name }}</span>
+        <span class="group-name">{{ props.card.group_name }}</span>
         <span class="creator-info">创建人：{{ props.card.creator }}</span>
       </div>
       <div class="button-container">
@@ -56,7 +61,8 @@ interface CardProps {
     is_joined: boolean;
     maximum: number;
     capacity: number;
-    group_desc: ""
+    group_desc: "";
+    tag: "";
   };
   status: number;
   msg: string;
@@ -121,9 +127,12 @@ const applicate = (gid) => {
 <style scoped>
 /* 调整 el-card 大小 */
 .custom-card {
-  height: 175px;
-  width: 90%
-    /* 设置卡片高度 */
+  height: 200px;
+  width: 90%;
+  margin-bottom: 20px;
+  /* 增加卡片下方间距 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
 }
 
 .button-container {
@@ -145,7 +154,7 @@ const applicate = (gid) => {
 
 .image-container {
   /* Set container size */
-  width: 100%;
+  width: auto;
   height: 100px;
   /* Set container height */
 
@@ -158,7 +167,7 @@ const applicate = (gid) => {
 }
 
 .image {
-  width: 100%;
+  width: 530px;
   height: 100%;
   object-fit: cover;
   z-index: 0;
@@ -179,10 +188,35 @@ const applicate = (gid) => {
   margin-bottom: 10px;
 }
 
+.group-name {
+  font-size: 18px;
+  /* 调整名字字体大小 */
+  font-weight: bold;
+  /* 加粗名字 */
+  color: #333;
+  /* 调整名字颜色 */
+}
+
 .creator-info {
   color: #888;
   /* 创建人信息的颜色 */
-  font-size: 14px;
+  font-size: 16px;
   /* 创建人信息的字体大小 */
+}
+
+.tag-container {
+  position: absolute;
+  top: -35px;
+  left: -495px;
+  padding: 5px;
+  z-index: 1;
+}
+
+.tag {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: rgb(135, 198, 235);
+  font-weight: bold;
 }
 </style>

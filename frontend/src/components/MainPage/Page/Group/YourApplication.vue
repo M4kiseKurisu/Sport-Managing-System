@@ -18,16 +18,8 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      :small="small"
-      :disabled="disabled"
-      :background="background"
-      layout="prev, pager, next"
-      :page-size="10"
-      :total="totalPages"
-      v-model:current-page="currentPage"
-      @current-change="handleCurrentChange"
-    />
+    <el-pagination :small="small" :disabled="disabled" :background="background" layout="prev, pager, next" :page-size="10"
+      :total="totalPages" v-model:current-page="currentPage" @current-change="handleCurrentChange" />
   </div>
 </template>
 
@@ -113,5 +105,22 @@ export default {
 </script>
 
 <style scoped>
-/* Your styles */
+.el-table,
+.el-table th,
+.el-table td {
+  font-size: 16px;
+}
+
+/* Customize table appearance */
+.el-table__header-wrapper {
+  background-color: #f5f7fa;
+}
+
+.el-table__header th {
+  background-color: #e4e7ed;
+}
+
+.el-table__body td {
+  background-color: #ffffff;
+}
 </style>

@@ -20,7 +20,7 @@
             <div class="button">
                 <el-button type="primary" @click="checkInformation()">查看详情</el-button>
                 <el-button type="danger" @click="getOut()">退出/撤销活动</el-button>
-                <el-button type="warning" @click="this.show = true">发布活动动态</el-button>
+                <el-button type="warning" v-if="judgeDate()" @click="this.show = true">发布活动动态</el-button>
             </div>
         </div>
 
@@ -280,6 +280,12 @@ export default {
             {
                 ElMessage.error( '请填写必填项！' );
             }
+        },
+        judgeDate ()
+        {
+            const currentTime = new Date();
+            const endTime = new Date( this.end_time );
+            return currentTime > endTime;
         }
     },
     props: [ "name", "start_time", "end_time", "category",

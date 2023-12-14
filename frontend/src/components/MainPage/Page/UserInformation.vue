@@ -1,14 +1,12 @@
 <template>
-  <el-row :gutter="20">
+  <el-row>
     <el-col :span="8">
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar
-          :size="150"
-          shape="circle"
-          :src="picture || './src/images/emptyAvatar.png'"
-        ></el-avatar>
+        <el-avatar v-if="this.picture === 'http://127.0.0.1:8000null'" :size="150" shape="circle"
+          :src="'./src/images/emptyAvatar.png'"></el-avatar>
+        <el-avatar v-else :size="150" shape="circle" :src="picture"></el-avatar>
       </div>
 
       <!-- 个人账号 -->
@@ -91,13 +89,7 @@
       <!-- 更改个人信息按钮 -->
       <div class="changeButton">
         <div class="button">
-          <el-upload
-            v-model:file-list="this.fileList"
-            :limit="1"
-            :show-file-list="false"
-            :auto-upload="false"
-            action="#"
-          >
+          <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
             <el-button type="primary" plain>选择头像</el-button>
           </el-upload>
         </div>
@@ -112,17 +104,31 @@
 
     <el-col :span="8">
       <!-- 活动饼状图 -->
+      <div class="tipContainer">
+        <div class="chartTip">当前已参加活动</div>
+      </div>
+
       <div class="pieChart">
         <Echart />
       </div>
     </el-col>
 
-    <el-col :span="8"> </el-col>
+    <el-col :span="8">
+      <!-- 团体饼状图 -->
+      <div class="tipContainer">
+        <div class="chartTip">当前已参加团体</div>
+      </div>
+
+      <div class="pieChart">
+        <Echart2 />
+      </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
 import Echart from "../Components/Echart.vue";
+import Echart2 from "../Components/Echart2.vue"
 import ChangeUserInformation from "../Components/ChangeUserInformation.vue";
 import axios from "axios";
 import { Female, Male, User, Phone, Message } from "@element-plus/icons-vue";
@@ -140,10 +146,13 @@ export default {
       activity: "",
       friend: "",
       group: "",
+
+      dataList: [],
     };
   },
   components: {
     Echart,
+    Echart2,
     ChangeUserInformation,
     Female,
     Male,
@@ -171,8 +180,11 @@ export default {
         this.activity = result.data.info.activity;
         this.friend = result.data.info.friend;
         this.group = result.data.info.group;
+        console.log(this.picture);
       }
     });
+
+
   },
   methods: {
     show() {
@@ -302,6 +314,16 @@ export default {
   display: flex;
   justify-content: flex-end;
   margin-right: 20px;
+}
+
+.tipContainer {
+  margin-top: 36px;
+  display: flex;
+}
+
+.chartTip {
+  margin-left: 8%;
+  font-size: 18px;
 }
 </style>
   

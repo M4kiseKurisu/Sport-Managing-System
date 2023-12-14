@@ -4,7 +4,7 @@
     <el-carousel :autoplay="false" type="card" height="200px">
         <el-carousel-item v-for="item in this.prefer" :key="item.aid">
             <!-- <h3 text="2xl" justify="center">{{ item }}</h3> -->
-            <img :src="'http://127.0.0.1:8000' + item.picture" class="image">
+            <img :src="'http://127.0.0.1:8000' + item.picture" class="image" @click="toDetail(item.aid)">
         </el-carousel-item>
     </el-carousel>
 
@@ -125,6 +125,9 @@ export default {
         ActivityShow,
     },
     methods: {
+        toDetail(aid) {
+            this.$router.push('/Page/Activity_Information/Detail/' + aid);
+        },
         handlePageChange(pageNo) {
             // pageNo 是你点击的页号
             // 在这里，你可以获取该页面的数据，并更新你的组件
@@ -150,13 +153,13 @@ export default {
             if (this.tag != "") {
                 search.tag = this.tag
             }
-            if (this.foundType != "") {
+            if (this.foundType !== "") {
                 search.type = this.foundType
             } else {
                 search.type = 2
             }
-
-            console.log(search);
+            console.log("-----------")
+            console.log(this.foundType);
 
             axios({
                 method: "GET",

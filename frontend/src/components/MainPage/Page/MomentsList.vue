@@ -1,4 +1,6 @@
 <template>
+    <h1 class="page-title">动态广场</h1>
+
     <div class="switch">
         <el-switch v-model="show" inline-prompt size="large"
             style="--el-switch-on-color: #13ce66; --el-switch-off-color: #1890ff" active-text="所有动态" inactive-text="你的动态" />
@@ -89,6 +91,15 @@ export default {
 </script>
 
 <style scoped>
+.page-title {
+    text-align: center;
+    /* 居中显示 */
+    font-size: 25px;
+    /* 字体较大 */
+    margin-bottom: 20px;
+    /* 与下方内容有一定间隔 */
+}
+
 .switch {
     padding: 0 20px;
     margin-bottom: 10px;

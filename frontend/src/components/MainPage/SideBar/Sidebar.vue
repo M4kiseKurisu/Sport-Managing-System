@@ -35,7 +35,7 @@
       <el-icon>
         <DocumentChecked />
       </el-icon>
-      <template #title>你的活动</template>
+      <template #title>我的活动</template>
     </el-menu-item>
 
     <el-menu-item index="/Page/Friend">
