@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-breadcrumb :separator-icon="ArrowRight" class="custom-breadcrumb">
-            <el-breadcrumb-item :to="{ path: '/' }"></el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/' }">Home</el-breadcrumb-item>
             <el-breadcrumb-item v-for="(item, index) in breadcrumbItems" :key="index">
                 <router-link :to="item.to" class="custom-link"
                     :class="{ 'last-item': index === breadcrumbItems.length - 1 }">{{ item.label }}</router-link>
