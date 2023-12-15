@@ -16,8 +16,7 @@
 <script>
 import { ArrowRight } from '@element-plus/icons-vue'
 export default {
-    data ()
-    {
+    data() {
         return {
             breadcrumbItems: [], // 存储面包屑路径信息
             ArrowRight
@@ -28,30 +27,25 @@ export default {
     },
     watch: {
         // 监听路由变化，在路由变化时更新面包屑信息
-        $route ( to, from )
-        {
-            this.updateBreadcrumb( to.matched );
+        $route(to, from) {
+            this.updateBreadcrumb(to.matched);
         }
     },
-    created ()
-    {
+    created() {
         // 初始化页面时构建面包屑
-        this.updateBreadcrumb( this.$route.matched );
+        this.updateBreadcrumb(this.$route.matched);
     },
     methods: {
-        updateBreadcrumb ( matched )
-        {
+        updateBreadcrumb(matched) {
             const breadcrumbs = [];
-            matched.forEach( route =>
-            {
-                if ( route.meta && route.meta.breadcrumbLabel )
-                {
-                    breadcrumbs.push( {
+            matched.forEach(route => {
+                if (route.meta && route.meta.breadcrumbLabel) {
+                    breadcrumbs.push({
                         label: route.meta.breadcrumbLabel,
                         to: route.path
-                    } );
+                    });
                 }
-            } );
+            });
             this.breadcrumbItems = breadcrumbs;
         }
     }
