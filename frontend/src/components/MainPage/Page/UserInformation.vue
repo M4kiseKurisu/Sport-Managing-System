@@ -4,12 +4,8 @@
       <!-- 头像组件 -->
 
       <div class="avatarDiv">
-        <el-avatar
-          v-if="this.picture === 'http://127.0.0.1:8000null'"
-          :size="150"
-          shape="circle"
-          :src="'./src/images/emptyAvatar.png'"
-        ></el-avatar>
+        <el-avatar v-if="this.picture === 'http://127.0.0.1:8000null'" :size="150" shape="circle"
+          :src="'./src/images/emptyAvatar.png'"></el-avatar>
         <el-avatar v-else :size="150" shape="circle" :src="picture"></el-avatar>
       </div>
 
@@ -93,13 +89,7 @@
       <!-- 更改个人信息按钮 -->
       <div class="changeButton">
         <div class="button">
-          <el-upload
-            v-model:file-list="this.fileList"
-            :limit="1"
-            :show-file-list="false"
-            :auto-upload="false"
-            action="#"
-          >
+          <el-upload v-model:file-list="this.fileList" :limit="1" :show-file-list="false" :auto-upload="false" action="#">
             <el-button type="primary" plain>选择头像</el-button>
           </el-upload>
         </div>
@@ -261,7 +251,7 @@ export default {
   display: flex;
   justify-content: center;
   padding-top: 20px;
-  margin-top: 80px;
+  margin-top: 50px;
 }
 
 .nameDiv {
